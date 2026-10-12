@@ -1,4 +1,4 @@
-/* Кабинет сотрудника, руководителя и HR — прототип 2.0. Данные: data.js. Роутинг по hash:
+/* Кабинет сотрудника, руководителя и HR — прототип 3.0. Данные: data.js. Роутинг по hash:
    #/employee/... — сотрудник (видит себя), #/manager/... — руководитель отдела (видит отдел), #/hr/... — HR и директор (видят всё). */
 (() => {
   const D = window.HR;
@@ -29,6 +29,7 @@
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const taskStatus = { in_progress: ['В работе', 'accent'], done: ['Сделано', 'good'], overdue: ['Просрочено', 'critical'], planned: ['Запланировано', ''] };
   const courseStatus = { assigned: ['Назначен', 'accent'], done: ['Пройден', 'good'], overdue: ['Просрочен', 'critical'] };
+  const fbSrc = { transcript: 'из транскрипта', manual: 'наблюдение руководителя', 360: 'из 360', form: 'анкета' };
   const chip = (text, cls = '') => `<span class="chip ${cls}">${esc(text)}</span>`;
   const perfChip = (l) => (l ? `<span class="chip perf ${esc(l)}">${esc(l)}</span>` : '<span class="hint">—</span>');
   const bar = (p, cls = '') => `<div class="bar ${cls}"><i style="width:${Math.max(0, Math.min(100, p))}%"></i></div>`;
@@ -55,8 +56,13 @@
   const matrixMax = (e) => compsOf(e).length * 10;
   const groupsOf = (e) => { const g = {}; matrixOf(e).forEach((c) => { (g[c.group] ||= []).push(c.score); }); return Object.entries(g).map(([name, arr]) => ({ name, avg: arr.reduce((s, v) => s + v, 0) / arr.length })); };
   const levelOf = (s) => (s <= 3 ? 'base' : s <= 6 ? 'mid' : s <= 8 ? 'adv' : 'expert');
-  const levelName = { base: 'Базовый', mid: 'Средний', adv: 'Продвинутый', expert: 'Эксперт' };
-  const nextGrade = (g) => D.grades[Math.min(D.grades.indexOf(g) + 1, 3)];
+  // Столбцы матрицы аккаунтов соответствуют грейдам роли (ТЗ 3.0: у каждой роли свой набор грейдов)
+  const levelName = { base: 'Junior', mid: 'Middle', adv: 'Middle+', expert: 'Senior' };
+  const ladderOf = (e) => D.gradeLadders[e.dept] || ['Junior', 'Middle', 'Senior'];
+  const nextGrade = (e) => { const l = ladderOf(e); const i = l.indexOf(e.grade); return i < 0 ? e.grade : l[Math.min(i + 1, l.length - 1)]; };
+  const ladderChips = (e) => ladderOf(e).map((g) => chip(g, g === e.grade ? 'grade' : '')).join(' ');
+  const hardsOf = (e) => D.hardSkills[e.id] || [];
+  const hardStatus = { confirmed: ['Подтверждено', 'good'], progress: ['В работе', 'accent'], todo: ['Не начато', ''] };
   const isAccount = (e) => e.dept === 'account';
   // Проверка ограничений перехода на следующий грейд (только для аккаунтов: там есть правила)
   const constraintsFor = (e, g) => (isAccount(e) ? (D.gradeRules.constraints[g] || []).map(([c, min]) => ({ c, min, cur: e.matrix[c] ?? 0, ok: (e.matrix[c] ?? 0) >= min })) : []);
@@ -80,7 +86,7 @@
   }
   function bars(id, labels, datasets, opts = {}) {
     const wrap = (l) => (typeof l === 'string' && l.length > 12 && !opts.horizontal) ? l.split(' ').reduce((a, w) => { const last = a[a.length - 1]; if (last !== undefined && (last + ' ' + w).length <= 14) a[a.length - 1] = last + ' ' + w; else a.push(w); return a; }, []) : l;
-    mk(id, { type: 'bar', data: { labels: labels.map(wrap), datasets: datasets.map((d) => ({ borderRadius: 4, borderSkipped: 'start', barPercentage: 0.6, categoryPercentage: 0.7, ...d })) },
+    mk(id, { type: 'bar', data: { labels: labels.map(wrap), datasets: datasets.map((d) => ({ borderRadius: 4, borderSkipped: 'start', barPercentage: 0.6, categoryPercentage: 0.7, maxBarThickness: 44, ...d })) },
       options: { responsive: true, maintainAspectRatio: false, indexAxis: opts.horizontal ? 'y' : 'x', plugins: { legend: { display: false }, tooltip: tooltipBase() },
         scales: { x: { grid: { display: !!opts.horizontal, color: css('--line') }, max: opts.horizontal ? opts.max : undefined, border: { display: false }, ticks: { color: css('--text-3'), maxRotation: 0, autoSkip: false } },
           y: { grid: { display: !opts.horizontal, color: css('--line') }, max: opts.horizontal ? undefined : opts.max, min: 0, border: { display: false }, ticks: { color: css('--text-3'), precision: 0 } } } } });
@@ -115,12 +121,12 @@
     { h: `${p}/structure`, t: 'Структура', i: I.org },
     { h: `${p}/team`, t: 'Сотрудники', i: I.people },
     { g: 'Процессы' },
-    { h: `${p}/transcripts`, t: 'Транскрипты встреч', i: I.mic, badge: pendingCount },
-    { h: `${p}/feedback`, t: 'Обратная связь', i: I.chat },
-    { h: `${p}/reviews`, t: 'Performance Review', i: I.star },
-    { h: `${p}/onboarding`, t: 'Адаптация и обучение', i: I.onb, badge: () => Object.entries(D.onboarding).filter(([id, o]) => o.risk !== 'low' && inScope(id)).length },
-    { h: `${p}/pulse`, t: 'Пульс и mNPS', i: I.pulse },
-    { h: `${p}/processes`, t: 'Карта процессов', i: I.flow },
+    { h: `${p}/transcripts`, t: 'Транскрипты встреч', s: 'Транскрипты', i: I.mic, badge: pendingCount },
+    { h: `${p}/feedback`, t: 'Обратная связь', s: 'Обратная связь', i: I.chat },
+    { h: `${p}/reviews`, t: 'Performance Review', s: 'PR', i: I.star },
+    { h: `${p}/onboarding`, t: 'Адаптация и обучение', s: 'Адаптация', i: I.onb, badge: () => Object.entries(D.onboarding).filter(([id, o]) => o.risk !== 'low' && inScope(id)).length },
+    { h: `${p}/pulse`, t: 'Пульс и mNPS', s: 'Пульс', i: I.pulse },
+    { h: `${p}/processes`, t: 'Карта процессов', s: 'Процессы', i: I.flow },
   ];
   const NAV = {
     employee: [
@@ -128,24 +134,20 @@
       { h: '/employee/profile', t: 'Профиль', i: I.home },
       { h: '/employee/tasks', t: 'Задачи', i: I.tasks, badge: () => TASKS[USERS.employee].filter((t) => t.status === 'overdue').length },
       { h: '/employee/one-on-one', t: 'Постмиты 1:1', i: I.chat },
-      { h: '/employee/learning', t: 'Обучение (LMS)', i: I.learn },
+      { h: '/employee/learning', t: 'Обучение (LMS)', s: 'Обучение', i: I.learn },
       { g: 'Развитие' },
-      { h: '/employee/review', t: 'Performance Review', i: I.star },
-      { h: '/employee/grades', t: 'Матрица грейдов', i: I.grade },
+      { h: '/employee/review', t: 'Performance Review', s: 'PR', i: I.star },
+      { h: '/employee/grades', t: 'Матрица грейдов', s: 'Грейды', i: I.grade },
       { h: '/employee/idp', t: 'ИПР', i: I.growth },
-      { h: '/employee/forms', t: 'Анкеты и самооценка', i: I.form },
-      { g: 'О прототипе' },
-      { h: '/about', t: 'Что изменилось', i: I.info },
-      { h: '/tz', t: 'ТЗ 2.0', i: I.form },
-      { h: '/prompt', t: 'Промт для схемы', i: I.flow },
+      { h: '/employee/forms', t: 'Анкеты и самооценка', s: 'Анкеты', i: I.form },
     ],
-    manager: [...managerNav('/manager'), { g: 'О прототипе' }, { h: '/about', t: 'Что изменилось', i: I.info }, { h: '/tz', t: 'ТЗ 2.0', i: I.form }, { h: '/prompt', t: 'Промт для схемы', i: I.flow }],
-    hr: [...managerNav('/hr'), { g: 'Администрирование' }, { h: '/hr/people', t: 'Данные сотрудников', i: I.people }, { h: '/hr/settings', t: 'Шаблоны и циклы', i: I.gear }, { h: '/hr/access', t: 'Роли и доступ', i: I.lock }, { g: 'О прототипе' }, { h: '/about', t: 'Что изменилось', i: I.info }, { h: '/tz', t: 'ТЗ 2.0', i: I.form }, { h: '/prompt', t: 'Промт для схемы', i: I.flow }],
+    manager: [...managerNav('/manager')],
+    hr: [...managerNav('/hr'), { g: 'Администрирование' }, { h: '/hr/people', t: 'Данные сотрудников', s: 'Данные', i: I.people }, { h: '/hr/settings', t: 'Шаблоны и циклы', s: 'Шаблоны', i: I.gear }, { h: '/hr/access', t: 'Роли и доступ', s: 'Доступ', i: I.lock }],
   };
 
   // ---------- shared blocks ----------
   function matrixRadarCard(e, id) {
-    const groups = groupsOf(e); const sum = matrixSum(e), max = matrixMax(e); const ng = nextGrade(e.grade);
+    const groups = groupsOf(e); const sum = matrixSum(e), max = matrixMax(e); const ng = nextGrade(e);
     const rng = isAccount(e) && D.gradeRules.ranges[ng]; const cons = constraintsFor(e, ng);
     setTimeout(() => radar(id, groups.map((g) => g.name), [{ label: 'Текущий уровень', data: groups.map((g) => +g.avg.toFixed(1)), borderColor: css('--s1'), backgroundColor: css('--s1') + '26', pointBackgroundColor: css('--s1') }]));
     return `<div class="chart h-300"><canvas id="${id}"></canvas></div>
@@ -154,10 +156,17 @@
   }
   function matrixTable(e, withLevels) {
     const rows = matrixOf(e); let lastGroup = '';
-    return `<table class="matrix"><thead><tr><th>Компетенция</th><th>Балл</th><th class="hide-m">${withLevels ? 'Уровень проявления сейчас' : 'Уровень'}</th></tr></thead><tbody>${rows.map((c) => {
+    return `<table class="matrix"><thead><tr><th>Компетенция</th><th class="hide-m">Тип</th><th>Балл</th><th class="hide-m">${withLevels ? 'Уровень проявления сейчас' : 'Уровень'}</th></tr></thead><tbody>${rows.map((c) => {
       const lv = levelOf(c.score); const g = c.group !== lastGroup && c.group !== c.name ? `<span class="cgroup">${esc(c.group)}</span>` : ''; lastGroup = c.group;
-      return `<tr><td class="cname">${g}${esc(c.name)}</td><td style="white-space:nowrap">${scale10(c.score)} <b style="margin-left:6px">${c.score}</b></td>${withLevels && c.levels ? `<td class="lvl cur hide-m"><b>${levelName[lv]}:</b> ${esc(c.levels[lv])}</td>` : `<td class="hide-m">${chip(levelName[lv], lv === 'base' ? 'warn' : lv === 'expert' ? 'good' : '')}</td>`}</tr>`;
+      return `<tr><td class="cname">${g}${esc(c.name)}</td><td class="hide-m">${chip(c.kind === 'hard' ? 'хард' : 'софт', c.kind === 'hard' ? 'accent kind' : 'kind')}</td><td style="white-space:nowrap">${scale10(c.score)} <b style="margin-left:6px">${c.score}</b></td>${withLevels && c.levels ? `<td class="lvl cur hide-m"><b>${levelName[lv]}:</b> ${esc(c.levels[lv])}</td>` : `<td class="hide-m">${chip(levelName[lv], lv === 'base' ? 'warn' : lv === 'expert' ? 'good' : '')}</td>`}</tr>`;
     }).join('')}</tbody></table>`;
+  }
+  function hardsCard(e) {
+    const h = hardsOf(e); if (!h.length) return '';
+    const ok = h.filter((x) => x.status === 'confirmed').length;
+    return `<div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Харды</h2><span class="hint">задание на навык, подтверждение артефактом, валидирует руководитель</span></div>
+      <div class="progress-row" style="grid-template-columns:auto 1fr 60px;margin-bottom:10px"><div class="hint">Подтверждено ${ok} из ${h.length}</div>${bar(Math.round(100 * ok / h.length), 'good')}<div class="num">${Math.round(100 * ok / h.length)}%</div></div>
+      <table><thead><tr><th>Навык</th><th class="hide-m">Задание</th><th>Статус</th><th class="hide-m">Артефакт</th></tr></thead><tbody>${h.map((x) => `<tr><td>${esc(x.skill)}</td><td class="hide-m"><small>${esc(x.task)}</small></td><td>${chip(hardStatus[x.status][0], hardStatus[x.status][1])}</td><td class="hide-m"><small>${esc(x.artifact || '—')}</small></td></tr>`).join('')}</tbody></table></div>`;
   }
   function tasksTable(list, showResult = true) {
     if (!list.length) return '<div class="empty">Задач нет</div>';
@@ -177,7 +186,7 @@
     const m = e.manager ? emp(e.manager) : null; const onb = D.onboarding[e.id]; const pr = (D.prCycles[e.id] || [])[0];
     return `<div class="card"><div class="row" style="gap:18px;align-items:flex-start">${avatar(e, 'lg')}<div style="flex:1;min-width:0">
       <div class="row"><h2>${esc(e.name)}</h2>${chip(e.grade, 'grade')}${e.status === 'probation' ? chip('Испытательный срок', 'warn') : ''}</div>
-      <div class="muted" style="margin:2px 0 12px">${esc(e.role)} · ${esc(deptName(e.dept))}</div>
+      <div class="muted" style="margin:2px 0 6px">${esc(e.role)} · ${esc(deptName(e.dept))}</div>${e.dept && e.grade !== 'Lead' ? `<div class="row" style="gap:4px;margin-bottom:12px"><span class="hint">Грейды роли:</span> ${ladderChips(e)}</div>` : '<div style="height:6px"></div>'}
       <div class="grid cols-4" style="gap:10px">
         <div class="stat"><span class="label">В компании</span><span class="value" style="font-size:18px">${tenure(e.hired)}</span><span class="hint">с ${fmt(e.hired)}</span></div>
         <div class="stat"><span class="label">Руководитель</span><span class="value" style="font-size:18px">${m ? (forManager && inScope(m.id) ? personLink(m) : esc(m.name)) : '—'}</span></div>
@@ -254,7 +263,7 @@
     const rows = ids.map((id) => ({ e: emp(id), items: FB.filter((f) => f.to === id && (!quarter || f.quarter === quarter)) })).filter((r) => r.items.length);
     if (!rows.length) return '<div class="empty">Записей за период нет</div>';
     const src = { transcript: 'транскрипт', manual: 'вручную', 360: '360', form: 'анкета' };
-    const cell = (items) => items.length ? `<ul class="list">${items.map((f) => `<li><div class="body" style="font-size:13px">${esc(f.text)}<div class="meta">${fmt(f.date)} · ${esc(emp(f.from).name)} · ${chip(src[f.source] || f.source)}</div></div></li>`).join('')}</ul>` : '<span class="hint">—</span>';
+    const cell = (items) => items.length ? `<ul class="list">${items.map((f) => `<li><div class="body" style="font-size:13px">${esc(f.text)}<div class="meta">${fmt(f.date)} · ${chip(src[f.source] || f.source)}</div></div></li>`).join('')}</ul>` : '<span class="hint">—</span>';
     return `<table><thead><tr><th style="width:180px">Сотрудник</th><th style="width:40%">Молодец</th><th>Не молодец</th></tr></thead><tbody>${rows.map((r) => `<tr><td><div class="row" style="flex-wrap:nowrap">${avatar(r.e, 'sm')}<div><b style="font-weight:500">${ROLE === 'employee' ? esc(r.e.name) : personLink(r.e)}</b><div class="hint">${esc(r.e.role)}</div></div></div></td><td>${cell(r.items.filter((f) => f.kind === 'success'))}</td><td>${cell(r.items.filter((f) => f.kind === 'growth'))}</td></tr>`).join('')}</tbody></table>`;
   }
 
@@ -278,7 +287,7 @@
         <div class="card"><div class="card-head"><h3>Матрица грейдов · ${esc(e.grade)}</h3>${link('/employee/grades', 'матрица и план')}</div>${matrixRadarCard(e, 'radar-profile')}</div>
         <div class="stack">
           <div class="card"><div class="card-head"><h3>Обучение в LMS</h3>${link('/employee/learning', 'все курсы')}</div><ul class="list">${courses.filter((c) => c.status !== 'done').map((c) => `<li><div class="body"><div style="font-size:14px">${esc(c.title)}</div><div class="meta">до ${fmtShort(c.due)} · ${esc(c.type)}</div></div>${chip(courseStatus[c.status][0], courseStatus[c.status][1])}</li>`).join('') || '<li class="empty">Назначенных курсов нет</li>'}</ul></div>
-          <div class="card"><div class="card-head"><h3>Обратная связь по мне</h3><span class="hint">из транскриптов и от коллег</span></div><ul class="list">${fb.map((f) => `<li>${chip(f.kind === 'success' ? 'Молодец' : 'Зона роста', f.kind === 'success' ? 'good' : 'warn')}<div class="body" style="font-size:13px">${esc(f.text)}<div class="meta">${fmt(f.date)} · ${esc(emp(f.from).name)}</div></div></li>`).join('')}</ul></div>
+          <div class="card"><div class="card-head"><h3>Обратная связь по мне</h3><span class="hint">из транскриптов и от коллег</span></div><ul class="list">${fb.map((f) => `<li>${chip(f.kind === 'success' ? 'Молодец' : 'Зона роста', f.kind === 'success' ? 'good' : 'warn')}<div class="body" style="font-size:13px">${esc(f.text)}<div class="meta">${fmt(f.date)} · ${esc(fbSrc[f.source] || f.source)}</div></div></li>`).join('')}</ul></div>
           ${last11 ? `<div class="card"><div class="card-head"><h3>Последний постмит 1:1</h3>${link('/employee/one-on-one', 'все')}</div>${postmitList([last11], tasks, true)}</div>` : ''}
           <div class="card"><div class="card-head"><h3>История грейдов</h3></div>${gradeTimeline(e)}</div>
         </div>
@@ -295,7 +304,7 @@
     const e = emp(USERS.employee); const list = D.oneOnOnes[e.id] || [];
     return { title: 'Постмиты 1:1', crumbs: 'Кабинет сотрудника', html: `
       <div class="grid cols-3" style="margin-bottom:16px">
-        <div class="card span-2"><div class="row between"><div><h3>Следующая встреча: 20.10.2026, 11:00</h3><div class="hint">раз в 2 недели · 30 минут · с Верой Ситниковой · раз в квартал встреча итоговая</div></div><button class="btn primary" onclick="hrAct.demo()">Добавить вопрос к встрече</button></div>
+        <div class="card span-2"><div class="row between"><div><h3>Следующая встреча: 20.10.2026, 11:00</h3><div class="hint">раз в 2 недели · 30 минут · с Верой Ситниковой</div></div><button class="btn primary" onclick="hrAct.demo()">Добавить вопрос к встрече</button></div>
           <div class="grid cols-2" style="margin-top:12px;gap:12px"><div><div class="hint">Вопросы руководителя</div><ul class="list"><li>${check(false)}<div class="body" style="font-size:14px">Промт для проверки SEO-отчётов: что готово</div></li><li>${check(false)}<div class="body" style="font-size:14px">Шаблон отчёта (перенесено с прошлой встречи, просрочено)</div></li></ul></div><div><div class="hint">Вопросы сотрудника</div><ul class="list"><li>${check(false)}<div class="body" style="font-size:14px">Чекин по ИПР: разбор первых 5 сообщений клиентам</div></li></ul></div></div></div>
         <div class="card lav"><div class="card-head"><h3>С чем можно прийти на 1:1</h3></div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-2)"><li>Хочу вырасти в доходе: что для этого сделать</li><li>Хочу развиваться в роли или сменить роль</li><li>Нужна обратная связь по ситуации или результату</li><li>Устал, перегорел, конфликт, личные обстоятельства</li><li>Мои успехи за месяц и проблемы, где нужна помощь</li></ul></div>
       </div>
@@ -325,7 +334,7 @@
       </div>` };
   };
   V['/employee/grades'] = () => {
-    const e = emp(USERS.employee); const ng = nextGrade(e.grade); const cons = constraintsFor(e, ng); const plan = D.gradePlan[e.id]; const rng = D.gradeRules.ranges;
+    const e = emp(USERS.employee); const ng = nextGrade(e); const cons = constraintsFor(e, ng); const plan = D.gradePlan[e.id]; const rng = D.gradeRules.ranges;
     return { title: 'Матрица грейдов и план', crumbs: 'Кабинет сотрудника', html: `
       <div class="grid cols-4" style="margin-bottom:16px">
         <div class="card stat"><span class="label">Текущий грейд</span><span class="value">${esc(e.grade)}</span><span class="hint">с ${fmt(D.gradeHistory[e.id].slice(-1)[0].date)}</span></div>
@@ -341,9 +350,10 @@
           <div class="card"><div class="card-head"><h3>Проверь себя перед оценкой на грейд</h3></div><ul class="list">${(plan ? plan.checklist : []).map((c) => `<li>${check(c.done)}<div class="body" style="font-size:14px">${esc(c.text)}</div></li>`).join('')}</ul><div class="row" style="margin-top:10px"><button class="btn primary sm" onclick="location.hash='/employee/forms'">Заполнить матрицу с артефактами</button></div></div>
         </div>
       </div>
-      <div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Матрица компетенций · ${esc(deptName(e.dept))}</h2><span class="hint">баллы 1–10, уровень проявления подсвечен по текущему баллу</span></div>${matrixTable(e, isAccount(e))}</div>
-      <div class="grid cols-2"><div class="card"><div class="card-head"><h3>Минимальные сроки переходов</h3></div><table><thead><tr><th>Грейд</th><th>Не раньше</th><th class="num hide-m">Баллы</th></tr></thead><tbody>${['Junior', 'Middle', 'Middle+', 'Senior'].map((g) => `<tr><td>${chip(g, g === e.grade ? 'grade' : '')}</td><td><small>${esc(D.gradeRules.minMonths[g])}</small></td><td class="num hide-m">${rng[g][0]}–${rng[g][1]}</td></tr>`).join('')}</tbody></table></div>
-        <div class="card lav"><div class="card-head"><h3>Постмит по итогу оценки на грейд</h3></div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-2)"><li>Сдал / не сдал</li><li>Что в зелёной зоне, что в жёлтой, что в красной</li><li>Чем поможет корректировка красных зон и как её сделать</li><li>Кто может быть наставником по красным зонам</li><li>Что сделать для перехода на следующий грейд и как поможет ИПР</li></ul></div></div>` };
+      <div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Софты · ${esc(deptName(e.dept))}</h2><span class="hint">баллы 1–10; уровень проявления подписан грейдом роли и подсвечен по текущему баллу</span></div>${matrixTable(e, isAccount(e))}</div>
+      ${hardsCard(e)}
+      <div class="grid cols-2"><div class="card"><div class="card-head"><h3>Минимальные сроки переходов</h3></div><table><thead><tr><th>Грейд</th><th>Не раньше</th><th class="num hide-m">Баллы</th></tr></thead><tbody>${ladderOf(e).map((g) => `<tr><td>${chip(g, g === e.grade ? 'grade' : '')}</td><td><small>${esc(D.gradeRules.minMonths[g] || '—')}</small></td><td class="num hide-m">${rng[g] ? `${rng[g][0]}–${rng[g][1]}` : '—'}</td></tr>`).join('')}</tbody></table></div>
+        <div class="card lav"><div class="card-head"><h3>Постмит по итогу оценки на грейд</h3></div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-2)"><li>Сдал / не сдал, итоговая сумма и ограничения</li><li>Сильные компетенции</li><li>Что скорректировать и как: план корректировки</li><li>Кто поможет: наставник, эксперт</li><li>Цель ИПР на следующий квартал</li></ul></div></div>` };
   };
   V['/employee/idp'] = () => ({ title: 'Индивидуальный план развития', crumbs: 'Кабинет сотрудника', html: `<div class="card">${idpBlock(emp(USERS.employee))}</div><div class="hint" style="margin-top:10px">Правило заказчика: одна компетенция в квартал, один фокус. Компетенцию выбирают там, где зона роста повторяется в разных источниках: самоанализ, 360, оценка на грейд, PR, ОС руководителя и клиентов.</div>` });
   V['/employee/forms'] = () => {
@@ -368,20 +378,20 @@
   };
 
   // ---------- manager / hr views ----------
-  const crumbsM = () => (ROLE === 'hr' ? 'Кабинет HR и директора · все отделы' : `Кабинет руководителя · ${esc(deptName(me().dept))}`);
+  const crumbsM = () => (ROLE === 'hr' ? 'Кабинет HR-менеджера и директора · все отделы' : `Кабинет руководителя · ${esc(deptName(me().dept))}`);
   V['/manager/dashboard'] = () => {
     const team = scope(); const ids = team.map((e) => e.id); const depts = scopeDepts();
     const newcomers = team.filter((e) => e.status === 'probation'); const risky = Object.entries(D.onboarding).filter(([id, o]) => ids.includes(id) && o.risk !== 'low');
     const allTasks = ids.flatMap((id) => TASKS[id] || []); const overdueT = allTasks.filter((t) => t.status === 'overdue');
     const allCourses = ids.flatMap((id) => D.courses[id] || []); const overdueC = allCourses.filter((c) => c.status === 'overdue');
-    const gradeCount = ['Junior', 'Middle', 'Middle+', 'Senior', 'Lead'].map((g) => team.filter((e) => e.grade === g).length);
+    const gradeList = D.grades.filter((g) => team.some((e) => e.grade === g)); const gradeCount = gradeList.map((g) => team.filter((e) => e.grade === g).length);
+    const EY = D.engagementYear; const engNow = depts.reduce((s, d) => s + EY.values[d.id], 0) / depts.length; const engPrev = depts.reduce((s, d) => s + EY.prev[d.id], 0) / depts.length;
     const perf = ['A', 'B', 'C', 'D'].map((l) => D.prSummary.results.filter((r) => ids.includes(r.id) && r.performance === l).length);
     const pend = pendingCount(); const fb30 = FB.filter((f) => ids.includes(f.to) && daysBetween(f.date, TODAY) <= 30);
     setTimeout(() => {
-      bars('chart-grades', ['Junior', 'Middle', 'Middle+', 'Senior', 'Lead'], [{ data: gradeCount, backgroundColor: css('--s1') }]);
+      bars('chart-grades', gradeList, [{ data: gradeCount, backgroundColor: css('--s1') }]);
       bars('chart-perf', ['A', 'B', 'C', 'D'], [{ data: perf, backgroundColor: [css('--s7'), css('--s1'), css('--s8'), css('--s2')] }]);
-      if (ROLE === 'hr') bars('chart-eng', D.departments.map((d) => d.short || d.name), [{ data: D.departments.map((d) => D.pulse.engagement[d.id].slice(-1)[0]), backgroundColor: css('--s1') }], { horizontal: true, max: 10 });
-      else line('chart-eng', D.pulse.months, [{ data: D.pulse.engagement[me().dept], borderColor: css('--s1'), backgroundColor: css('--s1') }], { min: 5, max: 10 });
+      if (ROLE === 'hr') bars('chart-eng', D.departments.map((d) => d.short || d.name), [{ label: EY.prevDate, data: D.departments.map((d) => EY.prev[d.id]), backgroundColor: css('--s4') }, { label: EY.date, data: D.departments.map((d) => EY.values[d.id]), backgroundColor: css('--s1') }], { horizontal: true, max: 10 });
     });
     const risks = [
       ...TS.flatMap((t) => t.items).filter((i) => i.status === 'pending' && ids.includes(i.emp)).slice(0, 3).map((i) => ({ who: emp(i.emp), what: `Ждёт подтверждения из транскрипта: ${i.text}`, cls: 'accent', to: `${base()}/transcripts` })),
@@ -404,12 +414,12 @@
         <div class="card stat"><span class="label">Просрочено задач</span><span class="value">${overdueT.length}</span><span class="delta flat">из ${allTasks.length} в постмитах</span></div>
         <div class="card stat"><span class="label">Просрочено обязательных курсов</span><span class="value">${overdueC.length}</span><span class="delta flat">${allCourses.filter((c) => c.status === 'assigned').length} назначено</span></div>
         <div class="card stat"><span class="label">1:1 за последние 2 недели</span><span class="value">${ROLE === 'hr' ? 81 : 100}<small>%</small></span><span class="delta ${ROLE === 'hr' ? 'down' : 'up'}">${ROLE === 'hr' ? '−7 п.п. к сентябрю' : 'все сотрудники отдела'}</span></div>
-        <div class="card stat"><span class="label">${ROLE === 'hr' ? 'eNPS, октябрь' : 'Вовлечённость отдела'}</span><span class="value">${ROLE === 'hr' ? '+' + D.pulse.enps.slice(-1)[0] : D.pulse.engagement[me().dept].slice(-1)[0].toFixed(1)}</span><span class="delta up">${ROLE === 'hr' ? '+7 к сентябрю' : '+0,2 к сентябрю'}</span></div>
+        <div class="card stat"><span class="label">Вовлечённость ${ROLE === 'hr' ? 'агентства' : 'отдела'} · раз в год</span><span class="value">${engNow.toFixed(1)}<small>из 10</small></span><span class="delta ${engNow >= engPrev ? 'up' : 'down'}">${engNow >= engPrev ? '+' : '−'}${Math.abs(engNow - engPrev).toFixed(1).replace('.', ',')} к ${EY.prevDate} · замер ${EY.date}</span></div>
       </div>
-      <div class="grid cols-3" style="margin-bottom:16px">
+      <div class="grid ${ROLE === 'hr' ? 'cols-3' : 'cols-2'}" style="margin-bottom:16px">
         <div class="card"><div class="card-head"><h3>Распределение по грейдам</h3></div><div class="chart h-220"><canvas id="chart-grades"></canvas></div></div>
         <div class="card"><div class="card-head"><h3>Performance Review · ${esc(D.prSummary.period)}</h3>${link(`${base()}/reviews`, 'подробно')}</div><div class="chart h-220"><canvas id="chart-perf"></canvas></div></div>
-        <div class="card"><div class="card-head"><h3>${ROLE === 'hr' ? 'Вовлечённость по отделам, октябрь' : 'Вовлечённость отдела по месяцам'}</h3>${link(`${base()}/pulse`, 'опросы')}</div><div class="chart h-220"><canvas id="chart-eng"></canvas></div></div>
+        ${ROLE === 'hr' ? `<div class="card"><div class="card-head"><h3>Вовлечённость по отделам · годовой замер</h3><span class="hint">из 10</span></div><div class="chart h-220"><canvas id="chart-eng"></canvas></div>${legend([[css('--s4'), EY.prevDate], [css('--s1'), EY.date]])}</div>` : ''}
       </div>
       <div class="grid cols-2">
         <div class="card"><div class="card-head"><h3>Требует внимания</h3><span class="hint">${risks.length}</span></div><ul class="list">${risks.map((r) => `<li>${avatar(r.who, 'sm')}<div class="body"><div style="font-size:14px">${personLink(r.who)} <span class="muted">· ${esc(r.who.role)}</span></div><div class="meta">${chip(r.what, r.cls)} ${link(r.to, 'открыть')}</div></div></li>`).join('') || '<li class="empty">Всё в порядке</li>'}</ul></div>
@@ -453,7 +463,7 @@
           ${onb ? onboardingCard(id, onb, false) : ''}
           <div class="private"><div class="lab">Приватная заметка руководителя · видите только вы</div>${id === 'e03' ? 'Обсудить нагрузку: 4 проекта, сроки по отчётам поплыли. Кандидат на Middle+ после контрольной точки 2, если дебиторка и скорость ответов войдут в норму.' : 'Заметок нет'}</div>
         </div></div>`,
-      matrix: `<div class="card">${matrixTable(e, isAccount(e))}${isAccount(e) ? `<div class="hint" style="margin-top:12px">Ограничения для ${esc(nextGrade(e.grade))}: ${constraintsFor(e, nextGrade(e.grade)).map((c) => chip(`${c.c} ≥ ${c.min} (сейчас ${c.cur})`, c.ok ? 'good' : 'critical')).join(' ')}</div>` : ''}</div>`,
+      matrix: `${hardsCard(e)}<div class="card">${matrixTable(e, isAccount(e))}${isAccount(e) ? `<div class="hint" style="margin-top:12px">Ограничения для ${esc(nextGrade(e))}: ${constraintsFor(e, nextGrade(e)).map((c) => chip(`${c.c} ≥ ${c.min} (сейчас ${c.cur})`, c.ok ? 'good' : 'critical')).join(' ')}</div>` : ''}</div>`,
       tasks: `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Оперативные (из постмитов 1:1 и транскриптов)</h3></div>${tasksTable(tasks.filter((t) => t.kind === 'ops'))}</div><div class="card"><div class="card-head"><h3>Длительные (PR, ИПР)</h3></div>${tasksTable(tasks.filter((t) => t.kind === 'long'))}</div>`,
       oneonone: `<div class="card"><div class="card-head"><h3>Постмиты 1:1</h3><button class="btn primary sm" onclick="hrAct.demo()">Новый постмит</button></div>${postmitList(oo, tasks)}</div>`,
       pr: cycles.length ? `<div class="card" style="margin-bottom:16px">${prBlock(cycles[0], true)}</div>${cycles.slice(1).map((c) => `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>${esc(c.period)} · итог ${perfChip(c.performance.end)}</h3></div><div class="hint">${esc(c.speech)}</div></div>`).join('')}` : '<div class="card"><div class="empty">Performance Review ещё не проводился. Для новичков первый PR после испытательного срока.</div></div>',
@@ -508,7 +518,7 @@
           <div class="form-row"><div class="field"><label>Кому</label><select id="fb-to">${scope().map((e) => `<option value="${e.id}">${esc(e.name)} · ${esc(e.role)}</option>`).join('')}</select></div><div class="field"><label>Тип</label><select id="fb-kind"><option value="success">Молодец</option><option value="growth">Не молодец (зона роста)</option></select></div></div>
           <div class="form-row"><div class="field"><label>Источник</label><select id="fb-src"><option value="manual">Наблюдение руководителя</option><option value="form">Анкета коллеги или клиента</option><option value="transcript">Встреча (без транскрипта)</option></select></div><div class="field"><label>Квартал</label><select><option>4 кв 2026</option></select></div></div>
           <div class="field"><label>Что произошло, пример, что делать дальше</label><textarea id="fb-text" placeholder="Пример: ОС от ПМ, что стала активно спрашивать по клиентам на синхах групп и добиваться ответов"></textarea></div>
-          <div class="row"><button class="btn primary" onclick="hrAct.addFeedback()">Записать</button><span class="hint">Кто дал ОС — ${esc(me().name)}</span></div></div>
+          <div class="row"><button class="btn primary" onclick="hrAct.addFeedback()">Записать</button><span class="hint">Запись попадёт в профиль сотрудника и в журнал квартала</span></div></div>
         <div class="card ${pend ? 'lav' : ''}"><div class="card-head"><h3>Из транскриптов</h3></div><div class="stat"><span class="label">Ждут подтверждения</span><span class="value">${pend}</span></div><div class="hint" style="margin:8px 0 12px">Задачи и обратная связь, которые упомянуты на встречах, попадают сюда только после решения руководителя.</div><button class="btn blue sm" onclick="location.hash='${base()}/transcripts'">Разобрать</button>
           <div class="hint" style="margin-top:16px">Источники записей: транскрипты встреч, наблюдения руководителя, анкеты коллег и клиентов, итоги 360. Раз в квартал журнал сверяется с 360 и PR.</div></div>
       </div>
@@ -528,6 +538,7 @@
         <div class="card"><div class="card-head"><h3>Итоги ${esc(D.prSummary.period)}</h3><span class="hint">нажмите на сотрудника</span></div><table><thead><tr><th>Сотрудник</th><th>Грейд</th><th>Итог</th><th class="hide-m">Решение</th></tr></thead><tbody>${res.map((r) => { const e = emp(r.id); return `<tr class="clickable" onclick="location.hash='${base()}/person/${r.id}'"><td>${esc(e.name)}<div class="hint">${esc(deptName(e.dept))}</div></td><td>${chip(e.grade, 'grade')}</td><td>${perfChip(r.performance)}</td><td class="hide-m"><small>${esc(r.decision)}</small></td></tr>`; }).join('')}</tbody></table></div>
         <div class="stack">
           <div class="card"><div class="card-head"><h3>Как устроен цикл</h3></div><ol class="list">${D.templates.prCycle.meetings.map((s, i) => `<li><span class="avatar sm" style="background:var(--accent)">${i + 1}</span><div class="body" style="font-size:14px">${esc(s)}</div></li>`).join('')}</ol><div class="hint" style="margin-top:8px">Входы: ${D.templates.prCycle.inputs.join('; ').toLowerCase()}. После успешного PR (уровень не ниже B) сотрудник может выйти на оценку на грейд в плановые сроки.</div></div>
+          ${ROLE === 'hr' ? `<div class="card"><div class="card-head"><h3>Руководители отделов</h3><span class="hint">видит директор</span></div><table><thead><tr><th>Руководитель</th><th>Грейд</th><th>PR</th><th class="num">mNPS</th></tr></thead><tbody>${D.departments.map((d) => { const h = emp(d.head); const m = D.mnps[h.id]; const lvl = { e15: 'A', e06: 'B', e02: 'B', e09: 'C', e12: 'B' }[h.id]; return `<tr><td>${esc(h.name)}<div class="hint">${esc(d.name)}</div></td><td>${chip(h.grade, 'grade')}</td><td>${perfChip(lvl)}</td><td class="num">${m ? (m.score > 0 ? '+' : '') + m.score : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : ''}
           <div class="card lav"><div class="card-head"><h3>Уровни перформанса</h3></div>${Object.entries(D.performanceLevels).map(([k, v]) => `<div class="row" style="padding:6px 0;flex-wrap:nowrap;align-items:flex-start">${perfChip(k)}<div style="font-size:13px">${esc(v)}</div></div>`).join('')}</div>
         </div>
       </div>` };
@@ -540,12 +551,13 @@
       <div class="grid cols-2">
         <div class="card"><div class="card-head"><h3>Обязательные курсы: назначены и просрочены</h3></div><table><thead><tr><th>Сотрудник</th><th>Курс</th><th>Срок</th><th>Статус</th></tr></thead><tbody>${allCourses.filter((c) => c.type === 'обязательный' && c.status !== 'done').map((c) => `<tr><td>${personLink(emp(c.id))}</td><td><small>${esc(c.title)}</small></td><td style="white-space:nowrap">${fmtShort(c.due)}</td><td>${chip(courseStatus[c.status][0], courseStatus[c.status][1])}</td></tr>`).join('') || '<tr><td colspan="4" class="hint">Нет</td></tr>'}</tbody></table></div>
         <div class="card"><div class="card-head"><h3>Развивающие курсы</h3></div><table><thead><tr><th>Сотрудник</th><th>Курс</th><th>Статус</th></tr></thead><tbody>${allCourses.filter((c) => c.type !== 'обязательный').map((c) => `<tr><td>${personLink(emp(c.id))}</td><td><small>${esc(c.title)}</small></td><td>${chip(courseStatus[c.status][0], courseStatus[c.status][1])}</td></tr>`).join('') || '<tr><td colspan="3" class="hint">Нет</td></tr>'}</tbody></table>
-          <div class="hint" style="margin-top:10px">Источник: iSpring Learn по API, раз в сутки: название курса, срок, статус. Курс из ИПР назначается в LMS руководителем.</div></div>
+          <div class="hint" style="margin-top:10px">Источник: iSpring Learn по API, раз в неделю: название курса, срок, статус. Курс из ИПР назначается в LMS руководителем.</div></div>
       </div>` };
   };
   V['/manager/pulse'] = () => {
-    const P = D.pulse; const depts = scopeDepts(); const steps = ['#dbe4fb', '#b7c9f6', '#8aa6f0', '#3167f1', '#1e4fcf', '#083dac'];
-    const color = (v) => steps[Math.min(5, Math.max(0, Math.round((v - 6.5) / 0.4)))]; const txt = (v) => (v >= 7.9 ? '#fff' : 'var(--text)');
+    const P = D.pulse; const depts = scopeDepts();
+    // Цвет ячейки — доля акцента поверх фона карточки: работает во всех вариантах и темах
+    const pct = (v) => Math.round(Math.min(1, Math.max(0, (v - 6.4) / 2.2)) * 85 + 10); const color = (v) => `color-mix(in srgb, var(--s1) ${pct(v)}%, var(--surface))`; const txt = (v) => (pct(v) >= 55 ? '#fff' : 'var(--text)');
     const heads = depts.map((d) => d.head);
     setTimeout(() => {
       line('chart-enps2', P.months, [{ data: P.enps, borderColor: css('--s1'), backgroundColor: css('--s1') }], { min: -20, max: 50 });
@@ -554,11 +566,11 @@
     return { title: 'Пульс-опросы и mNPS', crumbs: crumbsM(), html: `
       <div class="grid cols-4" style="margin-bottom:16px">
         <div class="card stat"><span class="label">eNPS агентства, октябрь</span><span class="value">+${P.enps.slice(-1)[0]}</span><span class="delta up">+7 к сентябрю</span></div>
-        <div class="card stat"><span class="label">Вовлечённость ${ROLE === 'hr' ? 'в среднем' : 'отдела'}</span><span class="value">${(depts.reduce((s, d) => s + P.engagement[d.id].slice(-1)[0], 0) / depts.length).toFixed(1)}<small>из 10</small></span></div>
+        <div class="card stat"><span class="label">Пульс ${ROLE === 'hr' ? 'агентства' : 'отдела'}, октябрь</span><span class="value">${(depts.reduce((s, d) => s + P.engagement[d.id].slice(-1)[0], 0) / depts.length).toFixed(1)}<small>из 10</small></span></div>
         <div class="card stat"><span class="label">Отклик</span><span class="value">${P.responseRate.slice(-1)[0]}<small>%</small></span><span class="delta down">−6 п.п.</span></div>
         <div class="card stat"><span class="label">Следующий опрос</span><span class="value" style="font-size:20px">15.10</span><span class="hint">${esc(D.templates.pulse.frequency)}</span></div>
       </div>
-      <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Вовлечённость по месяцам</h3><span class="hint">из 10 · ${ROLE === 'hr' ? 'все отделы' : 'свой отдел и среднее по агентству'}</span></div>
+      <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>Пульс по месяцам</h3><span class="hint">из 10 · ${ROLE === 'hr' ? 'все отделы' : 'свой отдел и среднее по агентству'}</span></div>
         <div class="heat" style="grid-template-columns:180px repeat(${P.months.length},1fr)"><div></div>${P.months.map((m) => `<div class="collab">${m}</div>`).join('')}${depts.map((d) => `<div class="rowlab">${esc(d.name)}</div>${P.engagement[d.id].map((v) => `<div class="cell" style="background:${color(v)};color:${txt(v)}">${v.toFixed(1)}</div>`).join('')}`).join('')}${ROLE === 'hr' ? '' : `<div class="rowlab">Среднее по агентству</div>${P.months.map((_, i) => { const v = D.departments.reduce((s, d) => s + P.engagement[d.id][i], 0) / 5; return `<div class="cell" style="background:${color(v)};color:${txt(v)}">${v.toFixed(1)}</div>`; }).join('')}`}</div></div>
       <div class="grid cols-2" style="margin-bottom:16px">
         <div class="card"><div class="card-head"><h3>eNPS</h3></div><div class="chart h-220"><canvas id="chart-enps2"></canvas></div><div class="hint">Ориентиры: до +20 норма, +21…+40 хорошо, выше +40 отлично</div></div>
@@ -575,11 +587,11 @@
       <div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Три блока процессов</h2><span class="hint">одинаковы для всех отделов, отличаются только матрицы компетенций и метрики PR</span></div><div class="steps">
         <div class="step off"><div class="n">1</div><b>Приём на работу</b><ul><li>Собеседование</li><li>Тестовое задание</li><li>Финальное собеседование</li></ul><div class="hint" style="margin-top:8px">По решению заказчика в кабинете не ведётся. Карточку сотрудника заводит HR или руководитель при выходе.</div></div>
         <div class="step"><div class="n">2</div><b>Онбординг (испытательный срок)</b><ul><li>Установочная встреча: цели и критерии ИС, план адаптации в LMS, наставник</li><li>Неделя: техника, сервисы, оценка погружения</li><li>Экватор: оценка погружения 1–4, актуализация критериев</li><li>Финиш: 360 от команды, решение по ИС</li><li>Встреча с HR BP на 5-й месяц</li></ul><div class="hint" style="margin-top:8px">Артефакты: постмиты встреч, план адаптации, статусы курсов LMS</div></div>
-        <div class="step"><div class="n">3</div><b>После испытательного срока</b><ul><li>1:1 раз в 1–2 недели с постмитом, раз в квартал итоговый</li><li>Performance Review раз в полугодие с двумя контрольными точками</li><li>Оценка 360 перед PR и на точках</li><li>Оценка на грейд по матрице после PR не ниже B</li><li>ИПР: одна компетенция в квартал</li><li>Пульс-опрос раз в месяц, mNPS руководителей</li></ul><div class="hint" style="margin-top:8px">Артефакты: Self Review, лист PR, отчёт 360, матрица с артефактами, ИПР</div></div>
+        <div class="step"><div class="n">3</div><b>После испытательного срока</b><ul><li>1:1 раз в 1–2 недели с постмитом</li><li>Performance Review раз в полугодие с двумя контрольными точками</li><li>Оценка 360 перед PR и на точках</li><li>Оценка на грейд по матрице после PR не ниже B</li><li>ИПР: одна компетенция в квартал</li><li>Пульс-опрос раз в месяц, mNPS руководителей</li></ul><div class="hint" style="margin-top:8px">Артефакты: Self Review, лист PR, отчёт 360, матрица с артефактами, ИПР</div></div>
       </div></div>
       <div class="grid cols-2">
         <div class="card"><div class="card-head"><h3>Календарь цикла (год)</h3></div><table><thead><tr><th>Когда</th><th>Что</th><th class="hide-m">Кто</th></tr></thead><tbody>
-          ${[['Раз в 1–2 недели', '1:1 с постмитом: вопросы обеих сторон, действия, сроки, артефакты', 'руководитель, сотрудник'], ['Каждый месяц', 'Пульс-опрос; чекин по ИПР на 1:1', 'все'], ['Раз в квартал', 'Итоговый 1:1; новая цель ИПР; журнал ОС сверяется с 360', 'руководитель'], ['Февраль, август', 'Постановка целей PR на полугодие; Self Review; 360 на начало', 'все'], ['Апрель–май, сентябрь', 'Контрольная точка 1 PR', 'руководитель'], ['Июнь, декабрь', 'Контрольная точка 2 PR', 'руководитель'], ['Июль, январь', 'Итоги PR: уровень A–D, прямая речь, шаги; оценки на грейд по плану', 'все, HR'], ['По факту', 'Онбординг: установочная, неделя, экватор, финиш', 'руководитель, рекрутер, наставник, HR BP']].map(([a, b, c]) => `<tr><td style="white-space:nowrap">${a}</td><td>${b}</td><td class="hide-m"><small>${c}</small></td></tr>`).join('')}
+          ${[['Раз в 1–2 недели', '1:1 с постмитом: вопросы обеих сторон, действия, сроки, артефакты', 'руководитель, сотрудник'], ['Каждый месяц', 'Пульс-опрос; чекин по ИПР на 1:1', 'все'], ['Раз в квартал', 'Новая цель ИПР; журнал обратной связи сверяется с 360', 'руководитель, сотрудник'], ['Февраль, август', 'Постановка целей PR на полугодие; Self Review; 360 на начало', 'все'], ['Апрель, сентябрь', 'Контрольная точка 1 PR', 'руководитель'], ['Июнь, декабрь', 'Контрольная точка 2 PR', 'руководитель'], ['Июль, январь', 'Итоги PR: уровень A–D, прямая речь, шаги; оценки на грейд по плану', 'все, HR'], ['По факту', 'Онбординг: установочная, неделя, экватор, финиш', 'руководитель, рекрутер, наставник, HR BP']].map(([a, b, c]) => `<tr><td style="white-space:nowrap">${a}</td><td>${b}</td><td class="hide-m"><small>${c}</small></td></tr>`).join('')}
         </tbody></table></div>
         <div class="card"><div class="card-head"><h3>Откуда берутся данные</h3></div><table><thead><tr><th>Блок кабинета</th><th>Источник</th></tr></thead><tbody>
           ${[['Карточка сотрудника, грейд, руководитель, отдел', 'Заводит HR-менеджер или руководитель, история изменений'], ['Задачи оперативные', 'Постмиты 1:1 (блок «Действия») и транскрипты после подтверждения руководителем'], ['Задачи длительные', 'Цели PR на полугодие и шаги ИПР'], ['Курсы LMS', 'iSpring Learn по API: название, срок, статус'], ['Матрица грейдов', 'Самооценка с артефактами, валидация руководителя'], ['Performance Review', 'Лист PR: метрики по роли, цели, 360, уровень A–D'], ['Оценка 360 и mNPS', 'Анкеты в системе, агрегированный отчёт'], ['Обратная связь', 'Транскрипты встреч, наблюдения руководителя, анкеты, 360'], ['Пульс-опросы', 'Анкета раз в месяц, анонимно, разрез по отделам']].map(([a, b]) => `<tr><td>${a}</td><td><small>${b}</small></td></tr>`).join('')}
@@ -592,10 +604,10 @@
         <div class="card span-2"><div class="card-head"><h3>Добавить сотрудника</h3><span class="hint">заводит HR-менеджер или руководитель отдела</span></div>
           <div class="form-row"><div class="field"><label>ФИО</label><input type="text" placeholder="Имя Фамилия"></div><div class="field"><label>Роль</label><input type="text" placeholder="Аккаунт-менеджер"></div></div>
           <div class="form-row"><div class="field"><label>Отдел</label><select>${D.departments.map((d) => `<option>${esc(d.name)}</option>`).join('')}</select></div><div class="field"><label>Руководитель</label><select>${D.departments.map((d) => `<option>${esc(emp(d.head).name)}</option>`).join('')}</select></div></div>
-          <div class="form-row"><div class="field"><label>Грейд на входе</label><select>${['Junior', 'Middle', 'Middle+', 'Senior'].map((g) => `<option>${g}</option>`).join('')}</select></div><div class="field"><label>Дата выхода</label><input type="date" value="2026-10-19"></div></div>
-          <div class="form-row"><div class="field"><label>Наставник</label><select>${D.employees.filter((e) => ['Senior', 'Lead'].includes(e.grade) && e.dept).map((e) => `<option>${esc(e.name)}</option>`).join('')}</select></div><div class="field"><label>Рекрутер</label><input type="text" value="Ирина Скрипачёва"></div></div>
+          <div class="form-row"><div class="field"><label>Грейд на входе</label><select>${D.gradeLadders.account.map((g) => `<option>${g}</option>`).join('')}</select><span class="hint">список грейдов зависит от роли</span></div><div class="field"><label>Дата выхода</label><input type="date" value="2026-10-19"></div></div>
+          <div class="form-row"><div class="field"><label>Наставник</label><select>${D.employees.filter((e) => ['Senior', 'Lead'].includes(e.grade) && e.dept).map((e) => `<option>${esc(e.name)}</option>`).join('')}</select></div><div class="field"><label>Статус</label><select><option>Испытательный срок</option><option>В штате</option><option>Уволен</option></select></div></div>
           <div class="row"><button class="btn primary" onclick="hrAct.demo()">Создать карточку и план адаптации</button><span class="hint">Создаются: кабинет сотрудника, план онбординга из шаблона, назначения обязательных курсов в LMS</span></div></div>
-        <div class="card"><div class="card-head"><h3>Что меняет HR</h3></div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-2)"><li>Отдел, руководитель, наставник</li><li>Грейд: по итогам оценки, с датой и основанием</li><li>Статус: ИС, в штате, отпуск, уволен</li><li>Плановые даты PR и оценки на грейд</li><li>Шаблоны матриц, PR, 360, адаптации</li></ul><div class="hint" style="margin-top:10px">Каждое изменение попадает в журнал с автором и датой.</div></div>
+        <div class="card"><div class="card-head"><h3>Что меняет HR</h3></div><ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text-2)"><li>Отдел, руководитель, наставник</li><li>Грейд: по итогам оценки, с датой и основанием</li><li>Статус: испытательный срок, в штате, уволен</li><li>Плановые даты PR и оценки на грейд</li><li>Шаблоны матриц, PR, 360, адаптации</li></ul><div class="hint" style="margin-top:10px">Каждое изменение попадает в журнал с автором и датой.</div></div>
       </div>
       <div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Все сотрудники</h2></div><table><thead><tr><th>Сотрудник</th><th class="hide-m">Отдел</th><th>Грейд</th><th class="hide-m">Руководитель</th><th class="hide-m">Выход</th><th>Статус</th><th></th></tr></thead><tbody>${D.employees.filter((e) => e.id !== 'e01').map((e) => `<tr><td><div class="row" style="flex-wrap:nowrap">${avatar(e, 'sm')}<div><b style="font-weight:500">${esc(e.name)}</b><div class="hint">${esc(e.role)}</div></div></div></td><td class="hide-m">${esc(deptName(e.dept))}</td><td>${chip(e.grade, 'grade')}</td><td class="hide-m">${e.manager ? esc(emp(e.manager).name) : '—'}</td><td class="hide-m">${fmt(e.hired)}</td><td>${e.status === 'probation' ? chip('ИС', 'warn') : chip('В штате', 'good')}</td><td><button class="btn sm ghost" onclick="hrAct.demo()">Изменить</button></td></tr>`).join('')}</tbody></table></div>
       <div class="card"><div class="card-head"><h3>Журнал изменений</h3></div><ul class="list">${D.changeLog.map((c) => `<li><div class="body" style="font-size:14px">${esc(c.what)}<div class="meta">${fmt(c.date)} · ${esc(emp(c.who).name)}</div></div></li>`).join('')}</ul></div>` });
@@ -603,25 +615,49 @@
     const T = D.templates;
     return { title: 'Шаблоны и циклы', crumbs: crumbsM(), html: `
       <div class="card" style="margin-bottom:16px"><div class="card-head"><h2>Матрицы компетенций по трекам</h2><span class="hint">шаблоны заказчика; редактирует HR</span></div>
-        <table><thead><tr><th>Трек</th><th class="num">Компетенций</th><th>Шкала</th><th class="hide-m">Диапазоны грейдов</th><th class="hide-m">Ограничения</th><th></th></tr></thead><tbody>${D.departments.map((d) => `<tr><td>${esc(d.name)}</td><td class="num">${D.competencies[d.id].length}</td><td><small>1–10, максимум ${D.competencies[d.id].length * 10}</small></td><td class="hide-m"><small>${d.id === 'account' ? Object.entries(D.gradeRules.ranges).map(([g, r]) => `${g} ${r[0]}–${r[1]}`).join(' · ') : 'заполнить по шаблону трека'}</small></td><td class="hide-m"><small>${d.id === 'account' ? 'по 3 компетенции на Middle, Middle+, Senior' : d.id === 'dev' ? 'матрица хардов: доля подтверждённых заданий' : '—'}</small></td><td><button class="btn sm ghost" onclick="hrAct.demo()">Открыть</button></td></tr>`).join('')}</tbody></table></div>
+        <table><thead><tr><th>Трек</th><th class="num">Компетенций</th><th>Грейды роли</th><th class="hide-m">Диапазоны баллов</th><th class="hide-m">Ограничения</th><th></th></tr></thead><tbody>${D.departments.map((d) => `<tr><td>${esc(d.name)}</td><td class="num">${D.competencies[d.id].length}</td><td><small>${D.gradeLadders[d.id].join(' → ')}</small></td><td class="hide-m"><small>${d.id === 'account' ? Object.entries(D.gradeRules.ranges).map(([g, r]) => `${g} ${r[0]}–${r[1]}`).join(' · ') : 'заполнить по шаблону трека'}</small></td><td class="hide-m"><small>${d.id === 'account' ? 'софты: по 3 компетенции на Middle, Middle+, Senior; харды: задания с артефактом' : 'харды и софты: подтверждение заданием'}</small></td><td><button class="btn sm ghost" onclick="hrAct.demo()">Открыть</button></td></tr>`).join('')}</tbody></table></div>
       <div class="grid cols-3">
         <div class="card"><div class="card-head"><h3>Цикл Performance Review</h3></div><div class="hint">Период: ${esc(T.prCycle.period)} · шкала ${esc(T.prCycle.scale)}</div><ol style="margin:8px 0;padding-left:18px;font-size:13px">${T.prCycle.meetings.map((m) => `<li>${esc(m)}</li>`).join('')}</ol><div class="hint">Входы: ${esc(T.prCycle.inputs.join(', '))}</div><div class="hint" style="margin-top:6px">Метрики эффективности задаются по роли: у аккаунтов 10 метрик (отток, допродажи, дебиторка, скорость реакции, NPS клиентов и др.)</div></div>
         <div class="card"><div class="card-head"><h3>Оценка 360</h3></div><div class="hint">Шкала ${esc(T.review360.scale)} · группы: ${esc(T.review360.groups.join(', '))} · когда: ${esc(T.review360.when)}</div><div class="hint" style="margin-top:8px">Открытые вопросы:</div><ul style="margin:4px 0 0;padding-left:18px;font-size:13px">${T.review360.open.map((q) => `<li>${esc(q)}</li>`).join('')}</ul><div class="hint" style="margin-top:8px">Набор компетенций и индикаторов — свой на трек</div></div>
         <div class="card"><div class="card-head"><h3>План адаптации</h3></div><ol style="margin:0;padding-left:18px;font-size:13px">${T.adaptation.meetings.map((m) => `<li>${esc(m)}</li>`).join('')}</ol><div class="hint" style="margin-top:8px">${esc(T.adaptation.scale)}</div><ul style="margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--text-2)">${T.adaptation.roles.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></div>
         <div class="card"><div class="card-head"><h3>Постмит 1:1</h3></div><ul style="margin:0;padding-left:18px;font-size:13px">${T.oneOnOne.fields.map((f) => `<li>${esc(f)}</li>`).join('')}</ul><div class="hint" style="margin-top:8px">${esc(T.oneOnOne.frequency)}</div></div>
         <div class="card"><div class="card-head"><h3>Пульс-опрос</h3></div><div class="hint">${esc(T.pulse.frequency)}</div><ol style="margin:8px 0 0;padding-left:18px;font-size:13px">${T.pulse.questions.map((q) => `<li>${esc(q)}</li>`).join('')}</ol></div>
-        <div class="card"><div class="card-head"><h3>Интеграции</h3></div><table><tbody><tr><td>LMS</td><td><small>${esc(T.lms.system)}: ${esc(T.lms.api)}. ${esc(T.lms.sync)}</small></td></tr><tr><td>Транскрипты</td><td><small>Загрузка текста или файла; извлечение задач и ОС; подтверждение руководителем</small></td></tr><tr><td>Трекер задач</td><td><small>Не подключается: задачи живут в постмитах. Ссылки на Планфикс как текст</small></td></tr><tr><td>Данные</td><td><small>Сервер в РФ</small></td></tr></tbody></table></div>
+        <div class="card"><div class="card-head"><h3>Интеграции</h3></div><table><tbody><tr><td>LMS</td><td><small>${esc(T.lms.system)}: ${esc(T.lms.api)}. ${esc(T.lms.sync)}</small></td></tr><tr><td>Транскрипты</td><td><small>Загрузка текста или файла; извлечение задач и ОС; подтверждение руководителем</small></td></tr><tr><td>Трекер задач</td><td><small>Не подключается: задачи живут в постмитах. Ссылки на Планфикс как текст</small></td></tr><tr><td>Кадровые данные</td><td><small>Вводят HR-менеджер или руководитель; история изменений обязательна</small></td></tr></tbody></table></div>
       </div>` };
   };
   V['/hr/access'] = () => ({ title: 'Роли и доступ', crumbs: crumbsM(), html: `
       <div class="card" style="margin-bottom:16px"><table><thead><tr><th>Роль</th><th>Видит</th><th>Меняет</th></tr></thead><tbody>${D.roles.map((r) => `<tr><td style="white-space:nowrap"><b style="font-weight:500">${esc(r.name)}</b></td><td><small>${esc(r.sees)}</small></td><td><small>${esc(r.edits)}</small></td></tr>`).join('')}</tbody></table></div>
-      <div class="card"><div class="card-head"><h3>Матрица видимости данных</h3></div><table><thead><tr><th>Данные</th><th>Сотрудник</th><th>Руководитель отдела</th><th>HR</th><th>Директор</th></tr></thead><tbody>
-        ${[['Грейд, матрица, история грейдов', 'свои', 'свой отдел', 'все', 'все'], ['Задачи и постмиты 1:1', 'свои', 'свой отдел', 'все', 'все'], ['Performance Review', 'свой', 'свой отдел', 'все', 'все'], ['Оценка 360', 'своя, в агрегате', 'свой отдел, по группам', 'все', 'все'], ['mNPS руководителя', '—', 'свой', 'все', 'все'], ['Приватные заметки руководителя', '—', 'только автор', '—', '—'], ['Журнал обратной связи', 'записи о себе', 'свой отдел', 'все', 'все'], ['Транскрипты встреч', '—', 'свои встречи', 'все', 'все'], ['Пульс-опросы', 'итоги по агентству', 'свой отдел и среднее', 'все', 'все'], ['Карточки, грейды, шаблоны (редактирование)', '—', 'свой отдел: карточки', 'всё', 'руководители отделов']].map((r) => `<tr>${r.map((c, i) => `<td>${i ? `<small>${c}</small>` : c}</td>`).join('')}</tr>`).join('')}
-      </tbody></table><div class="hint" style="margin-top:10px">Руководители отделов как сотрудники: их PR, грейдирование и mNPS ведёт директор.</div></div>` });
+      <div class="card"><div class="card-head"><h3>Матрица видимости данных</h3></div><table><thead><tr><th>Данные</th><th>Сотрудник</th><th>Руководитель отдела</th><th>HR-менеджер и директор</th></tr></thead><tbody>
+        ${[['Грейд, матрица, история грейдов', 'свои', 'свой отдел', 'все'], ['Задачи и постмиты 1:1', 'свои', 'свой отдел', 'все'], ['Performance Review', 'свой', 'свой отдел', 'все; директор — и руководителей отделов'], ['Оценка 360', 'своя, в агрегате', 'свой отдел, по группам', 'все'], ['mNPS руководителя', '—', 'свой', 'все'], ['Приватные заметки руководителя', '—', 'только сам руководитель', '—'], ['Журнал обратной связи', 'записи о себе', 'свой отдел', 'все'], ['Транскрипты встреч', '—', 'свои встречи', 'все'], ['Пульс-опросы', 'итоги по агентству', 'свой отдел и среднее', 'все'], ['Карточки, грейды, шаблоны (редактирование)', '—', 'карточки своего отдела', 'всё']].map((r) => `<tr>${r.map((c, i) => `<td>${i ? `<small>${c}</small>` : c}</td>`).join('')}</tr>`).join('')}
+      </tbody></table><div class="hint" style="margin-top:10px">HR-менеджер и директор работают в одном кабинете. Директор дополнительно видит PR, грейдирование и mNPS руководителей отделов.</div></div>` });
 
-  V['/tz'] = () => ({ title: 'ТЗ 2.0: кабинет сотрудника и кабинет руководителя', crumbs: 'Документы для заказчика · копия в репозитории проекта', html: $('#tz-content').innerHTML });
-  V['/prompt'] = () => ({ title: 'Промт для схемы архитектуры (Gamma)', crumbs: 'Документы для заказчика', html: $('#prompt-content').innerHTML });
-  V['/about'] = () => ({ title: 'О прототипе 2.0: что изменилось', crumbs: 'Каркас для обсуждения ТЗ', html: $('#about-content').innerHTML });
+  V['/tz'] = () => ({ title: 'ТЗ 3.0', crumbs: 'Документы · вкладка «3.0. Задача» Google-документа заказчика', html: $('#tz-content').innerHTML });
+  V['/about'] = () => ({ title: 'Что нового в версии 3.0', crumbs: 'Документы · каркас для обсуждения', html: $('#about-content').innerHTML });
+  V['/scheme'] = () => {
+    const S = D.scheme; const srcById = Object.fromEntries(S.sources.map((x) => [x.id, x]));
+    const tag = (id) => `<span style="color:var(--src-${id})">${esc(srcById[id].name)}</span>`;
+    const reach = (id) => S.cabinets.filter((c) => c.screens.some((x) => x.src.includes(id))).length;
+    return { title: 'Схема и промт', crumbs: 'Документы · блок-схема трёх кабинетов по ТЗ 3.0', html: `
+      <div class="notice" style="margin-bottom:16px">Слева источники данных, справа три кабинета. У каждого источника свой цвет: тем же цветом он подписан в каждом экране, куда идут его данные. Наведите курсор или нажмите на источник, чтобы подсветить все экраны, куда он попадает.</div>
+      <div class="scheme" id="scheme">
+        <div class="col"><div class="col-head"><b>Источники данных</b><span>${S.sources.length} источников</span></div>
+          ${S.sources.map((x) => `<button type="button" class="src-item" data-src="${x.id}" style="color:var(--src-${x.id})"><b>${esc(x.name)}</b><small>${esc(x.who)}</small><em>в ${reach(x.id)} ${plural(reach(x.id), ['кабинет', 'кабинета', 'кабинетов'])}</em></button>`).join('')}
+        </div>
+        ${S.cabinets.map((c) => `<div class="col"><div class="col-head"><b>${esc(c.name)}</b><span>${esc(c.scope)}</span></div>
+          ${c.screens.map((x) => `<div class="scr" data-srcs="${x.src.join(' ')}"><b>${esc(x.name)}</b><p>${esc(x.what)}</p><div class="srcs">${x.src.map(tag).join('')}</div></div>`).join('')}</div>`).join('')}
+      </div>
+      <div class="card" style="margin-top:16px"><div class="card-head"><h2>Связи: один источник — несколько кабинетов</h2><span class="hint">экраны, куда идут данные источника</span></div>
+        <div style="overflow-x:auto"><table class="links"><thead><tr><th>Источник</th>${S.cabinets.map((c) => `<th>${esc(c.name.replace('Кабинет ', ''))}</th>`).join('')}</tr></thead><tbody>
+        ${S.sources.map((x) => `<tr><td><b style="color:var(--src-${x.id})">${esc(x.name)}</b></td>${S.cabinets.map((c) => { const l = c.screens.filter((y) => y.src.includes(x.id)).map((y) => y.name); return `<td style="color:var(--src-${x.id})">${l.length ? esc(l.join(', ')) : '<span class="hint">—</span>'}</td>`; }).join('')}</tr>`).join('')}
+        </tbody></table></div></div>
+      <div class="card" style="margin-top:16px" id="prompt-card">${$('#prompt-content').innerHTML}</div>`,
+      after: () => {
+        const box = $('#scheme'); let locked = null;
+        const show = (id) => { box.classList.toggle('focus', !!id); box.querySelectorAll('.scr').forEach((el) => { const on = id && el.dataset.srcs.split(' ').includes(id); el.classList.toggle('hl', !!on); el.classList.toggle('dim', !!id && !on); el.style.setProperty('--hl', id ? `var(--src-${id})` : ''); }); box.querySelectorAll('.src-item').forEach((el) => { el.classList.toggle('on', el.dataset.src === id); el.classList.toggle('dim', !!id && el.dataset.src !== id); }); };
+        box.querySelectorAll('.src-item').forEach((b) => { b.onmouseenter = () => { if (!locked) show(b.dataset.src); }; b.onmouseleave = () => { if (!locked) show(null); }; b.onfocus = () => { if (!locked) show(b.dataset.src); }; b.onclick = () => { locked = locked === b.dataset.src ? null : b.dataset.src; show(locked); }; });
+        document.querySelectorAll('#prompt-card pre').forEach((pre) => { const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn sm'; btn.textContent = 'Скопировать промт'; btn.onclick = () => { const t = pre.innerText; (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('Промт скопирован')).catch(() => { const r = document.createRange(); r.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); toast('Выделено: нажмите Ctrl+C'); }); }; const row = document.createElement('div'); row.className = 'copy-row'; row.appendChild(btn); pre.before(row); });
+      } };
+  };
 
   // ---------- router ----------
   function route() {
@@ -642,17 +678,22 @@
     $('#sidebar').classList.remove('open'); if (!route._keep) window.scrollTo(0, 0); route._keep = false;
   }
   function renderNav(hash) {
-    document.querySelectorAll('.role-switch button').forEach((b) => b.classList.toggle('active', b.dataset.role === ROLE));
+    document.querySelectorAll('#seg-role button').forEach((b) => b.classList.toggle('on', b.dataset.role === ROLE));
+    document.querySelectorAll('#seg-design button').forEach((b) => b.classList.toggle('on', b.dataset.design === document.documentElement.dataset.design));
+    document.querySelectorAll('#seg-theme button').forEach((b) => b.classList.toggle('on', b.dataset.themeSet === document.documentElement.dataset.theme));
+    document.querySelectorAll('.db-docs a').forEach((a) => a.classList.toggle('on', a.dataset.doc === hash));
     const isActive = (h) => hash === h || (h.endsWith('/team') && /\/person\//.test(hash)) || (h.endsWith('/transcripts') && hash.includes('/transcripts')) || (h.endsWith('/feedback') && hash.includes('/feedback'));
-    $('#nav').innerHTML = NAV[ROLE].map((n) => n.g ? `<div class="group">${n.g}</div>` : `<a href="#${n.h}" class="${isActive(n.h) ? 'active' : ''}">${n.i}<span>${n.t}</span>${n.badge && n.badge() ? `<span class="badge">${n.badge()}</span>` : ''}</a>`).join('');
+    $('#nav').innerHTML = NAV[ROLE].map((n) => n.g ? `<div class="group">${n.g}</div>` : `<a href="#${n.h}" class="${isActive(n.h) ? 'active' : ''}">${n.i}<span class="l">${n.t}</span><span class="s">${n.s || n.t}</span>${n.badge && n.badge() ? `<span class="badge">${n.badge()}</span>` : ''}</a>`).join('');
     const u = me();
     $('#me').innerHTML = `${avatar(u)}<div style="min-width:0"><b style="font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500">${esc(u.name)}</b><small style="font-size:12px;color:var(--text-3)">${esc(u.role)}</small></div>`;
   }
   const origRoute = route; window.__hrRoute = origRoute;
-  document.querySelectorAll('.role-switch button').forEach((b) => { b.onclick = () => { location.hash = b.dataset.role === 'manager' ? '/manager/dashboard' : b.dataset.role === 'hr' ? '/hr/dashboard' : '/employee/profile'; }; });
+  document.querySelectorAll('#seg-role button').forEach((b) => { b.onclick = () => { location.hash = b.dataset.role === 'manager' ? '/manager/dashboard' : b.dataset.role === 'hr' ? '/hr/dashboard' : '/employee/profile'; }; });
+  // Вариант дизайна и тема: атрибуты на <html>, запоминаются в браузере и в адресе (ссылку можно отправить)
+  const setView = (key, val) => { document.documentElement.dataset[key] = val; try { localStorage.setItem(`hr-${key}`, val); } catch (e) { /* ignore */ } const u = new URL(location.href); u.searchParams.set(key, val); history.replaceState(null, '', u); route._keep = true; const y = window.scrollY; route(); window.scrollTo(0, y); };
+  document.querySelectorAll('#seg-design button').forEach((b) => { b.onclick = () => setView('design', b.dataset.design); });
+  document.querySelectorAll('#seg-theme button').forEach((b) => { b.onclick = () => setView('theme', b.dataset.themeSet); });
   $('#menu-btn').onclick = () => $('#sidebar').classList.toggle('open');
-  $('#theme-btn').onclick = () => { const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); document.documentElement.dataset.theme = cur === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('hr-theme', document.documentElement.dataset.theme); } catch (e) { /* ignore */ } route(); };
-  try { const q = new URLSearchParams(location.search).get('theme'); const t = q || localStorage.getItem('hr-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) { /* ignore */ }
   // Подтверждения из транскриптов перерисовывают экран без прокрутки вверх
   const keepScroll = (fn) => (...a) => { route._keep = true; const y = window.scrollY; fn(...a); window.scrollTo(0, y); };
   hrAct.confirm = keepScroll(hrAct.confirm); hrAct.reject = keepScroll(hrAct.reject); hrAct.addFeedback = keepScroll(hrAct.addFeedback);
