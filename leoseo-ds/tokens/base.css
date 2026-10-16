@@ -2,6 +2,9 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text-body);font:var(--text-body-font);font-feature-settings:"kern"}
+/* fixed background art, as on leoseo.ru */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(../assets/bg-leoseo.webp) center/cover no-repeat;opacity:var(--bg-image-opacity)}
+.ls-no-art::before,body.ls-no-art::before{display:none}
 a{color:var(--accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 a:hover{color:var(--text-strong)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -16,6 +19,7 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 @page{size:A4;margin:18mm 16mm 18mm 16mm}
 @media print{
   body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body::before{display:none}
   .ls-screen-only{display:none!important}
   .ls-print-only{display:block}
   .ls-break-before{break-before:page}
