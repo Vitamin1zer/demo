@@ -4,14 +4,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap');
 
 /* tokens/colors.css */
-/* LEOSEO — colour tokens. Dark is the default (:root); light is for print/PDF.
-   Both themes share one set of semantic names. Contrast notes are against --bg. */
+/* LEOSEO — colour tokens. One screen theme: dark (:root).
+   The light palette exists only for print/PDF (@media print) and for print-preview cards ([data-theme="print"]).
+   Contrast figures: dark — against the page (#0d0d10 + background art at 18 %, 99.9th percentile pixel);
+   print — against white. */
 
 :root{
-  /* raw — ink (dark theme) */
-  --n-bg:#08080a;--n-s1:#0d0d10;--n-s2:#131318;--n-grid:#1f1f26;
-  --ink-0:#f6f3ee;--ink-1:#e8e4dd;--ink-2:#a39c92;--ink-3:#8a8278;--ink-4:#6e675e;
-  /* raw — paper (light theme) */
+  /* raw — ink (dark) */
+  --n-deep:#08080a;--n-bg:#0d0d10;--n-s1:#131318;--n-s2:#191920;--n-grid:#23232b;
+  --ink-0:#f6f3ee;--ink-1:#e8e4dd;--ink-2:#b5aea3;--ink-3:#9a9287;
+  /* raw — paper (print) */
   --p-bg:#ffffff;--p-s1:#f7f5f1;--p-s2:#efece6;--p-grid:#e7e3dc;
   --pk-0:#14161a;--pk-1:#2b2824;--pk-2:#544e46;--pk-3:#6e675e;
   /* raw — copper */
@@ -20,69 +22,49 @@
   --blue-500:#5b8fd6;--blue-700:#3d6fb8;
   /* raw — sand (third data series) */
   --sand-500:#7a7268;--sand-600:#8a8278;
+
+  --bg-image-opacity:.18;
 }
 
-:root{
+:root,[data-theme="dark"]{
   color-scheme:dark;
-  --bg:var(--n-bg);              /* page */
-  --surface-1:var(--n-s1);       /* figures, plan cards */
-  --surface-2:var(--n-s2);       /* tooltip, hover */
-  --text-strong:var(--ink-0);    /* headings, lead, key numbers — 18.6:1 */
-  --text-body:var(--ink-1);      /* running text — 15.9:1 */
+  --bg-deep:var(--n-deep);       /* tracks, wells, inset areas */
+  --bg:var(--n-bg);              /* page, under the background art */
+  --surface-1:var(--n-s1);       /* cards, figure frames — opaque, hides the art */
+  --surface-2:var(--n-s2);       /* tooltip, hover, selected segment */
+  --text-strong:var(--ink-0);    /* headings, lead — 14.7:1 */
+  --text-body:var(--ink-1);      /* running text — 12.8:1 */
   --text-muted:var(--ink-2);     /* table heads, legend — 7.4:1 */
   --text-faint:var(--ink-3);     /* source, captions — 5.3:1 */
-  --line:rgba(246,243,238,.09);  /* row dividers */
-  --line-strong:rgba(246,243,238,.16); /* H2 rule, frames */
-  --grid:var(--n-grid);          /* chart gridlines — barely visible */
-  --accent:var(--cu-500);        /* copper: one accent per screen — 6.2:1 */
-  --accent-text:var(--cu-300);   /* copper as text/link — 8.9:1 */
+  --line:rgba(246,243,238,.10);
+  --line-strong:rgba(246,243,238,.18);
+  --grid:var(--n-grid);
+  --accent:var(--cu-500);        /* graphics — 5.1:1; on surface 5.8:1 */
+  --accent-text:var(--cu-300);   /* copper as text/link — 7.4:1 */
   --accent-line:var(--cu-500);
-  --data-1:var(--blue-500);      /* main series — 6.1:1 */
-  --data-2:var(--cu-500);        /* highlighted series — 6.2:1 */
-  --data-3:var(--sand-500);      /* context series — 4.1:1 */
-  --up:var(--cu-300);            /* growth: always with ↑ and + */
-  --down:var(--ink-0);           /* decline: always with ↓ and − */
+  --data-1:var(--blue-500);      /* on surface-1 5.6:1 */
+  --data-2:var(--cu-500);        /* on surface-1 5.8:1 */
+  --data-3:var(--sand-500);      /* on surface-1 3.9:1 — graphics only */
+  --up:var(--cu-300);
+  --down:var(--ink-0);
   --focus:var(--cu-300);
   --hover:rgba(246,243,238,.04);
 }
 
-[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:var(--n-bg);--surface-1:var(--n-s1);--surface-2:var(--n-s2);
-  --text-strong:var(--ink-0);--text-body:var(--ink-1);--text-muted:var(--ink-2);--text-faint:var(--ink-3);
-  --line:rgba(246,243,238,.09);--line-strong:rgba(246,243,238,.16);--grid:var(--n-grid);
-  --accent:var(--cu-500);--accent-text:var(--cu-300);--accent-line:var(--cu-500);
-  --data-1:var(--blue-500);--data-2:var(--cu-500);--data-3:var(--sand-500);
-  --up:var(--cu-300);--down:var(--ink-0);--focus:var(--cu-300);--hover:rgba(246,243,238,.04);
-}
-
-[data-theme="light"]{
+[data-theme="print"]{
   color-scheme:light;
-  --bg:var(--p-bg);              /* white paper */
-  --surface-1:var(--p-s1);
-  --surface-2:var(--p-s2);
-  --text-strong:var(--pk-0);     /* 17.8:1 */
-  --text-body:var(--pk-1);       /* 14.6:1 */
-  --text-muted:var(--pk-2);      /* 8.2:1 */
-  --text-faint:var(--pk-3);      /* 5.6:1 */
-  --line:rgba(20,22,26,.12);
-  --line-strong:rgba(20,22,26,.24);
-  --grid:var(--p-grid);
-  --accent:var(--cu-600);        /* 4.0:1 graphics */
-  --accent-text:var(--cu-700);   /* 5.0:1 text */
-  --accent-line:var(--cu-600);
-  --data-1:var(--blue-700);      /* 5.0:1 */
-  --data-2:var(--cu-600);        /* 4.0:1 */
-  --data-3:var(--sand-600);      /* 3.8:1 */
-  --up:var(--cu-700);
-  --down:var(--pk-0);
-  --focus:var(--cu-700);
-  --hover:rgba(20,22,26,.04);
+  --bg-deep:var(--p-s2);--bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+  --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+  --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+  --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+  --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+  --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:rgba(20,22,26,.04);
 }
 
 @media print{
   :root,[data-theme="dark"]{
     color-scheme:light;
+    --bg-deep:var(--p-s2);           /* 17.8:1 strong / 5.6:1 faint on white */
     --bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
     --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
     --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
@@ -165,6 +147,9 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text-body);font:var(--text-body-font);font-feature-settings:"kern"}
+/* fixed background art, as on leoseo.ru */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(bg-leoseo.webp) center/cover no-repeat;opacity:var(--bg-image-opacity)}
+.ls-no-art::before,body.ls-no-art::before{display:none}
 a{color:var(--accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 a:hover{color:var(--text-strong)}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
@@ -179,6 +164,7 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 @page{size:A4;margin:18mm 16mm 18mm 16mm}
 @media print{
   body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body::before{display:none}
   .ls-screen-only{display:none!important}
   .ls-print-only{display:block}
   .ls-break-before{break-before:page}
@@ -188,13 +174,12 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 /* Component classes (ls-*). Used by the React components in Claude Design; usable in plain HTML too. */
 
 /* page */
-.ls-page{background:var(--bg);color:var(--text-body);font:var(--text-body-font);min-height:100%}
+.ls-page{background:transparent;color:var(--text-body);font:var(--text-body-font);min-height:100%}
 .ls-page__inner{max-width:var(--content-max);margin:0 auto;padding:var(--sp-6) var(--page-pad) var(--sp-9)}
 
 /* logo — url resolved relative to this file */
 .ls-logo{display:inline-block;aspect-ratio:201/40;background:url(leoseo-logo-light.svg) left center/contain no-repeat;flex:none}
-[data-theme="light"] .ls-logo{background-image:url(leoseo-logo-dark.svg)}
-[data-theme="light"] [data-theme="dark"] .ls-logo{background-image:url(leoseo-logo-light.svg)}
+[data-theme="print"] .ls-logo{background-image:url(leoseo-logo-dark.svg)}
 @media print{.ls-logo,[data-theme] .ls-logo{background-image:url(leoseo-logo-dark.svg)!important}}
 
 /* report header */
@@ -262,7 +247,7 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 .ls-table .num{text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
 .ls-table tfoot td{border-top:var(--border) solid var(--line-strong);border-bottom:0;color:var(--text-strong);font-weight:var(--fw-semibold)}
 .ls-share{display:flex;align-items:center;justify-content:flex-end;gap:12px}
-.ls-share__bar{position:relative;width:96px;height:8px;background:var(--line);flex:none}
+.ls-share__bar{position:relative;width:96px;height:8px;background:var(--bg-deep);outline:1px solid var(--line);outline-offset:-1px;flex:none}
 .ls-share__bar span{position:absolute;inset:0 auto 0 0;background:var(--data-1)}
 .ls-share b{min-width:3.6em;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums}
 @media (max-width:600px){
@@ -335,17 +320,129 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
   .ls-plan{background:transparent}
 }
 
+/* ───── interactive ───── */
+.ls-btn-reset{appearance:none;background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;cursor:pointer;border-radius:0}
+
+/* card */
+.ls-card{position:relative;display:grid;align-content:start;gap:var(--sp-1);background:var(--surface-1);border:var(--border) solid var(--line);padding:var(--sp-2) var(--sp-3) var(--sp-3);min-width:0;color:var(--text-body);text-decoration:none}
+a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);color:var(--text-body)}
+.ls-card__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-card__t{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted);margin:0}
+.ls-card.is-page .ls-card__t,.ls-card.is-task .ls-card__t{font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-card__v{font:var(--fw-display) var(--fs-5)/1.1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);letter-spacing:var(--ls-display);margin:0}
+.ls-card.is-page .ls-card__v,.ls-card.is-task .ls-card__v{font:var(--fw-bold) var(--fs-3)/1.2 var(--font-num)}
+.ls-card__c{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-card__chg{font:var(--fw-bold) var(--fs-1)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--down);white-space:nowrap}
+.ls-card__chg.is-up{color:var(--up)}
+.ls-card__spark{display:block;width:100%;height:36px;margin-top:var(--sp-1)}
+.ls-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--sp-2);margin:var(--space-block) 0}
+.ls-status{font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);padding:3px 6px;border:var(--border) solid var(--line-strong);color:var(--text-muted);white-space:nowrap}
+.ls-status.is-done{color:var(--text-strong);border-color:var(--text-faint)}
+.ls-status.is-doing{color:var(--accent-text);border-color:var(--accent-line)}
+
+/* segmented control */
+.ls-seg{display:inline-flex;border:var(--border) solid var(--line-strong);background:var(--bg-deep);max-width:100%;flex-wrap:wrap}
+.ls-seg__o{min-height:36px;min-width:44px;padding:0 var(--sp-2);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);color:var(--text-muted);border-right:var(--border) solid var(--line)}
+.ls-seg__o:last-child{border-right:0}
+.ls-seg__o:hover{color:var(--text-strong)}
+.ls-seg__o[aria-checked="true"],.ls-seg__o[aria-selected="true"]{background:var(--surface-2);color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--text-strong)}
+.ls-seg__o:focus-visible{outline-offset:-2px}
+.ls-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-1) var(--sp-3);margin:var(--sp-3) 0 calc(-1 * var(--sp-1))}
+.ls-tabs{display:flex;gap:0;border-bottom:var(--border) solid var(--line-strong);overflow-x:auto;scrollbar-width:none}
+.ls-tabs .ls-seg__o{border:0;background:none;min-height:44px;padding:0 var(--sp-2)}
+.ls-tabs .ls-seg__o:first-child{padding-left:0}
+.ls-tabs .ls-seg__o[aria-selected="true"]{background:none;box-shadow:inset 0 -2px 0 var(--accent)}
+
+/* toggle */
+.ls-tgl{display:inline-flex;align-items:center;gap:12px;min-height:44px;font:var(--text-small);color:var(--text-muted);cursor:pointer;user-select:none}
+.ls-tgl:hover{color:var(--text-strong)}
+.ls-tgl__sw{position:relative;width:36px;height:20px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);flex:none}
+.ls-tgl__sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--text-faint)}
+.ls-tgl[aria-checked="true"]{color:var(--text-strong)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw{border-color:var(--accent-line)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw::after{left:18px;background:var(--accent)}
+.ls-tgl__dot{display:inline-block;width:10px;height:10px;flex:none}
+
+/* range slider */
+.ls-range{display:grid;gap:var(--sp-1);margin:var(--sp-2) 0;max-width:40em}
+.ls-range__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-range__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-range__o{font:var(--fw-display) var(--fs-4)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-range__o small{font:var(--fw-medium) var(--fs-1)/1 var(--font-text);color:var(--text-faint);margin-left:6px}
+.ls-range input{-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:0;background:transparent;cursor:pointer}
+.ls-range input::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--accent) var(--p),var(--bg-deep) var(--p));outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-track{height:4px;background:var(--bg-deep);outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-progress{height:4px;background:var(--accent)}
+.ls-range input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input::-moz-range-thumb{width:16px;height:16px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input:focus-visible{outline:none}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range input:focus-visible::-moz-range-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range__ax{display:flex;justify-content:space-between;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums;margin-top:calc(-1 * var(--sp-1))}
+.ls-outs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:var(--sp-2);margin:var(--sp-2) 0}
+.ls-out{border-top:var(--border) solid var(--line-strong);padding-top:var(--sp-1)}
+.ls-out dt{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-out dd{margin:var(--sp-h) 0 0;font:var(--fw-display) var(--fs-4)/1.2 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong)}
+
+/* accordion */
+.ls-acc{margin:var(--space-block) 0;border-top:var(--border) solid var(--line-strong)}
+.ls-acc__i{border-bottom:var(--border) solid var(--line)}
+.ls-acc__h{margin:0}
+.ls-acc__b{display:flex;width:100%;align-items:center;justify-content:space-between;gap:var(--sp-2);min-height:56px;padding:var(--sp-1) 0;text-align:left;font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-acc__b:hover{color:var(--accent-text)}
+.ls-acc__b:focus-visible{outline-offset:-2px}
+.ls-acc__m{display:flex;align-items:center;gap:var(--sp-2);font:var(--text-small);color:var(--text-faint);flex:none}
+.ls-acc__g{display:inline-grid;place-items:center;width:28px;height:28px;border:var(--border) solid var(--line-strong);font:var(--fw-medium) 18px/1 var(--font-display);color:var(--text-muted)}
+.ls-acc__p{padding:0 0 var(--sp-3)}
+.ls-acc__p[hidden]{display:none}
+@media print{.ls-acc__p[hidden]{display:block}.ls-acc__g{display:none}}
+
+/* carousel */
+.ls-car{margin:var(--space-block) 0}
+.ls-car__h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);margin:0 0 var(--sp-2)}
+.ls-car__nav{display:flex;gap:var(--sp-1)}
+.ls-car__btn{display:inline-grid;place-items:center;width:44px;height:44px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);color:var(--text-strong);font:var(--fw-semibold) 18px/1 var(--font-display)}
+.ls-car__btn:hover{background:var(--surface-2)}
+.ls-car__btn:disabled{color:var(--text-faint);border-color:var(--line);cursor:default;background:transparent}
+.ls-car__trk{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(min(84%,300px),calc((100% - 2 * var(--sp-2)) / 3));gap:var(--sp-2);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:auto}
+.ls-car__trk::-webkit-scrollbar{display:none}
+.ls-car__trk>*{scroll-snap-align:start}
+.ls-car__trk:focus-visible{outline-offset:4px}
+.ls-car__dots{display:flex;justify-content:center;gap:0;margin-top:var(--sp-1)}
+.ls-car__dot{display:inline-grid;place-items:center;width:32px;height:44px}
+.ls-car__dot span{display:block;width:8px;height:8px;border:1px solid var(--text-faint)}
+.ls-car__dot[aria-current="true"] span{background:var(--text-strong);border-color:var(--text-strong)}
+.ls-car__dot:focus-visible{outline-offset:-6px}
+@media print{.ls-car__trk{grid-auto-flow:row;grid-template-columns:1fr 1fr;overflow:visible}.ls-car__nav,.ls-car__dots{display:none}}
+@media (max-width:600px){.ls-car__nav{display:none}}
+
+/* progress */
+.ls-prog{margin:var(--sp-2) 0;max-width:40em}
+.ls-prog__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);margin-bottom:var(--sp-1)}
+.ls-prog__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-prog__v{font:var(--fw-bold) var(--fs-2)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-prog__v small{font:var(--text-small);color:var(--text-faint);margin-left:6px}
+.ls-prog__t{position:relative;height:8px;background:var(--bg-deep);outline:1px solid var(--line-strong);outline-offset:-1px;display:flex}
+.ls-prog__d{background:var(--accent);height:100%}
+.ls-prog__w{height:100%;background:repeating-linear-gradient(90deg,var(--text-faint) 0 2px,transparent 2px 6px);opacity:.6}
+.ls-prog__k{display:flex;flex-wrap:wrap;gap:var(--sp-h) var(--sp-3);font:var(--text-small);color:var(--text-faint);margin-top:var(--sp-1)}
+.ls-prog__k i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+@media (max-width:600px){.ls-seg__o{min-height:44px}}
+
 /* страница демо */
+:root{--content-max:1440px}
+.ls-tw{overflow-x:auto}
 .ls-chart .hit{fill:transparent}
 .ls-chart .hit:hover{fill:var(--hover)}
 .ls-fig__wrap{position:relative}
 .ls-plan+.ls-plan{margin-top:var(--sp-2)}
+.ls-acc .ls-p{margin-bottom:var(--sp-1)}
 @page{@top-left{content:"LEOSEO · eco-capital.ru";font:500 9pt Manrope,sans-serif;color:#6e675e;vertical-align:bottom;padding-bottom:4mm}
 @top-right{content:"Трафик, спрос и структура · 7 октября 2026";font:500 9pt Manrope,sans-serif;color:#6e675e;vertical-align:bottom;padding-bottom:4mm}
 @bottom-right{content:counter(page) " / " counter(pages);font:500 9pt Manrope,sans-serif;color:#6e675e}}
 @page:first{@top-left{content:none}@top-right{content:none}}
 </style></head><body>
-<div class="ls-page" data-theme="dark"><main class="ls-page__inner">
+<div class="ls-page"><main class="ls-page__inner">
 <header class="ls-head">
 <div class="ls-head__bar"><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:20px"></span><span class="ls-head__client">Аналитика · eco-capital.ru</span></div>
 <h1 class="ls-h1">Почему падает поисковый трафик eco-capital.ru и что мы меняем</h1>
@@ -356,13 +453,16 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 
 <h2 class="ls-h2">Треть трафика давала одна страница, и её не стало</h2>
 <p class="ls-p">В 2025 году страница «Перезалог» приносила 90–130 визитов в месяц. С января 2026 года её визиты обнулились и не вернулись после переезда на новый сайт.</p>
-<figure class="ls-fig"><p class="ls-fig__title">Визиты из поиска по месяцам</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i style="background:var(--data-1)"></i>Остальные страницы</li><li><i style="background:var(--data-2)"></i>«Перезалог»</li></ul><div class="ls-fig__wrap"><div data-chart='{"x": ["2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"], "series": [{"name": "Остальные страницы", "values": [188, 205, 239, 177, 155, 169, 193, 126, 195, 160, 96, 123, 237, 269, 117, 209, 135, 135, 112, 124, 98]}, {"name": "«Перезалог»", "values": [90, 104, 105, 132, 131, 113, 90, 71, 62, 84, 76, 78, 0, 0, 0, 0, 0, 15, 0, 0, 0]}], "label": "Визиты из поиска по месяцам, январь 2025 – сентябрь 2026", "total": "Всего"}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, данные на 7 октября 2026.</figcaption></figure>
+<div class="ls-controls ls-screen-only"><div class="ls-seg" role="radiogroup" aria-label="Шаг графика" data-for="ch-traffic"><button type="button" class="ls-btn-reset ls-seg__o" role="radio" aria-checked="true" tabindex="0" data-value="m">Месяцы</button><button type="button" class="ls-btn-reset ls-seg__o" role="radio" aria-checked="false" tabindex="-1" data-value="q">Кварталы</button></div><button type="button" class="ls-btn-reset ls-tgl" role="switch" aria-checked="true" data-for="ch-traffic" data-series="«Перезалог»"><span class="ls-tgl__sw" aria-hidden="true"></span><i class="ls-tgl__dot" style="background:var(--data-2)" aria-hidden="true"></i><span>«Перезалог» отдельно</span></button></div>
+<figure class="ls-fig"><p class="ls-fig__title">Визиты из поиска по месяцам</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i style="background:var(--data-1)"></i>Остальные страницы</li><li><i style="background:var(--data-2)"></i>«Перезалог»</li></ul><div class="ls-fig__wrap"><div id="ch-traffic" data-chart='{"x": ["2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"], "series": [{"name": "Остальные страницы", "values": [188, 205, 239, 177, 155, 169, 193, 126, 195, 160, 96, 123, 237, 269, 117, 209, 135, 135, 112, 124, 98]}, {"name": "«Перезалог»", "values": [90, 104, 105, 132, 131, 113, 90, 71, 62, 84, 76, 78, 0, 0, 0, 0, 0, 15, 0, 0, 0]}], "label": "Визиты из поиска, январь 2025 – сентябрь 2026", "total": "Всего", "titles": {"m": "Визиты из поиска по месяцам", "q": "Визиты из поиска по кварталам"}}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, данные на 7 октября 2026.</figcaption></figure>
+<h3 class="ls-h3">Сентябрь 2026 коротко</h3>
+<div class="ls-cards"><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Визиты из поиска</h4></div><p class="ls-card__v">98</p><p class="ls-card__c"><span class="ls-card__chg">↓ −62 %</span> к сентябрю 2025</p><svg class="ls-card__spark" viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label="Визиты из поиска за 13 месяцев"><polyline points="0.00,5.11 8.33,7.39 16.67,20.02 25.00,14.93 33.33,8.61 41.67,3.00 50.00,29.67 58.33,13.53 66.67,26.51 75.00,23.88 83.33,30.54 91.67,28.44 100.00,33.00" fill="none" stroke="var(--data-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Запросов в топ-10 Яндекса</h4></div><p class="ls-card__v">38–48</p><p class="ls-card__c">до переезда на новый сайт было 3</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Отказы из поиска</h4></div><p class="ls-card__v">22 %</p><p class="ls-card__c"><span class="ls-card__chg is-up">↑ +8</span> п. п. за год</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Заявок с сайта</h4></div><p class="ls-card__v">17</p><p class="ls-card__c"><span class="ls-card__chg">↓ −53 %</span> к сентябрю 2025<br>форма, звонок, мессенджер</p><svg class="ls-card__spark" viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label="Заявки за 13 месяцев"><polyline points="0.00,20.37 8.33,3.53 16.67,15.63 25.00,11.42 33.33,19.32 41.67,3.00 50.00,25.63 58.33,23.00 66.67,23.00 75.00,33.00 83.33,26.68 91.67,22.47 100.00,30.37" fill="none" stroke="var(--data-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg></article></div>
 
 <h2 class="ls-h2">Четыре причины</h2>
 <ol class="ls-why">
 <li><h3 class="ls-h3">Спрос в нише упал в 1,5–3 раза</h3>
 <p class="ls-p">По главному запросу сайта «помощь в получении кредита» осталась треть спроса 2025 года. Брендовый спрос упал вдвое в те месяцы, когда не работала реклама в Директе.</p>
-<table class="ls-table"><caption>Вордстат, Санкт-Петербург, среднее число запросов в месяц.</caption><thead><tr><th scope="col">Запрос</th><th class="num" scope="col">1-е полугодие 2025</th><th class="num" scope="col">3-й квартал 2026</th><th class="num" scope="col">Осталось</th></tr></thead><tbody><tr><td>помощь в получении кредита</td><td class="num">672</td><td class="num">222</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:33%"></span></span><b>33 %</b></span></td></tr><tr><td>перезалог</td><td class="num">256</td><td class="num">92</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:36%"></span></span><b>36 %</b></span></td></tr><tr><td>эко капитал</td><td class="num">72</td><td class="num">37</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:51%"></span></span><b>51 %</b></span></td></tr><tr><td>кредит с плохой кредитной историей</td><td class="num">3 747</td><td class="num">1 933</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:52%"></span></span><b>52 %</b></span></td></tr><tr><td>кредитный брокер</td><td class="num">950</td><td class="num">639</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:67%"></span></span><b>67 %</b></span></td></tr><tr><td>кредит под залог недвижимости</td><td class="num">4 251</td><td class="num">3 394</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:80%"></span></span><b>80 %</b></span></td></tr></tbody><tfoot><tr><td>Всего по шести запросам</td><td class="num">9 948</td><td class="num">6 317</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:64%"></span></span><b>64 %</b></span></td></tr></tfoot></table></li>
+<div class="ls-tw"><table class="ls-table"><caption>Вордстат, Санкт-Петербург, среднее число запросов в месяц.</caption><thead><tr><th scope="col">Запрос</th><th class="num" scope="col">1-е полугодие 2025</th><th class="num" scope="col">3-й квартал 2026</th><th class="num" scope="col">Осталось</th></tr></thead><tbody><tr><td>помощь в получении кредита</td><td class="num">672</td><td class="num">222</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:33%"></span></span><b>33 %</b></span></td></tr><tr><td>перезалог</td><td class="num">256</td><td class="num">92</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:36%"></span></span><b>36 %</b></span></td></tr><tr><td>эко капитал</td><td class="num">72</td><td class="num">37</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:51%"></span></span><b>51 %</b></span></td></tr><tr><td>кредит с плохой кредитной историей</td><td class="num">3 747</td><td class="num">1 933</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:52%"></span></span><b>52 %</b></span></td></tr><tr><td>кредитный брокер</td><td class="num">950</td><td class="num">639</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:67%"></span></span><b>67 %</b></span></td></tr><tr><td>кредит под залог недвижимости</td><td class="num">4 251</td><td class="num">3 394</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:80%"></span></span><b>80 %</b></span></td></tr></tbody><tfoot><tr><td>Всего по шести запросам</td><td class="num">9 948</td><td class="num">6 317</td><td class="num"><span class="ls-share"><span class="ls-share__bar" aria-hidden="true"><span style="width:64%"></span></span><b>64 %</b></span></td></tr></tfoot></table></div></li>
 <li><h3 class="ls-h3">Потеряна страница «Перезалог»</h3>
 <p class="ls-p">Новая страница стоит на 2–12 местах, но трафика почти нет: спрос по перезалогу упал втрое, а по «перезалог недвижимости срочно» в топе узкие специалисты с подробными страницами, схемами и кейсами.</p></li>
 <li><h3 class="ls-h3">Выдачу заняли сервисы Яндекса и банки</h3>
@@ -375,15 +475,18 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 
 <h2 class="ls-h2">Спрос и прогноз</h2>
 <p class="ls-p">За последние 12 месяцев по ядру сайта набирается 199&nbsp;720 запросов, за год спрос упал на 27&nbsp;%. Пик приходится на март, провал – на август. Против рынка растёт только рефинансирование ипотеки, пик у него в январе.</p>
+<figure class="ls-fig"><p class="ls-fig__title">Спрос по ядру сайта, запросов в месяц</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Спрос</li><li><i class="is-line" style="background:var(--data-1)"></i>Прогноз</li></ul><div class="ls-fig__wrap"><div id="ch-demand" data-line='{"x": ["2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04"], "series": [{"name": "Спрос", "values": [20189, 22201, 21105, 20401, 21949, 21576, 18590, 17942, 17991, 21162, 17453, 21644, 22793, 20508, 17389, 15966, 15306, 18038, 17528, 14774, 14228, 14195, 14128, 14867, null, null, null, null, null, null, null], "color": "var(--data-1)"}, {"name": "Прогноз", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 14867, 16260, 15998, 14346, 13516, 13771, 14772, 13546], "color": "var(--data-1)", "dash": true}], "label": "Спрос по ядру, октябрь 2024 – апрель 2027", "split": 23, "splitLabel": "прогноз"}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Вордстат, Санкт-Петербург, ядро из 1 673 запросов, данные на 7 октября 2026.</figcaption></figure><figure class="ls-fig"><p class="ls-fig__title">Посетители из поиска в месяц: факт и три сценария</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Факт</li><li><i class="is-line" style="background:var(--data-3)"></i>Оптимистичный</li><li><i class="is-line" style="background:var(--data-2)"></i>Реалистичный</li><li><i class="is-line" style="background:var(--data-3)"></i>Пессимистичный</li></ul><div class="ls-fig__wrap"><div id="ch-visitors" data-line='{"x": ["2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04"], "series": [{"name": "Факт", "values": [194, 237, 199, 220, 237, 269, 247, 227, 227, 196, 137, 162, 143, 134, 147, 131, 175, 100, 135, 110, 106, 81, 85, 78, null, null, null, null, null, null, null], "color": "var(--data-1)"}, {"name": "Оптимистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 94, 114, 128, 143, 165, 198, 207], "color": "var(--data-3)", "dash": true}, {"name": "Реалистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 87, 96, 103, 109, 120, 139, 143], "color": "var(--data-2)", "dash": true}, {"name": "Пессимистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 80, 78, 76, 74, 75, 78, 77], "color": "var(--data-3)", "dash": true}], "label": "Посетители из поиска, октябрь 2024 – апрель 2027", "split": 23, "splitLabel": "прогноз"}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, прогноз по спросу и позициям, данные на 7 октября 2026.</figcaption></figure>
 <div class="ls-cols">
 <div><h3 class="ls-h3">Изменение спроса по темам</h3><ul class="ls-chg"><li><span>Рефинансирование ипотеки</span><span class="ls-chg__v is-up" aria-label="рост +75 %"><span class="ls-chg__a" aria-hidden="true">↑</span>+75 %</span></li><li><span>Кредит под залог автомобиля</span><span class="ls-chg__v" aria-label="падение −46 %"><span class="ls-chg__a" aria-hidden="true">↓</span>−46 %</span></li><li><span>Кредит с плохой историей</span><span class="ls-chg__v" aria-label="падение −44 %"><span class="ls-chg__a" aria-hidden="true">↓</span>−44 %</span></li><li><span>Банкротство физлиц</span><span class="ls-chg__v" aria-label="падение −35 %"><span class="ls-chg__a" aria-hidden="true">↓</span>−35 %</span></li><li><span>Кредит под залог</span><span class="ls-chg__v" aria-label="падение −35 %"><span class="ls-chg__a" aria-hidden="true">↓</span>−35 %</span></li></ul><p class="ls-note">Девять месяцев 2026 года к тем же месяцам 2025-го.</p></div>
 <div><h3 class="ls-h3">Посетителей из поиска в месяц</h3><div class="ls-fc"><div class="ls-fc__grp"><p class="ls-fc__t">Январь 2027</p><div class="ls-fc__row"><span class="ls-fc__nm">Пессимистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:29.6%"></span><span class="ls-fc__val" style="left:29.6%">74</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div><div class="ls-fc__row is-main"><span class="ls-fc__nm">Реалистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:43.6%"></span><span class="ls-fc__val" style="left:43.6%">109</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div><div class="ls-fc__row"><span class="ls-fc__nm">Оптимистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:57.2%"></span><span class="ls-fc__val" style="left:57.2%">143</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div></div><div class="ls-fc__grp"><p class="ls-fc__t">Апрель 2027</p><div class="ls-fc__row"><span class="ls-fc__nm">Пессимистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:30.8%"></span><span class="ls-fc__val" style="left:30.8%">77</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div><div class="ls-fc__row is-main"><span class="ls-fc__nm">Реалистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:57.2%"></span><span class="ls-fc__val" style="left:57.2%">143</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div><div class="ls-fc__row"><span class="ls-fc__nm">Оптимистичный</span><span class="ls-fc__trk"><span class="ls-fc__bar" style="width:82.8%"></span><span class="ls-fc__val" style="left:82.8%">207</span><span class="ls-fc__now" style="left:31.2%" aria-hidden="true"></span></span></div></div><p class="ls-fc__key"><i aria-hidden="true"></i>Сентябрь 2026: 78</p></div><p class="ls-note">При нынешнем спросе. Доля запросов ядра в топ-10 Яндекса к апрелю: 7,5&nbsp;% в реалистичном сценарии и 10,4&nbsp;% в оптимистичном, сейчас 3,9&nbsp;%.</p></div>
 </div>
+<div class="ls-screen-only"><h3 class="ls-h3">Если поднять больше запросов в топ-10</h3><div class="ls-range" data-points='[[3.9, 78], [7.5, 143], [10.4, 207]]' data-now="78" data-outs="sc-outs"><div class="ls-range__h"><label class="ls-range__l" for="sc-share">Доля запросов ядра в топ-10 Яндекса</label><output class="ls-range__o" for="sc-share"></output></div><input id="sc-share" type="range" min="3.9" max="10.4" step="0.1" value="7.5"><div class="ls-range__ax" aria-hidden="true"><span>3,9 % сейчас</span><span>10,4 % оптимистичный</span></div></div><dl class="ls-outs" id="sc-outs" aria-live="polite"><div class="ls-out"><dt>Посетителей из поиска в апреле 2027</dt><dd data-k="vis"></dd></div><div class="ls-out"><dt>К сентябрю 2026</dt><dd data-k="d"></dd></div><div class="ls-out"><dt>Рост</dt><dd data-k="x"></dd></div></dl><p class="ls-note">Между сценариями прогноза по спросу на 7 октября 2026: 3,9 % – 78, 7,5 % – 143, 10,4 % – 207 посетителей. При нынешнем спросе, без учёта сезона.</p></div>
 
 <hr class="ls-pb" aria-hidden="true">
 <h2 class="ls-h2">Новая структура: 13 страниц в октябре, 4 доработки в ноябре</h2>
 <p class="ls-p">До конца ноября главное – страницы услуг. В октябре выходят новые страницы под запросы, где в топе брокеры, а не банки: частный инвестор, залог ипотечной квартиры, перезалог квартиры и перезалог с просрочками, ипотечный брокер. В ноябре дорабатываем действующие: «Перезалог», «Кредит с плохой КИ», «Рефинансирование ипотеки» до январского пика спроса и раздел «Кредит под залог». Статьи блога, подготовленные на октябрь, выходят в ноябре.</p>
 <section class="ls-plan"><div class="ls-plan__h"><h3 class="ls-h3">Октябрь – новые страницы</h3><span class="ls-plan__n">13 новых страниц</span></div><ul><li><span class="ls-plan__pg">Займ от частного инвестора</span><span class="ls-plan__m"><span class="q">частные инвесторы под залог недвижимости</span><span class="v">422 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит под залог ипотечной квартиры</span><span class="ls-plan__m"><span class="q">кредит под залог ипотечной квартиры</span><span class="v">1 008 в мес.</span></span></li><li><span class="ls-plan__pg">Перезалог квартиры</span></li><li><span class="ls-plan__pg">Перезалог с просрочками и арестом</span></li><li><span class="ls-plan__pg">Ипотечный брокер</span><span class="ls-plan__m"><span class="q">помощь с ипотекой</span><span class="v">1 974 в мес.</span></span></li><li><span class="ls-plan__pg">Рефинансирование с большой кредитной нагрузкой</span></li><li><span class="ls-plan__pg">Кредит для ООО</span><span class="ls-plan__m"><span class="q">кредитный брокер для юридических лиц</span><span class="v">186 в мес.</span></span></li><li><span class="ls-plan__pg">Проверка кредитной истории</span><span class="ls-plan__m"><span class="q">проверить кредитную историю онлайн</span><span class="v">13 287 в мес.</span></span></li><li><span class="ls-plan__pg">Калькулятор долговой нагрузки</span><span class="ls-plan__m"><span class="q">калькулятор реструктуризации</span><span class="v">192 в мес.</span></span></li><li><span class="ls-plan__pg">Перезалог авто под ПТС</span><span class="ls-plan__m"><span class="q">перезалог авто под птс</span><span class="v">175 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит под залог на погашение других кредитов</span></li><li><span class="ls-plan__pg">Кредит под залог на миллион рублей</span></li><li><span class="ls-plan__pg">Кредит под залог спецтехники и грузовых авто</span><span class="ls-plan__m"><span class="q">кредит под залог грузового автомобиля</span><span class="v">124 в мес.</span></span></li></ul></section><section class="ls-plan"><div class="ls-plan__h"><h3 class="ls-h3">Ноябрь – доработка действующих</h3><span class="ls-plan__n">4 доработки</span></div><ul><li><span class="ls-plan__pg">Перезалог</span><span class="ls-plan__m"><span class="q">перезалог</span><span class="v">92 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит с плохой КИ</span><span class="ls-plan__m"><span class="q">кредит с плохой кредитной историей</span><span class="v">1 933 в мес.</span></span></li><li><span class="ls-plan__pg">Рефинансирование ипотеки</span></li><li><span class="ls-plan__pg">Кредит под залог, раздел</span><span class="ls-plan__m"><span class="q">кредит под залог недвижимости спб</span><span class="v">3 394 в мес.</span></span></li></ul></section>
+<h3 class="ls-h3">Что будет на каждой странице</h3><div class="ls-acc"><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h1" aria-expanded="false" aria-controls="acc-p1"><span>Займ от частного инвестора</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p1" role="region" aria-labelledby="acc-h1" hidden><p class="ls-p">Ветки нет вовсе, ядро по ней 0 фраз. В топ-10 Яндекс Услуги, Авито, atlantcredit, mbkcredit, binkor, zalog-spb – то есть выдача брокерская, шанс высокий. На старом сайте схема «инвестор – банк» стояла в первом экране.</p><ul class="ls-bullets"><li>Чем частный инвестор отличается от банка: срок решения, ставка, сумма, документы, риски.</li><li>Порядок: оценка, договор, регистрация залога в Росреестре, расписка, как не нарваться на мошенников.</li><li>Что проверяем у инвестора и что фиксируем в договоре (гарантии).</li><li>Таблица «банк – частный инвестор – МФО», калькулятор, FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h2" aria-expanded="false" aria-controls="acc-p2"><span>Кредит под залог ипотечной квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p2" role="region" aria-labelledby="acc-h2" hidden><p class="ls-p">6 фраз в ядре без страницы. В топ-10 блог Домклик, re-finance, mbkcredit, банки; брокерская страница одна (mbkcredit) – шанс средний.</p><ul class="ls-bullets"><li>Можно ли заложить квартиру, пока ипотека не погашена: когда нужно согласие банка, когда нужен перезалог.</li><li>Схемы: рефинансирование с доп. суммой, кредит под вторую очередь залога, закрытие ипотеки новым кредитом.</li><li>Сумма и ставка по примеру расчёта; документы; сроки; ссылка на «Перезалог» и «Рефинансирование ипотеки».</li><li>FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h3" aria-expanded="false" aria-controls="acc-p3"><span>Перезалог квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p3" role="region" aria-labelledby="acc-h3" hidden><p class="ls-p">Мы на 10 месте по «перезалог квартиры», лидер (bank-partner1.ru) держит 1–2 места по 6 фразам кластера. Подстраница нужна, чтобы страница «Перезалог» держала общий запрос, а эта – квартиру.</p><ul class="ls-bullets"><li>Пошагово: оценка, одобрение, погашение старого кредита, снятие и регистрация нового залога.</li><li>Сроки, расходы (оценка, страхование, пошлина), когда перезалог невыгоден.</li><li>Кейс с цифрами, FAQ 6–8 вопросов, таблица банков.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h4" aria-expanded="false" aria-controls="acc-p4"><span>Перезалог с просрочками и арестом</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p4" role="region" aria-labelledby="acc-h4" hidden><p class="ls-p">Лидеры закрывают этот интент отдельными блоками («с просрочками», «с арестом ФССП»). Выдача по «перезалог недвижимости срочно» целиком из узких специалистов.</p><ul class="ls-bullets"><li>Что возможно при просрочке и аресте: банк или частный инвестор, как снимается арест, сроки.</li><li>Риски и как их закрываем в договоре.</li><li>Кейс, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h5" aria-expanded="false" aria-controls="acc-p5"><span>Ипотечный брокер</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p5" role="region" aria-labelledby="acc-h5" hidden><p class="ls-p">По «помощь в получении ипотеки спб» в топ-10 ипотечные брокеры и Карты, bankcreditdeposit на 9 месте с отдельной страницей (8 фраз, 6 500). У нас раздел «Ипотека» – развилка.</p><ul class="ls-bullets"><li>Что делает брокер, когда нужен, сколько стоит и когда платит клиент.</li><li>Кейсы отказов и одобрений, программы, документы, сроки.</li><li>Ссылки на подстраницы ипотеки, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h6" aria-expanded="false" aria-controls="acc-p6"><span>Рефинансирование с большой кредитной нагрузкой</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p6" role="region" aria-labelledby="acc-h6" hidden><p class="ls-p">Ниша из разбора конкурентов: рефинансирование по головным фразам занято банками, работают узкие запросы.</p><ul class="ls-bullets"><li>Что такое ПДН и как банк считает нагрузку (ссылка на статью 20.11.2026).</li><li>Банки, одобряющие при нагрузке выше 50 %, сроки, документы.</li><li>Пример расчёта, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h7" aria-expanded="false" aria-controls="acc-p7"><span>Кредит для ООО</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p7" role="region" aria-labelledby="acc-h7" hidden><p class="ls-p">Кластер «кредит для бизнеса» разбит по формам; у конкурентов подстраницы ИП и ООО (18 фраз).</p><ul class="ls-bullets"><li>Для кого, виды кредитов (оборотный, инвестиционный, овердрафт, лизинг), требования, документы.</li><li>Связь с «Кредит для бизнеса» и «Лизинг», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h8" aria-expanded="false" aria-controls="acc-p8"><span>Проверка кредитной истории</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p8" role="region" aria-labelledby="acc-h8" hidden><p class="ls-p">da.credit собирает 93 фразы на странице про НБКИ и скоринг-бюро, cfr-spb.ru и lioncredit.ru тоже. Это вход в воронку: проверка – диагноз – подбор банка.</p><ul class="ls-bullets"><li>Сервисная страница с формой: что проверяем, что получит клиент, срок, цена.</li><li>Связь со статьями блога про кредитную историю.</li><li>FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h9" aria-expanded="false" aria-controls="acc-p9"><span>Калькулятор долговой нагрузки</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p9" role="region" aria-labelledby="acc-h9" hidden><p class="ls-p">lioncredit.ru собирает запросы отдельным калькулятором реструктуризации, bankcreditdeposit – статьёй «снижаем ПДН». Калькулятор – и запросы, и диагностика клиента.</p><ul class="ls-bullets"><li>Калькулятор (разработка – у Заказчика по п. 2.2.3) и текст вокруг: как считается ПДН, нормативы ЦБ, что делать при ПДН выше 50 %.</li><li>Блок «рассчитайте и получите подбор банка», FAQ.</li><li>Статья про период охлаждения – в блоге.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h10" aria-expanded="false" aria-controls="acc-p10"><span>Перезалог авто под ПТС</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p10" role="region" aria-labelledby="acc-h10" hidden><p class="ls-p">zalog-spb.ru собирает «перезалог авто под птс» (175).</p><ul class="ls-bullets"><li>После страницы «Займ под залог ПТС».</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h11" aria-expanded="false" aria-controls="acc-p11"><span>Кредит под залог на погашение других кредитов</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p11" role="region" aria-labelledby="acc-h11" hidden><p class="ls-p">credit.club собирает 17 и 14 фраз на страницу по сумме и цели. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по цели.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h12" aria-expanded="false" aria-controls="acc-p12"><span>Кредит под залог на миллион рублей</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p12" role="region" aria-labelledby="acc-h12" hidden><p class="ls-p">credit.club: страницы по сумме. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по сумме (1–5 млн).</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h13" aria-expanded="false" aria-controls="acc-p13"><span>Кредит под залог спецтехники и грузовых авто</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p13" role="region" aria-labelledby="acc-h13" hidden><p class="ls-p">Низкий приоритет: мелкий спрос, у конкурентов (zalog-spb, mbkcredit) есть.</p><ul class="ls-bullets"><li>Одна общая страница.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h14" aria-expanded="false" aria-controls="acc-p14"><span>Перезалог</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p14" role="region" aria-labelledby="acc-h14" hidden><p class="ls-p">Страница «Перезалог» давала 90–130 визитов в месяц, треть поискового трафика 2025 года. С января 2026 трафика нет, в топ-10 по «перезалог недвижимости срочно» страницы нет. Кластер 18 фраз в Топвизоре, позиции 2–12.</p><ul class="ls-bullets"><li>Взять за основу структуру старой страницы (Tilda, снимок 13.07.2024): схемы «между банками» и «инвестор – банк», срочность, ставка от 3 %.</li><li>Первый экран: срок, аванс, ставка, сумма, «без предоплаты» (как у bank-partner1.ru и perezalog.com).</li><li>Блоки: перезалог с просрочками, с арестом ФССП, под меньшую ставку, из банка в банк; калькулятор; видео эксперта; цитата эксперта.</li><li>Два–три кейса с суммой, ставкой и сроком (данные даёт клиент); FAQ 6–8 вопросов; таблица «какие банки берут перезалог».</li><li>Ссылки на подстраницы «Перезалог квартиры» и «Перезалог с просрочками и арестом», с главной и раздела «Кредит под залог».</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h15" aria-expanded="false" aria-controls="acc-p15"><span>Кредит с плохой КИ</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p15" role="region" aria-labelledby="acc-h15" hidden><p class="ls-p">Кластер уже в топ-30 Яндекса по 32,1 % запросов, лучший по близости к топ-10. Спрос −44 % за девять месяцев, поэтому дожимать нужно первым и длинными фразами (с просрочками, без отказа, под залог).</p><ul class="ls-bullets"><li>Длинные фразы вместо головной: с просрочками, без отказа, с текущей просрочкой, после банкротства.</li><li>Блок «где реально одобряют»: таблица банков с датой обновления.</li><li>Стоимость, гарантии, цифры опыта, FAQ 6–8 вопросов.</li><li>Кейс по плохой КИ с суммой и ставкой.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h16" aria-expanded="false" aria-controls="acc-p16"><span>Рефинансирование ипотеки</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p16" role="region" aria-labelledby="acc-h16" hidden><p class="ls-p">Единственный крупный кластер ядра с ростом (+75 %), пик в январе. Страница в топ-50 Яндекса не входит. Тексты нужно поставить до декабря, чтобы успеть к январскому пику.</p><ul class="ls-bullets"><li>Условия рефинансирования по банкам, когда выгодно (разница ставок, остаток, срок), когда нет.</li><li>Расчёт на примере: остаток, ставка, срок, экономия.</li><li>Налоговый вычет при рефинансировании, перерегистрация залога, сроки сделки.</li><li>Таблица «какой банк одобрит», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h17" aria-expanded="false" aria-controls="acc-p17"><span>Кредит под залог, раздел</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p17" role="region" aria-labelledby="acc-h17" hidden><p class="ls-p">Раздел – развилка на 700–800 слов, текста для кластера нет. Главная забирает коммерческие кластеры. Головные фразы (102 запроса, 0 в топ-30) занимают банки и агрегаторы, работать нужно длинными.</p><ul class="ls-bullets"><li>Дописать раздел до коммерческой страницы: таблица условий (ставка, сумма, срок, документы), список банков, этапы, сроки.</li><li>Блоки «по типу объекта» со ссылками на подстраницы (квартира, доля, комната, дом, участок, коммерческая, ипотечная квартира).</li><li>Стоимость и гарантии, цифры опыта, кейсы, FAQ 6–8 вопросов, калькулятор.</li></ul></div></div></div>
 
 <h2 class="ls-h2">Что появится на всех страницах услуг</h2>
 <ul class="ls-bullets">
@@ -398,39 +501,98 @@ b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
 </main></div>
 <script>
 (function(){
-var MS=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],ML=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+var MS=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],ML=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],ROMAN=['I','II','III','IV'];
 function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
 function ticks(max){var raw=max/4,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,step=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p,top=Math.ceil(max/step)*step,out=[];for(var v=0;v<=top+1e-9;v+=step)out.push(v);return out}
-function px(x,i){var m=/^(\d{4})-(\d{2})$/.exec(x);var mo=+m[2]-1;return{s:MS[mo],f:ML[mo]+' '+m[1],y:(mo===0||i===0)?m[1]:null}}
+function px(x,i){var m=/^(\d{4})-(\d{2})$/.exec(x);if(!m)return{s:x,f:x,y:null};var mo=+m[2]-1;return{s:MS[mo],f:ML[mo]+' '+m[1],y:(mo===0||i===0)?m[1]:null}}
+function quarters(x,series){var keys=[],idx={};x.forEach(function(m){var k=ROMAN[Math.floor((+m.slice(5)-1)/3)]+' кв. '+m.slice(2,4);if(!(k in idx)){idx[k]=keys.length;keys.push(k)}});
+  return{x:keys,series:series.map(function(s){var v=keys.map(function(){return 0});x.forEach(function(m,i){v[idx[ROMAN[Math.floor((+m.slice(5)-1)/3)]+' кв. '+m.slice(2,4)]]+=s.values[i]||0});return{name:s.name,values:v,color:s.color}})}}
 function render(box){
-  var d=JSON.parse(box.getAttribute('data-chart')),x=d.x,series=d.series,colors=['var(--data-1)','var(--data-2)','var(--data-3)'];
+  var d=JSON.parse(box.getAttribute('data-chart')),st=box._st||{period:'m',hide:{}},series=d.series.map(function(s,i){return{name:s.name,values:s.values,color:'var(--data-'+(i+1)+')'}}).filter(function(s){return!st.hide[s.name]});
+  var data=st.period==='q'?quarters(d.x,series):{x:d.x,series:series},x=data.x;series=data.series;
   var W=Math.round(box.getBoundingClientRect().width)||720,n=x.length,H=Math.round(Math.max(220,Math.min(320,W*0.4)));
   var padL=44,padR=4,padT=10,padB=46,pw=Math.max(10,W-padL-padR),ph=H-padT-padB;
   var totals=x.map(function(_,i){return series.reduce(function(s,se){return s+(se.values[i]||0)},0)});
   var tk=ticks(Math.max.apply(null,totals.concat([1]))),top=tk[tk.length-1];
   var yp=function(v){return padT+ph-(v/top)*ph},band=pw/Math.max(1,n),bw=Math.max(3,Math.min(40,band*0.64)),every=Math.max(1,Math.ceil(30/band));
   var NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
-  svg.setAttribute('class','ls-chart');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('role','img');
-  svg.setAttribute('aria-label',d.label);
+  svg.setAttribute('class','ls-chart');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('role','img');svg.setAttribute('aria-label',d.label);
   function el(t,a,txt){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e}
   tk.forEach(function(t){el('line',{x1:padL,x2:W-padR,y1:yp(t),y2:yp(t),stroke:t===0?'var(--line-strong)':'var(--grid)','stroke-width':1,'shape-rendering':'crispEdges'});el('text',{x:padL-8,y:yp(t)+4,'text-anchor':'end'},fmt(t))});
   var hi=el('rect',{x:0,y:padT,width:band,height:ph,fill:'var(--hover)',visibility:'hidden'});
   x.forEach(function(_,i){var acc=0,cx=padL+i*band+band/2,p=px(x[i],i);
     series.forEach(function(s,si){var v=s.values[i]||0;if(!v)return;var y0=yp(acc),y1=yp(acc+v);acc+=v;var gap=si>0&&acc-v>0?1:0;
-      el('rect',{x:cx-bw/2,y:y1,width:bw,height:Math.max(0,y0-y1-gap),fill:colors[si],'shape-rendering':'crispEdges'})});
+      el('rect',{x:cx-bw/2,y:y1,width:bw,height:Math.max(0,y0-y1-gap),fill:s.color,'shape-rendering':'crispEdges'})});
     if(i%every===0)el('text',{x:cx,y:padT+ph+18,'text-anchor':'middle'},p.s);
     if(p.y)el('text',{'class':'yr',x:cx-bw/2,y:padT+ph+38,'text-anchor':'start'},p.y);
   });
   var tip=box.parentNode.querySelector('.ls-tip');
   x.forEach(function(_,i){var r=el('rect',{'class':'hit',x:padL+i*band,y:padT,width:band,height:ph+padB});
     function show(){hi.setAttribute('x',padL+i*band);hi.setAttribute('visibility','visible');
-      var rows=series.map(function(s,si){return{n:s.name,v:fmt(s.values[i]||0),c:colors[si]}}).reverse();rows.push({n:d.total||'Всего',v:fmt(totals[i])});
+      var rows=series.map(function(s){return{n:s.name,v:fmt(s.values[i]||0),c:s.color}}).reverse();if(series.length>1)rows.push({n:d.total||'Всего',v:fmt(totals[i])});
       tip.innerHTML='<div class="ls-tip__h">'+px(x[i],i).f+'</div>'+rows.map(function(q){return'<div class="ls-tip__r"><span>'+(q.c?'<i style="background:'+q.c+'"></i>':'')+q.n+'</span><b>'+q.v+'</b></div>'}).join('');
       var cx=padL+i*band+band/2,tw=200,left=cx+14+tw>W?Math.max(0,cx-tw-14):cx+14;tip.style.left=left+'px';tip.style.top=Math.max(0,yp(totals[i])-20)+'px';tip.style.display='block'}
     r.addEventListener('pointerenter',show);r.addEventListener('pointerdown',show)});
   svg.addEventListener('pointerleave',function(){hi.setAttribute('visibility','hidden');tip.style.display='none'});
   box.innerHTML='';box.appendChild(svg);
+  var fig=box.closest('.ls-fig'),t=fig&&fig.querySelector('.ls-fig__title');if(t&&d.titles)t.textContent=d.titles[st.period];
+  var lg=fig&&fig.querySelector('.ls-legend');if(lg)lg.style.display=series.length>1?'':'none';
 }
-document.querySelectorAll('[data-chart]').forEach(function(box){render(box);if(window.ResizeObserver){var w=0;new ResizeObserver(function(){var x=Math.round(box.getBoundingClientRect().width);if(x&&x!==w){w=x;render(box)}}).observe(box)}});
+document.querySelectorAll('[data-chart]').forEach(function(box){box._st={period:'m',hide:{}};render(box);
+  if(window.ResizeObserver){var w=0;new ResizeObserver(function(){var x=Math.round(box.getBoundingClientRect().width);if(x&&x!==w){w=x;render(box)}}).observe(box)}});
+/* линейный график: факт сплошной, прогноз пунктиром, подписи у концов линий, перекрестие с подсказкой */
+function renderLine(box){
+  var d=JSON.parse(box.getAttribute('data-line')),x=d.x,series=d.series,n=x.length;
+  var W=Math.round(box.getBoundingClientRect().width)||720,H=Math.round(Math.max(220,Math.min(320,W*0.4))),wide=W>=560;
+  var labW=wide?Math.min(150,Math.max.apply(null,series.map(function(s){return s.name.length*7.6}))+14):8;
+  var padL=52,padR=labW,padT=wide?12:30,padB=46,pw=Math.max(10,W-padL-padR),ph=H-padT-padB;
+  var vals=[];series.forEach(function(s){s.values.forEach(function(v){if(v!=null)vals.push(v)})});
+  var tk=ticks(Math.max.apply(null,vals.concat([1]))),top=tk[tk.length-1];
+  var xp=function(i){return padL+(n<=1?pw/2:(i/(n-1))*pw)},yp=function(v){return padT+ph-(v/top)*ph};
+  var NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('class','ls-chart');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('role','img');svg.setAttribute('aria-label',d.label);
+  function el(t,a,txt){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e}
+  tk.forEach(function(t){el('line',{x1:padL,x2:padL+pw,y1:yp(t),y2:yp(t),stroke:t===0?'var(--line-strong)':'var(--grid)','stroke-width':1,'shape-rendering':'crispEdges'});el('text',{x:padL-8,y:yp(t)+4,'text-anchor':'end'},fmt(t))});
+  if(d.split!=null){var sx=xp(d.split);el('line',{x1:sx,x2:sx,y1:padT,y2:padT+ph,stroke:'var(--text-faint)','stroke-dasharray':'3 3','stroke-width':1});el('text',{x:sx+6,y:padT+12,style:'fill:var(--text-muted)'},d.splitLabel||'прогноз')}
+  var every=Math.max(1,Math.ceil(34/(pw/Math.max(1,n-1))));
+  x.forEach(function(m,i){var p=px(m,i);if(i%every===0)el('text',{x:xp(i),y:padT+ph+18,'text-anchor':'middle'},p.s);if(p.y)el('text',{'class':'yr',x:xp(i),y:padT+ph+38,'text-anchor':'start'},p.y)});
+  var cross=el('line',{x1:0,x2:0,y1:padT,y2:padT+ph,stroke:'var(--line-strong)','stroke-width':1,visibility:'hidden'});
+  series.forEach(function(s){var dd='',prev=false;s.values.forEach(function(v,i){if(v==null){prev=false;return}dd+=(prev?'L':'M')+xp(i).toFixed(1)+' '+yp(v).toFixed(1);prev=true});
+    el('path',{d:dd,fill:'none',stroke:s.color,'stroke-width':s.dash?2:2.5,'stroke-dasharray':s.dash?'6 4':'none','stroke-linejoin':'round','stroke-linecap':'round'})});
+  var dots=series.map(function(s){return el('circle',{r:4,fill:s.color,stroke:'var(--surface-1)','stroke-width':2,visibility:'hidden'})});
+  var ends=series.map(function(s,i){var k=s.values.length-1;while(k>0&&s.values[k]==null)k--;return{i:i,y:yp(s.values[k]),x:xp(k)}}).sort(function(a,b){return a.y-b.y});
+  for(var j=1;j<ends.length;j++)if(ends[j].y-ends[j-1].y<17)ends[j].y=ends[j-1].y+17;
+  ends.forEach(function(e){var s=series[e.i];if(wide)el('text',{'class':'lbl',x:e.x+8,y:e.y+4,style:'fill:'+s.color},s.name);else el('text',{'class':'lbl',x:e.x,y:e.y-10,'text-anchor':'end',style:'fill:'+s.color},s.name)});
+  var tip=box.parentNode.querySelector('.ls-tip');
+  function move(e){var r=svg.getBoundingClientRect(),mx=e.clientX-r.left,i=Math.max(0,Math.min(n-1,Math.round((mx-padL)/pw*(n-1))));
+    cross.setAttribute('x1',xp(i));cross.setAttribute('x2',xp(i));cross.setAttribute('visibility','visible');
+    var rows=[];series.forEach(function(s,si){var v=s.values[i];if(v==null){dots[si].setAttribute('visibility','hidden');return}dots[si].setAttribute('cx',xp(i));dots[si].setAttribute('cy',yp(v));dots[si].setAttribute('visibility','visible');rows.push({n:s.name,v:fmt(v),c:s.color})});
+    tip.innerHTML='<div class="ls-tip__h">'+px(x[i],i).f+'</div>'+rows.map(function(q){return'<div class="ls-tip__r"><span><i style="background:'+q.c+'"></i>'+q.n+'</span><b>'+q.v+'</b></div>'}).join('');
+    var tw=200,left=xp(i)+14+tw>W?Math.max(0,xp(i)-tw-14):xp(i)+14;tip.style.left=left+'px';tip.style.top=padT+'px';tip.style.display='block'}
+  svg.addEventListener('pointermove',move);svg.addEventListener('pointerdown',move);
+  svg.addEventListener('pointerleave',function(){cross.setAttribute('visibility','hidden');dots.forEach(function(c){c.setAttribute('visibility','hidden')});tip.style.display='none'});
+  box.innerHTML='';box.appendChild(svg);
+}
+document.querySelectorAll('[data-line]').forEach(function(box){renderLine(box);if(window.ResizeObserver){var w=0;new ResizeObserver(function(){var x=Math.round(box.getBoundingClientRect().width);if(x&&x!==w){w=x;renderLine(box)}}).observe(box)}});
+/* сегменты: период графика */
+document.querySelectorAll('.ls-seg[data-for]').forEach(function(seg){var box=document.getElementById(seg.getAttribute('data-for')),btns=[].slice.call(seg.querySelectorAll('.ls-seg__o'));
+  function set(i){btns.forEach(function(b,j){b.setAttribute('aria-checked',i===j?'true':'false');b.tabIndex=i===j?0:-1});box._st.period=btns[i].getAttribute('data-value');render(box)}
+  btns.forEach(function(b,i){b.addEventListener('click',function(){set(i)})});
+  seg.addEventListener('keydown',function(e){var i=btns.findIndex(function(b){return b.getAttribute('aria-checked')==='true'}),j=null;
+    if(e.key==='ArrowRight'||e.key==='ArrowDown')j=(i+1)%btns.length;else if(e.key==='ArrowLeft'||e.key==='ArrowUp')j=(i-1+btns.length)%btns.length;else if(e.key==='Home')j=0;else if(e.key==='End')j=btns.length-1;
+    if(j!=null){e.preventDefault();set(j);btns[j].focus()}})});
+/* переключатель: серия на графике */
+document.querySelectorAll('.ls-tgl[data-for]').forEach(function(t){var box=document.getElementById(t.getAttribute('data-for')),name=t.getAttribute('data-series');
+  t.addEventListener('click',function(){var on=t.getAttribute('aria-checked')!=='true';t.setAttribute('aria-checked',on?'true':'false');var dot=t.querySelector('.ls-tgl__dot');if(dot)dot.style.opacity=on?1:.35;box._st.hide[name]=!on;render(box)})});
+/* ползунок: доля в топ-10 -> посетителей */
+document.querySelectorAll('.ls-range[data-points]').forEach(function(r){var pts=JSON.parse(r.getAttribute('data-points')),now=+r.getAttribute('data-now'),inp=r.querySelector('input'),out=r.querySelector('.ls-range__o'),outs=document.getElementById(r.getAttribute('data-outs'));
+  function interp(v){for(var i=1;i<pts.length;i++){if(v<=pts[i][0]){var a=pts[i-1],b=pts[i];return a[1]+(b[1]-a[1])*(v-a[0])/(b[0]-a[0])}}return pts[pts.length-1][1]}
+  function upd(){var v=+inp.value,vis=Math.round(interp(v)),d=vis-now;inp.style.setProperty('--p',((v-inp.min)/(inp.max-inp.min))*100+'%');inp.setAttribute('aria-valuetext',v.toFixed(1).replace('.',',')+' %');
+    out.innerHTML=v.toFixed(1).replace('.',',')+'<small>%</small>';outs.querySelector('[data-k=vis]').textContent='≈ '+fmt(vis);outs.querySelector('[data-k=d]').textContent=(d>=0?'+':'−')+fmt(Math.abs(d));outs.querySelector('[data-k=x]').textContent='×'+(vis/now).toFixed(1).replace('.',',')}
+  inp.addEventListener('input',upd);upd()});
+/* аккордеон */
+document.querySelectorAll('.ls-acc').forEach(function(acc){var btns=[].slice.call(acc.querySelectorAll('.ls-acc__b'));
+  btns.forEach(function(b,i){b.addEventListener('click',function(){var on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',on?'true':'false');document.getElementById(b.getAttribute('aria-controls')).hidden=!on;b.querySelector('.ls-acc__g').textContent=on?'−':'+'});
+    b.addEventListener('keydown',function(e){var j=null;if(e.key==='ArrowDown')j=(i+1)%btns.length;else if(e.key==='ArrowUp')j=(i-1+btns.length)%btns.length;else if(e.key==='Home')j=0;else if(e.key==='End')j=btns.length-1;if(j!=null){e.preventDefault();btns[j].focus()}})})});
 })();
 </script></body></html>
