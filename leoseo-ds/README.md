@@ -12,12 +12,15 @@
 
 - `styles.css` — точка входа, одни `@import`.
 - `tokens/fonts.css` — Manrope (заголовки, цифры) и Golos Text (текст) с Google Fonts.
-- `tokens/colors.css` — тёмная тема по умолчанию, `data-theme="light"` для светлой, `@media print` всегда светлая.
-- `tokens/typography.css`, `tokens/spacing.css`, `tokens/base.css` — шкала, отступы, элементы, печать.
+- `tokens/colors.css` — единственная экранная тема тёмная; светлая палитра только для печати (`@media print`) и превью `data-theme="print"`.
+- `tokens/typography.css`, `tokens/spacing.css`, `tokens/base.css` — шкала, отступы, элементы, печать; в `base.css` фоновая картинка сайта `body::before` (`bg-leoseo.webp`, плотность 18 %), отключается классом `ls-no-art`.
 - `components/components.css` — классы: `ls-page`, `ls-head`, `ls-h1/h2/h3`, `ls-lead`, `ls-p`, `ls-bullets`, `ls-note`,
   `ls-quote`, `ls-conc` (вывод), `ls-fig` + `ls-legend` + `ls-chart` + `ls-tip` (графики), `ls-table` + `ls-share`,
-  `ls-chg` (изменения), `ls-why` (причины), `ls-plan` + `ls-tag` (план по месяцам), `ls-fc` (прогноз), `ls-sign`, `ls-cols`.
-- `assets/` — логотип для тёмного (`-light`) и светлого (`-dark`) фона.
+  `ls-chg` (изменения), `ls-why` (причины), `ls-plan` + `ls-tag` (план по месяцам), `ls-fc` (прогноз), `ls-sign`, `ls-cols`;
+  интерактив: `ls-card`/`ls-cards` (карточки метрика/страница/задача), `ls-seg` (сегменты), `ls-tabs`, `ls-tgl` (переключатель), `ls-range` + `ls-outs` (ползунок и выводы), `ls-acc` (аккордеон), `ls-car` (карусель), `ls-prog` (прогресс). Поведение – на странице своим JS (образец в build_demo.py).
+- `assets/` — логотип для тёмного (`-light`) и светлого (`-dark`) фона, фон сайта `bg-leoseo.webp`.
+
+Ширина контента в системе 1080 px; в демо по просьбе Леонида (16.10.2026) переопределяется на 1440 px (`--content-max`).
 
 ## Как подключать в демо
 
