@@ -1,0 +1,21 @@
+/* 8 px step. --sp-h (4 px) only inside dense rows. */
+:root{
+  --sp-h:4px;
+  --sp-1:8px;--sp-2:16px;--sp-3:24px;--sp-4:32px;--sp-5:40px;--sp-6:48px;--sp-7:64px;--sp-8:80px;--sp-9:96px;
+
+  --content-max:1080px;   /* page column */
+  --page-pad:24px;        /* side padding */
+  --hit:44px;             /* min tap target */
+
+  --radius:0;             /* straight corners; 2 px max for tiny marks, never above 4 */
+  --border:1px;           /* thin lines instead of shadows */
+  --rule-accent:2px;      /* «Вывод» left rule */
+
+  /* semantic */
+  --space-section:var(--sp-8);  /* above H2 */
+  --space-block:var(--sp-3);    /* between figure/table and text */
+  --space-para:var(--sp-2);
+}
+@media (max-width:600px){
+  :root{--page-pad:16px;--space-section:var(--sp-7)}
+}

@@ -1,0 +1,87 @@
+/* LEOSEO — colour tokens. Dark is the default (:root); light is for print/PDF.
+   Both themes share one set of semantic names. Contrast notes are against --bg. */
+
+:root{
+  /* raw — ink (dark theme) */
+  --n-bg:#08080a;--n-s1:#0d0d10;--n-s2:#131318;--n-grid:#1f1f26;
+  --ink-0:#f6f3ee;--ink-1:#e8e4dd;--ink-2:#a39c92;--ink-3:#8a8278;--ink-4:#6e675e;
+  /* raw — paper (light theme) */
+  --p-bg:#ffffff;--p-s1:#f7f5f1;--p-s2:#efece6;--p-grid:#e7e3dc;
+  --pk-0:#14161a;--pk-1:#2b2824;--pk-2:#544e46;--pk-3:#6e675e;
+  /* raw — copper */
+  --cu-300:#e0a268;--cu-500:#c1814e;--cu-600:#b06f3c;--cu-700:#985e30;
+  /* raw — blue (data) */
+  --blue-500:#5b8fd6;--blue-700:#3d6fb8;
+  /* raw — sand (third data series) */
+  --sand-500:#7a7268;--sand-600:#8a8278;
+}
+
+:root{
+  color-scheme:dark;
+  --bg:var(--n-bg);              /* page */
+  --surface-1:var(--n-s1);       /* figures, plan cards */
+  --surface-2:var(--n-s2);       /* tooltip, hover */
+  --text-strong:var(--ink-0);    /* headings, lead, key numbers — 18.6:1 */
+  --text-body:var(--ink-1);      /* running text — 15.9:1 */
+  --text-muted:var(--ink-2);     /* table heads, legend — 7.4:1 */
+  --text-faint:var(--ink-3);     /* source, captions — 5.3:1 */
+  --line:rgba(246,243,238,.09);  /* row dividers */
+  --line-strong:rgba(246,243,238,.16); /* H2 rule, frames */
+  --grid:var(--n-grid);          /* chart gridlines — barely visible */
+  --accent:var(--cu-500);        /* copper: one accent per screen — 6.2:1 */
+  --accent-text:var(--cu-300);   /* copper as text/link — 8.9:1 */
+  --accent-line:var(--cu-500);
+  --data-1:var(--blue-500);      /* main series — 6.1:1 */
+  --data-2:var(--cu-500);        /* highlighted series — 6.2:1 */
+  --data-3:var(--sand-500);      /* context series — 4.1:1 */
+  --up:var(--cu-300);            /* growth: always with ↑ and + */
+  --down:var(--ink-0);           /* decline: always with ↓ and − */
+  --focus:var(--cu-300);
+  --hover:rgba(246,243,238,.04);
+}
+
+[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:var(--n-bg);--surface-1:var(--n-s1);--surface-2:var(--n-s2);
+  --text-strong:var(--ink-0);--text-body:var(--ink-1);--text-muted:var(--ink-2);--text-faint:var(--ink-3);
+  --line:rgba(246,243,238,.09);--line-strong:rgba(246,243,238,.16);--grid:var(--n-grid);
+  --accent:var(--cu-500);--accent-text:var(--cu-300);--accent-line:var(--cu-500);
+  --data-1:var(--blue-500);--data-2:var(--cu-500);--data-3:var(--sand-500);
+  --up:var(--cu-300);--down:var(--ink-0);--focus:var(--cu-300);--hover:rgba(246,243,238,.04);
+}
+
+[data-theme="light"]{
+  color-scheme:light;
+  --bg:var(--p-bg);              /* white paper */
+  --surface-1:var(--p-s1);
+  --surface-2:var(--p-s2);
+  --text-strong:var(--pk-0);     /* 17.8:1 */
+  --text-body:var(--pk-1);       /* 14.6:1 */
+  --text-muted:var(--pk-2);      /* 8.2:1 */
+  --text-faint:var(--pk-3);      /* 5.6:1 */
+  --line:rgba(20,22,26,.12);
+  --line-strong:rgba(20,22,26,.24);
+  --grid:var(--p-grid);
+  --accent:var(--cu-600);        /* 4.0:1 graphics */
+  --accent-text:var(--cu-700);   /* 5.0:1 text */
+  --accent-line:var(--cu-600);
+  --data-1:var(--blue-700);      /* 5.0:1 */
+  --data-2:var(--cu-600);        /* 4.0:1 */
+  --data-3:var(--sand-600);      /* 3.8:1 */
+  --up:var(--cu-700);
+  --down:var(--pk-0);
+  --focus:var(--cu-700);
+  --hover:rgba(20,22,26,.04);
+}
+
+@media print{
+  :root,[data-theme="dark"]{
+    color-scheme:light;
+    --bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+    --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+    --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+    --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+    --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+    --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:transparent;
+  }
+}

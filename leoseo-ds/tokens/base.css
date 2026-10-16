@@ -1,0 +1,22 @@
+/* Element defaults for report pages + print geometry. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text-body);font:var(--text-body-font);font-feature-settings:"kern"}
+a{color:var(--accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--text-strong)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
+::selection{background:var(--accent);color:var(--n-bg)}
+
+.ls-screen-only{}
+.ls-print-only{display:none}
+.ls-break-before{}
+.ls-avoid-break{break-inside:avoid}
+
+@page{size:A4;margin:18mm 16mm 18mm 16mm}
+@media print{
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ls-screen-only{display:none!important}
+  .ls-print-only{display:block}
+  .ls-break-before{break-before:page}
+}
