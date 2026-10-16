@@ -142,6 +142,44 @@
   :root{--page-pad:16px;--space-section:var(--sp-7)}
 }
 
+/* tokens/motion.css */
+/* LEOSEO — motion, focus and state tokens (mechanics from leoseo.ru).
+   Motion is a response to hover / press only. Nothing animates on scroll. */
+:root{
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* durations: colour+border / lift+rotate / sheen; lifts: card hover / tilt card */
+  --dur-fast:.16s;
+  --dur-lift:.26s;
+  --dur-sheen:.9s;
+  --lift:-2px;
+  --tilt-lift:-6px;
+  --tilt-max:5deg;
+
+  --focus-ring-color:var(--cu-300);  /* #e0a268 */
+  --focus-ring-width:2px;
+  --focus-ring-offset:2px;
+
+  --copper-tint:rgba(193,129,78,.12);   /* selected chip, copper badge */
+  --copper-edge:rgba(193,129,78,.55);   /* copper badge border */
+  --bar-bg:rgba(13,13,16,.72);          /* sticky toolbar */
+  --bar-bg-scrolled:rgba(8,8,10,.9);
+  --bar-blur:14px;
+  --bar-h:60px;
+
+  --state-error:#e07a5f;    /* 6.6:1 on --bg-deep; always with «!» and text */
+  --state-success:#8cbf9a;  /* 9.3:1 on --bg-deep; always with «✓» and text */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --dur-fast:0s;
+    --dur-lift:0s;
+    --dur-sheen:0s;
+    --lift:0px;
+    --tilt-lift:0px;
+    --tilt-max:0deg;
+  }
+}
+
 /* tokens/base.css */
 /* Element defaults for report pages + print geometry. */
 *,*::before,*::after{box-sizing:border-box}
@@ -429,6 +467,198 @@ a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);colo
 .ls-prog__k i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
 @media (max-width:600px){.ls-seg__o{min-height:44px}}
 
+/* components/mechanics.css */
+/* LEOSEO — interaction layer (leo-*). Adds hover/press motion, focus, buttons, chips, badges,
+   sticky toolbar, form states. Base ls-* rules stay untouched; refinements below extend them.
+   Doc-only forced states: .is-hover / .is-active / .is-focus mirror :hover / :active / :focus-visible. */
+
+/* focus — everywhere */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible,
+.is-focus{outline:var(--focus-ring-width) solid var(--focus-ring-color)!important;outline-offset:var(--focus-ring-offset)!important}
+.ls-range input:focus-visible{outline:none!important}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.ls-range input:focus-visible::-moz-range-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+@media (min-width:601px){.ls-tabs{overflow:visible}}
+
+/* arrows & links */
+.leo-arrow{display:inline-block;transition:transform var(--dur-lift) var(--ease)}
+:is(a,button,.leo-card):is(:hover,.is-hover)>.leo-arrow,
+:is(a,button,.leo-card):is(:hover,.is-hover) .leo-reveal .leo-arrow{transform:translateX(4px)}
+.leo-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent-text);font:var(--fw-semibold) var(--fs-2)/1.4 var(--font-display);text-decoration:none;transition:color var(--dur-fast) var(--ease)}
+.leo-link:is(:hover,.is-hover){color:var(--text-strong)}
+
+/* ───── buttons ───── */
+.leo-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-1);min-height:44px;padding:0 20px;font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;border:1px solid transparent;border-radius:0;cursor:pointer;text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-btn--sm{min-height:36px;padding:0 14px}
+.leo-btn--lg{min-height:52px;padding:0 28px;font-size:var(--fs-2)}
+.leo-btn--block{display:flex;width:100%}
+@media (max-width:600px){.leo-btn--sm{min-height:44px}}
+.leo-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--n-deep)}
+.leo-btn--primary:is(:hover,.is-hover){background:var(--cu-300);border-color:var(--cu-300);color:var(--n-deep)}
+.leo-btn--primary:is(:active,.is-active){background:var(--cu-600);border-color:var(--cu-600);transform:translateY(1px)}
+.leo-btn--outline{background:var(--bg);border-color:var(--line-strong);color:var(--text-strong)}
+.leo-btn--outline:is(:hover,.is-hover){border-color:var(--accent-line);color:var(--accent-text)}
+.leo-btn--outline:is(:active,.is-active){background:var(--surface-2);transform:translateY(1px)}
+.leo-btn--ghost{background:transparent;color:var(--text-muted)}
+.leo-btn--ghost:is(:hover,.is-hover){background:var(--hover);color:var(--text-strong)}
+.leo-btn--ghost:is(:active,.is-active){background:rgba(246,243,238,.08);transform:translateY(1px)}
+.leo-btn:is(:disabled,[aria-disabled="true"]):not(.is-loading){background:transparent;border-color:var(--line);color:var(--text-faint);opacity:.6;cursor:not-allowed;transform:none}
+.leo-btn--ghost:is(:disabled,[aria-disabled="true"]):not(.is-loading){border-color:transparent}
+.leo-btn.is-loading{cursor:progress}
+.leo-btn.is-loading:is(:hover,:active){transform:none}
+.leo-spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;flex:none;animation:leo-rot .7s linear infinite}
+@keyframes leo-rot{to{transform:rotate(1turn)}}
+
+/* glow wrapper: copper edge rests in one corner, rotates on hover / focus */
+.leo-glow{position:relative;display:inline-flex;padding:1px;isolation:isolate;overflow:hidden;background:var(--line-strong);vertical-align:middle}
+.leo-glow--block{display:flex;width:100%}
+.leo-glow::before{content:"";position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;translate:-50% -50%;z-index:-1;
+  background:conic-gradient(from 0deg,transparent 0 62%,var(--cu-300) 80%,transparent 92%);animation:leo-rot 3.2s linear infinite;animation-play-state:paused}
+.leo-glow:is(:hover,:focus-within,.is-hover)::before{animation-play-state:running}
+.leo-glow>.leo-btn{border-color:transparent;flex:1}
+.leo-glow>.leo-btn--outline{background:var(--bg)}
+
+/* ───── cards (extends .ls-card) ───── */
+.leo-card{position:relative;overflow:hidden;cursor:pointer;
+  transition:transform var(--dur-lift) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-card:is(:hover,.is-hover){transform:translateY(var(--lift));border-color:var(--accent-line)}
+.leo-card:is(:active,.is-active){transform:translateY(0)}
+.leo-card[data-tilt]{transform-style:preserve-3d;will-change:transform}
+.leo-card[data-tilt].is-tilting{transition:transform .08s linear,border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-sheen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(246,243,238,.08) 50%,transparent 70%);transform:translateX(-110%)}
+.leo-sheen:is(:hover,.is-hover)::after{transform:translateX(110%);transition:transform var(--dur-sheen) var(--ease)}
+.leo-reveal{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp-1);font:var(--fw-semibold) var(--fs-1)/1.4 var(--font-display);color:var(--accent-text);opacity:0;transform:translateY(4px);
+  transition:opacity var(--dur-fast) var(--ease),transform var(--dur-lift) var(--ease)}
+.leo-card:is(:hover,:focus-visible,.is-hover) .leo-reveal{opacity:1;transform:none}
+@media (hover:none){.leo-reveal{opacity:1;transform:none}}
+.ls-card.is-featured{background:var(--surface-2);border-color:var(--accent-line)}
+.ls-card__badge{position:absolute;top:var(--sp-2);right:var(--sp-2)}
+.ls-card.is-featured .ls-card__top{padding-right:96px}
+@media print{.leo-reveal{display:none}.leo-card{transform:none!important}}
+
+/* ───── chips & badges ───── */
+.leo-chips{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1);margin:var(--sp-2) 0 0}
+.leo-chip{display:inline-flex;align-items:center;gap:var(--sp-1);min-height:36px;padding:0 14px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-medium) var(--fs-1)/1 var(--font-text);cursor:pointer;border-radius:0;
+  transition:color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-chip:is(:hover,.is-hover){color:var(--text-strong);border-color:var(--text-faint)}
+.leo-chip:is(:active,.is-active){transform:translateY(1px)}
+.leo-chip[aria-pressed="true"]{background:var(--copper-tint);border-color:var(--accent-line);color:var(--text-strong)}
+.leo-chip:disabled{opacity:.45;cursor:not-allowed;transform:none;color:var(--text-faint);border-color:var(--line)}
+.leo-chip__n{font:var(--fw-semibold) var(--fs-1)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-faint)}
+.leo-chip[aria-pressed="true"] .leo-chip__n{color:var(--accent-text)}
+.leo-chips__s{margin-left:auto;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums}
+@media (max-width:600px){.leo-chip{min-height:44px}.leo-chips__s{margin-left:0;width:100%}}
+@media print{.leo-chips{display:none}}
+
+.leo-badge,.ls-tag,.ls-status{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;white-space:nowrap;vertical-align:middle}
+.leo-badge--copper,.ls-tag.is-new{color:var(--accent-text);border-color:var(--copper-edge);background:var(--copper-tint)}
+.leo-badge--mono{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);background:var(--bg-deep)}
+.leo-badge--dot,.ls-status,.ls-status:is(.is-done,.is-doing,.is-todo){border-color:transparent;padding-left:0;background:transparent}
+.leo-badge--dot::before,.ls-status::before{content:"";width:7px;height:7px;background:currentColor;flex:none}
+.leo-badge--dot.is-copper,.ls-status.is-doing{color:var(--accent-text)}
+.leo-badge--dot.is-ink,.ls-status.is-done{color:var(--text-strong)}
+.leo-badge--dot.is-faint,.ls-status.is-todo{color:var(--text-faint)}
+.ls-status.is-todo::before,.leo-badge--dot.is-faint::before{background:transparent;border:1px solid currentColor}
+
+/* ───── segments, tabs, accordion ───── */
+.ls-seg__o{transition:color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.ls-seg__o:is(:hover,.is-hover):not(:disabled){color:var(--text-strong);background:var(--hover)}
+.ls-seg__o:is(:active,.is-active):not(:disabled){background:rgba(246,243,238,.08)}
+.ls-seg__o[aria-checked="true"]{background:var(--surface-2);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-seg__o:disabled{color:var(--text-faint);opacity:.45;cursor:not-allowed}
+.ls-tabs .ls-seg__o{box-shadow:inset 0 -2px 0 transparent;transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.ls-tabs .ls-seg__o:is(:hover,.is-hover):not(:disabled){background:none;box-shadow:inset 0 -2px 0 var(--line-strong)}
+.ls-tabs .ls-seg__o[aria-selected="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-acc__b{transition:color var(--dur-fast) var(--ease)}
+.ls-acc__b:is(:hover,.is-hover){color:var(--accent-text)}
+.ls-acc__g{font-size:0;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.ls-acc__g::before{content:"+";display:block;font:var(--fw-medium) 20px/1 var(--font-display);transition:transform var(--dur-lift) var(--ease)}
+.ls-acc__b[aria-expanded="true"] .ls-acc__g::before{transform:rotate(45deg)}
+.ls-acc__b:is(:hover,.is-hover) .ls-acc__g{border-color:var(--accent-line);color:var(--accent-text)}
+
+/* ───── tooltips, table rows, carousel, slider ───── */
+.ls-table tbody tr{transition:background-color var(--dur-fast) var(--ease)}
+.ls-table tbody tr:is(:hover,.is-hover){background:var(--hover)}
+.ls-table tbody tr:is(:hover,.is-hover) td:first-child{color:var(--text-strong)}
+.ls-car__trk{padding-block:var(--sp-1);margin-block:calc(-1 * var(--sp-1))}
+.ls-car__btn{transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-car__btn:is(:hover,.is-hover):not(:disabled){border-color:var(--accent-line);color:var(--accent-text);background:var(--bg-deep)}
+.ls-car__btn:is(:active,.is-active):not(:disabled){transform:translateY(1px)}
+.ls-car__btn:disabled{opacity:.5;cursor:not-allowed}
+.ls-car__dot span{transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease)}
+.ls-car__dot:hover span{border-color:var(--text-strong)}
+.ls-range input::-webkit-slider-thumb{transition:background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-range input:hover::-webkit-slider-thumb{background:var(--cu-300)}
+.ls-range input:active::-webkit-slider-thumb{background:var(--accent);transform:scale(1.1)}
+.ls-range input:hover::-moz-range-thumb{background:var(--cu-300)}
+.ls-range input:active{cursor:grabbing}
+.ls-range.is-disabled{opacity:.5}
+.ls-range input:disabled{cursor:not-allowed}
+.ls-range input:disabled::-webkit-slider-thumb{background:var(--text-faint)}
+.ls-range input:disabled::-moz-range-thumb{background:var(--text-faint)}
+.ls-range.is-disabled input::-webkit-slider-runnable-track{background:var(--bg-deep)}
+
+.leo-hint{position:relative;display:inline;border-bottom:1px dotted var(--text-faint);cursor:help;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.leo-hint:is(:hover,:focus-visible,.is-hover){border-bottom-color:var(--accent);color:var(--text-strong)}
+.leo-hint__b{position:absolute;left:0;bottom:calc(100% + 8px);z-index:6;width:max-content;max-width:min(300px,80vw);background:var(--surface-2);border:1px solid var(--line-strong);padding:var(--sp-1) 12px;font:var(--text-small);color:var(--text-strong);text-align:left;white-space:normal;
+  opacity:0;visibility:hidden;transform:translateY(4px);pointer-events:none;transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease),visibility var(--dur-fast)}
+.leo-hint:is(:hover,:focus-visible,.is-hover) .leo-hint__b{opacity:1;visibility:visible;transform:none}
+@media print{.leo-hint{border-bottom:0}.leo-hint__b{display:none}}
+
+/* ───── sticky report toolbar ───── */
+.leo-bar{position:sticky;top:0;z-index:30;background:var(--bar-bg);-webkit-backdrop-filter:blur(var(--bar-blur));backdrop-filter:blur(var(--bar-blur));border-bottom:1px solid var(--line)}
+.leo-bar.is-scrolled{background:var(--bar-bg-scrolled)}
+.leo-bar__in{max-width:var(--content-max);margin:0 auto;padding:0 var(--page-pad);min-height:var(--bar-h);display:flex;align-items:center;gap:var(--sp-3)}
+.leo-bar__nav{display:flex;flex:1;min-width:0;gap:var(--sp-h);overflow-x:auto;scrollbar-width:none}
+.leo-bar__nav::-webkit-scrollbar{display:none}
+.leo-bar__a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;color:var(--text-muted);text-decoration:none;font:var(--fw-medium) var(--fs-1)/1 var(--font-display);white-space:nowrap;box-shadow:inset 0 -2px 0 transparent;
+  transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.leo-bar__a:is(:hover,.is-hover){color:var(--text-body)}
+.leo-bar__a[aria-current="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.leo-bar__a:focus-visible{outline-offset:-2px!important}
+.ls-h2[id]{scroll-margin-top:calc(var(--bar-h) + var(--sp-2))}
+@media (max-width:600px){.leo-bar__in{gap:var(--sp-2)}.leo-bar .ls-logo{display:none}}
+@media print{.leo-bar{display:none!important}}
+
+/* ───── form ───── */
+.leo-form{display:grid;gap:var(--sp-3);max-width:36em;margin:var(--space-block) 0}
+.leo-field{display:grid;gap:6px}
+.leo-field__l{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted)}
+.leo-field__l i{font-style:normal;color:var(--text-faint)}
+.leo-input{width:100%;min-height:48px;padding:12px 14px;background:var(--bg-deep);border:1px solid var(--line-strong);border-radius:0;color:var(--text-strong);font:var(--text-body-font);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+textarea.leo-input{min-height:120px;resize:vertical;line-height:1.5}
+.leo-input::placeholder{color:var(--text-faint)}
+.leo-input:is(:hover,.is-hover):not(:disabled){border-color:var(--text-faint)}
+.leo-input:is(:focus,.is-focus){border-color:var(--accent-line);background:var(--n-deep)}
+.leo-field.is-error .leo-input{border-color:var(--state-error)}
+.leo-field.is-success .leo-input{border-color:var(--state-success)}
+.leo-input:disabled{opacity:.5;cursor:not-allowed}
+.leo-field__m{display:flex;gap:var(--sp-1);align-items:baseline;font:var(--text-small);color:var(--text-faint);margin:0}
+.leo-field.is-error .leo-field__m{color:var(--state-error)}
+.leo-field.is-success .leo-field__m{color:var(--state-success)}
+.leo-field__ic{display:inline-grid;place-items:center;width:16px;height:16px;flex:none;border:1px solid currentColor;font:var(--fw-bold) 11px/1 var(--font-display);transform:translateY(2px)}
+.leo-check{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:10px 0;cursor:pointer;font:var(--text-small);color:var(--text-muted);position:relative}
+.leo-check input{position:absolute;opacity:0;width:20px;height:20px;margin:0;top:10px;left:0}
+.leo-check__b{display:grid;place-items:center;width:20px;height:20px;flex:none;border:1px solid var(--line-strong);background:var(--bg-deep);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-check:is(:hover,.is-hover) .leo-check__b{border-color:var(--accent-line)}
+.leo-check input:checked+.leo-check__b{background:var(--accent);border-color:var(--accent)}
+.leo-check input:checked+.leo-check__b::after{content:"✓";font:var(--fw-bold) 14px/1 var(--font-display);color:var(--n-deep)}
+.leo-check input:focus-visible+.leo-check__b,.leo-check.is-focus .leo-check__b{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.leo-check.is-error .leo-check__b{border-color:var(--state-error)}
+.leo-check.is-disabled{opacity:.5;cursor:not-allowed}
+.leo-check a{color:var(--accent-text)}
+
+/* reduced motion: everything off */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0s!important;animation:none!important}
+  .leo-card,.leo-card[data-tilt]{transform:none!important}
+  .leo-sheen::after{display:none}
+  .leo-reveal{opacity:1;transform:none}
+}
+
 /* страница демо */
 :root{--content-max:1440px}
 .ls-tw{overflow-x:auto}
@@ -442,23 +672,27 @@ a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);colo
 @bottom-right{content:counter(page) " / " counter(pages);font:500 9pt Manrope,sans-serif;color:#6e675e}}
 @page:first{@top-left{content:none}@top-right{content:none}}
 </style></head><body>
-<div class="ls-page"><main class="ls-page__inner">
+<div class="ls-page" id="top">
+<div class="leo-bar"><div class="leo-bar__in"><a href="#top" aria-label="LEOSEO, к началу отчёта" style="display:inline-flex;min-height:44px;align-items:center"><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:18px"></span></a>
+<nav class="leo-bar__nav" aria-label="Разделы отчёта"><a class="leo-bar__a" href="#traffic">Трафик</a><a class="leo-bar__a" href="#reasons">Причины</a><a class="leo-bar__a" href="#demand">Спрос и прогноз</a><a class="leo-bar__a" href="#plan">План</a><a class="leo-bar__a" href="#pages">Страницы услуг</a></nav>
+<span class="leo-glow"><button type="button" class="leo-btn leo-btn--outline leo-btn--sm" onclick="window.print()">Печать / PDF</button></span></div></div>
+<main class="ls-page__inner">
 <header class="ls-head">
-<div class="ls-head__bar"><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:20px"></span><span class="ls-head__client">Аналитика · eco-capital.ru</span></div>
+<div class="ls-head__bar"><span class="ls-head__client">Аналитика · eco-capital.ru</span></div>
 <h1 class="ls-h1">Почему падает поисковый трафик eco-capital.ru и что мы меняем</h1>
 <dl class="ls-head__meta"><div><dt>Период</dt><dd>январь 2025 – сентябрь 2026</dd></div><div><dt>Источники</dt><dd>Яндекс Метрика, Вебмастер, Search Console, Вордстат, Топвизор (Санкт-Петербург)</dd></div><div><dt>Данные на</dt><dd>7 октября 2026</dd></div></dl>
 </header>
 
 <p class="ls-lead">В 2025 году сайт стабильно получал из поиска 280–340 визитов в месяц, в сентябре 2026 года – 98. Сайт исправен: санкций, ошибок индексации и технических поломок нет. Трафик забрали три вещи: рынок сжался, пропала страница «Перезалог», а коммерческую выдачу заняли банки и сервисы Яндекса.</p>
 
-<h2 class="ls-h2">Треть трафика давала одна страница, и её не стало</h2>
+<h2 class="ls-h2" id="traffic">Треть трафика давала одна страница, и её не стало</h2>
 <p class="ls-p">В 2025 году страница «Перезалог» приносила 90–130 визитов в месяц. С января 2026 года её визиты обнулились и не вернулись после переезда на новый сайт.</p>
 <div class="ls-controls ls-screen-only"><div class="ls-seg" role="radiogroup" aria-label="Шаг графика" data-for="ch-traffic"><button type="button" class="ls-btn-reset ls-seg__o" role="radio" aria-checked="true" tabindex="0" data-value="m">Месяцы</button><button type="button" class="ls-btn-reset ls-seg__o" role="radio" aria-checked="false" tabindex="-1" data-value="q">Кварталы</button></div><button type="button" class="ls-btn-reset ls-tgl" role="switch" aria-checked="true" data-for="ch-traffic" data-series="«Перезалог»"><span class="ls-tgl__sw" aria-hidden="true"></span><i class="ls-tgl__dot" style="background:var(--data-2)" aria-hidden="true"></i><span>«Перезалог» отдельно</span></button></div>
 <figure class="ls-fig"><p class="ls-fig__title">Визиты из поиска по месяцам</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i style="background:var(--data-1)"></i>Остальные страницы</li><li><i style="background:var(--data-2)"></i>«Перезалог»</li></ul><div class="ls-fig__wrap"><div id="ch-traffic" data-chart='{"x": ["2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09"], "series": [{"name": "Остальные страницы", "values": [188, 205, 239, 177, 155, 169, 193, 126, 195, 160, 96, 123, 237, 269, 117, 209, 135, 135, 112, 124, 98]}, {"name": "«Перезалог»", "values": [90, 104, 105, 132, 131, 113, 90, 71, 62, 84, 76, 78, 0, 0, 0, 0, 0, 15, 0, 0, 0]}], "label": "Визиты из поиска, январь 2025 – сентябрь 2026", "total": "Всего", "titles": {"m": "Визиты из поиска по месяцам", "q": "Визиты из поиска по кварталам"}}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, данные на 7 октября 2026.</figcaption></figure>
 <h3 class="ls-h3">Сентябрь 2026 коротко</h3>
 <div class="ls-cards"><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Визиты из поиска</h4></div><p class="ls-card__v">98</p><p class="ls-card__c"><span class="ls-card__chg">↓ −62 %</span> к сентябрю 2025</p><svg class="ls-card__spark" viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label="Визиты из поиска за 13 месяцев"><polyline points="0.00,5.11 8.33,7.39 16.67,20.02 25.00,14.93 33.33,8.61 41.67,3.00 50.00,29.67 58.33,13.53 66.67,26.51 75.00,23.88 83.33,30.54 91.67,28.44 100.00,33.00" fill="none" stroke="var(--data-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Запросов в топ-10 Яндекса</h4></div><p class="ls-card__v">38–48</p><p class="ls-card__c">до переезда на новый сайт было 3</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Отказы из поиска</h4></div><p class="ls-card__v">22 %</p><p class="ls-card__c"><span class="ls-card__chg is-up">↑ +8</span> п. п. за год</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Заявок с сайта</h4></div><p class="ls-card__v">17</p><p class="ls-card__c"><span class="ls-card__chg">↓ −53 %</span> к сентябрю 2025<br>форма, звонок, мессенджер</p><svg class="ls-card__spark" viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label="Заявки за 13 месяцев"><polyline points="0.00,20.37 8.33,3.53 16.67,15.63 25.00,11.42 33.33,19.32 41.67,3.00 50.00,25.63 58.33,23.00 66.67,23.00 75.00,33.00 83.33,26.68 91.67,22.47 100.00,30.37" fill="none" stroke="var(--data-1)" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg></article></div>
 
-<h2 class="ls-h2">Четыре причины</h2>
+<h2 class="ls-h2" id="reasons">Четыре причины</h2>
 <ol class="ls-why">
 <li><h3 class="ls-h3">Спрос в нише упал в 1,5–3 раза</h3>
 <p class="ls-p">По главному запросу сайта «помощь в получении кредита» осталась треть спроса 2025 года. Брендовый спрос упал вдвое в те месяцы, когда не работала реклама в Директе.</p>
@@ -468,12 +702,12 @@ a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);colo
 <li><h3 class="ls-h3">Выдачу заняли сервисы Яндекса и банки</h3>
 <p class="ls-p">По «кредитный брокер спб» половину топ-10 занимают Яндекс Карты, Услуги, Авито и 2ГИС. По «кредит под залог недвижимости» и «рефинансированию» в топ-20 только банки и агрегаторы. Поэтому растём на длинных запросах и в нишах, где в топе брокеры.</p></li>
 <li><h3 class="ls-h3">Коммерческие запросы забирает главная</h3>
-<p class="ls-p">После переезда число запросов в топ-10 Яндекса выросло с 3 до 38–48, но 42 из 128 запросов топ-30 ведут на главную, а не на разделы услуг. Разделы «Кредит под залог» и «Рефинансирование» – короткие развилки без условий и банков. Отказы из поиска выросли с 14 до 22&nbsp;%.</p></li>
+<p class="ls-p">После переезда число запросов в топ-10 Яндекса выросло с 3 до 38–48, но 42 из 128 запросов топ-30 ведут на главную, а не на разделы услуг. Разделы «Кредит под залог» и «Рефинансирование» – короткие развилки без условий и банков. <span class="leo-hint" tabindex="0">Отказы из поиска<span class="leo-hint__b" role="tooltip">Визиты из поиска, которые закончились на одной странице быстрее чем за 15 секунд, так считает Метрика.</span></span> выросли с 14 до 22&nbsp;%.</p></li>
 </ol>
 <p class="ls-note">У сайта около 600 ссылающихся доменов, полезных из них около 30, остальное – автоматический спам с апреля 2026 года. Санкций нет, но профиль чистим.</p>
 <aside class="ls-conc" aria-label="Вывод"><p class="ls-conc__t">Вывод</p><div class="ls-conc__b"><p>Сайт исправен. Вернуть трафик 2025 года одной правкой нельзя: нужны новые страницы под запросы, где в топе брокеры, а не банки.</p></div></aside>
 
-<h2 class="ls-h2">Спрос и прогноз</h2>
+<h2 class="ls-h2" id="demand">Спрос и прогноз</h2>
 <p class="ls-p">За последние 12 месяцев по ядру сайта набирается 199&nbsp;720 запросов, за год спрос упал на 27&nbsp;%. Пик приходится на март, провал – на август. Против рынка растёт только рефинансирование ипотеки, пик у него в январе.</p>
 <figure class="ls-fig"><p class="ls-fig__title">Спрос по ядру сайта, запросов в месяц</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Спрос</li><li><i class="is-line" style="background:var(--data-1)"></i>Прогноз</li></ul><div class="ls-fig__wrap"><div id="ch-demand" data-line='{"x": ["2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04"], "series": [{"name": "Спрос", "values": [20189, 22201, 21105, 20401, 21949, 21576, 18590, 17942, 17991, 21162, 17453, 21644, 22793, 20508, 17389, 15966, 15306, 18038, 17528, 14774, 14228, 14195, 14128, 14867, null, null, null, null, null, null, null], "color": "var(--data-1)"}, {"name": "Прогноз", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 14867, 16260, 15998, 14346, 13516, 13771, 14772, 13546], "color": "var(--data-1)", "dash": true}], "label": "Спрос по ядру, октябрь 2024 – апрель 2027", "split": 23, "splitLabel": "прогноз"}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Вордстат, Санкт-Петербург, ядро из 1 673 запросов, данные на 7 октября 2026.</figcaption></figure><figure class="ls-fig"><p class="ls-fig__title">Посетители из поиска в месяц: факт и три сценария</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Факт</li><li><i class="is-line" style="background:var(--data-3)"></i>Оптимистичный</li><li><i class="is-line" style="background:var(--data-2)"></i>Реалистичный</li><li><i class="is-line" style="background:var(--data-3)"></i>Пессимистичный</li></ul><div class="ls-fig__wrap"><div id="ch-visitors" data-line='{"x": ["2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06", "2026-07", "2026-08", "2026-09", "2026-10", "2026-11", "2026-12", "2027-01", "2027-02", "2027-03", "2027-04"], "series": [{"name": "Факт", "values": [194, 237, 199, 220, 237, 269, 247, 227, 227, 196, 137, 162, 143, 134, 147, 131, 175, 100, 135, 110, 106, 81, 85, 78, null, null, null, null, null, null, null], "color": "var(--data-1)"}, {"name": "Оптимистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 94, 114, 128, 143, 165, 198, 207], "color": "var(--data-3)", "dash": true}, {"name": "Реалистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 87, 96, 103, 109, 120, 139, 143], "color": "var(--data-2)", "dash": true}, {"name": "Пессимистичный", "values": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 78, 80, 78, 76, 74, 75, 78, 77], "color": "var(--data-3)", "dash": true}], "label": "Посетители из поиска, октябрь 2024 – апрель 2027", "split": 23, "splitLabel": "прогноз"}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, прогноз по спросу и позициям, данные на 7 октября 2026.</figcaption></figure>
 <div class="ls-cols">
@@ -483,12 +717,12 @@ a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);colo
 <div class="ls-screen-only"><h3 class="ls-h3">Если поднять больше запросов в топ-10</h3><div class="ls-range" data-points='[[3.9, 78], [7.5, 143], [10.4, 207]]' data-now="78" data-outs="sc-outs"><div class="ls-range__h"><label class="ls-range__l" for="sc-share">Доля запросов ядра в топ-10 Яндекса</label><output class="ls-range__o" for="sc-share"></output></div><input id="sc-share" type="range" min="3.9" max="10.4" step="0.1" value="7.5"><div class="ls-range__ax" aria-hidden="true"><span>3,9 % сейчас</span><span>10,4 % оптимистичный</span></div></div><dl class="ls-outs" id="sc-outs" aria-live="polite"><div class="ls-out"><dt>Посетителей из поиска в апреле 2027</dt><dd data-k="vis"></dd></div><div class="ls-out"><dt>К сентябрю 2026</dt><dd data-k="d"></dd></div><div class="ls-out"><dt>Рост</dt><dd data-k="x"></dd></div></dl><p class="ls-note">Между сценариями прогноза по спросу на 7 октября 2026: 3,9 % – 78, 7,5 % – 143, 10,4 % – 207 посетителей. При нынешнем спросе, без учёта сезона.</p></div>
 
 <hr class="ls-pb" aria-hidden="true">
-<h2 class="ls-h2">Новая структура: 13 страниц в октябре, 4 доработки в ноябре</h2>
+<h2 class="ls-h2" id="plan">Новая структура: 13 страниц в октябре, 4 доработки в ноябре</h2>
 <p class="ls-p">До конца ноября главное – страницы услуг. В октябре выходят новые страницы под запросы, где в топе брокеры, а не банки: частный инвестор, залог ипотечной квартиры, перезалог квартиры и перезалог с просрочками, ипотечный брокер. В ноябре дорабатываем действующие: «Перезалог», «Кредит с плохой КИ», «Рефинансирование ипотеки» до январского пика спроса и раздел «Кредит под залог». Статьи блога, подготовленные на октябрь, выходят в ноябре.</p>
 <section class="ls-plan"><div class="ls-plan__h"><h3 class="ls-h3">Октябрь – новые страницы</h3><span class="ls-plan__n">13 новых страниц</span></div><ul><li><span class="ls-plan__pg">Займ от частного инвестора</span><span class="ls-plan__m"><span class="q">частные инвесторы под залог недвижимости</span><span class="v">422 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит под залог ипотечной квартиры</span><span class="ls-plan__m"><span class="q">кредит под залог ипотечной квартиры</span><span class="v">1 008 в мес.</span></span></li><li><span class="ls-plan__pg">Перезалог квартиры</span></li><li><span class="ls-plan__pg">Перезалог с просрочками и арестом</span></li><li><span class="ls-plan__pg">Ипотечный брокер</span><span class="ls-plan__m"><span class="q">помощь с ипотекой</span><span class="v">1 974 в мес.</span></span></li><li><span class="ls-plan__pg">Рефинансирование с большой кредитной нагрузкой</span></li><li><span class="ls-plan__pg">Кредит для ООО</span><span class="ls-plan__m"><span class="q">кредитный брокер для юридических лиц</span><span class="v">186 в мес.</span></span></li><li><span class="ls-plan__pg">Проверка кредитной истории</span><span class="ls-plan__m"><span class="q">проверить кредитную историю онлайн</span><span class="v">13 287 в мес.</span></span></li><li><span class="ls-plan__pg">Калькулятор долговой нагрузки</span><span class="ls-plan__m"><span class="q">калькулятор реструктуризации</span><span class="v">192 в мес.</span></span></li><li><span class="ls-plan__pg">Перезалог авто под ПТС</span><span class="ls-plan__m"><span class="q">перезалог авто под птс</span><span class="v">175 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит под залог на погашение других кредитов</span></li><li><span class="ls-plan__pg">Кредит под залог на миллион рублей</span></li><li><span class="ls-plan__pg">Кредит под залог спецтехники и грузовых авто</span><span class="ls-plan__m"><span class="q">кредит под залог грузового автомобиля</span><span class="v">124 в мес.</span></span></li></ul></section><section class="ls-plan"><div class="ls-plan__h"><h3 class="ls-h3">Ноябрь – доработка действующих</h3><span class="ls-plan__n">4 доработки</span></div><ul><li><span class="ls-plan__pg">Перезалог</span><span class="ls-plan__m"><span class="q">перезалог</span><span class="v">92 в мес.</span></span></li><li><span class="ls-plan__pg">Кредит с плохой КИ</span><span class="ls-plan__m"><span class="q">кредит с плохой кредитной историей</span><span class="v">1 933 в мес.</span></span></li><li><span class="ls-plan__pg">Рефинансирование ипотеки</span></li><li><span class="ls-plan__pg">Кредит под залог, раздел</span><span class="ls-plan__m"><span class="q">кредит под залог недвижимости спб</span><span class="v">3 394 в мес.</span></span></li></ul></section>
-<h3 class="ls-h3">Что будет на каждой странице</h3><div class="ls-acc"><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h1" aria-expanded="false" aria-controls="acc-p1"><span>Займ от частного инвестора</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p1" role="region" aria-labelledby="acc-h1" hidden><p class="ls-p">Ветки нет вовсе, ядро по ней 0 фраз. В топ-10 Яндекс Услуги, Авито, atlantcredit, mbkcredit, binkor, zalog-spb – то есть выдача брокерская, шанс высокий. На старом сайте схема «инвестор – банк» стояла в первом экране.</p><ul class="ls-bullets"><li>Чем частный инвестор отличается от банка: срок решения, ставка, сумма, документы, риски.</li><li>Порядок: оценка, договор, регистрация залога в Росреестре, расписка, как не нарваться на мошенников.</li><li>Что проверяем у инвестора и что фиксируем в договоре (гарантии).</li><li>Таблица «банк – частный инвестор – МФО», калькулятор, FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h2" aria-expanded="false" aria-controls="acc-p2"><span>Кредит под залог ипотечной квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p2" role="region" aria-labelledby="acc-h2" hidden><p class="ls-p">6 фраз в ядре без страницы. В топ-10 блог Домклик, re-finance, mbkcredit, банки; брокерская страница одна (mbkcredit) – шанс средний.</p><ul class="ls-bullets"><li>Можно ли заложить квартиру, пока ипотека не погашена: когда нужно согласие банка, когда нужен перезалог.</li><li>Схемы: рефинансирование с доп. суммой, кредит под вторую очередь залога, закрытие ипотеки новым кредитом.</li><li>Сумма и ставка по примеру расчёта; документы; сроки; ссылка на «Перезалог» и «Рефинансирование ипотеки».</li><li>FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h3" aria-expanded="false" aria-controls="acc-p3"><span>Перезалог квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p3" role="region" aria-labelledby="acc-h3" hidden><p class="ls-p">Мы на 10 месте по «перезалог квартиры», лидер (bank-partner1.ru) держит 1–2 места по 6 фразам кластера. Подстраница нужна, чтобы страница «Перезалог» держала общий запрос, а эта – квартиру.</p><ul class="ls-bullets"><li>Пошагово: оценка, одобрение, погашение старого кредита, снятие и регистрация нового залога.</li><li>Сроки, расходы (оценка, страхование, пошлина), когда перезалог невыгоден.</li><li>Кейс с цифрами, FAQ 6–8 вопросов, таблица банков.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h4" aria-expanded="false" aria-controls="acc-p4"><span>Перезалог с просрочками и арестом</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p4" role="region" aria-labelledby="acc-h4" hidden><p class="ls-p">Лидеры закрывают этот интент отдельными блоками («с просрочками», «с арестом ФССП»). Выдача по «перезалог недвижимости срочно» целиком из узких специалистов.</p><ul class="ls-bullets"><li>Что возможно при просрочке и аресте: банк или частный инвестор, как снимается арест, сроки.</li><li>Риски и как их закрываем в договоре.</li><li>Кейс, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h5" aria-expanded="false" aria-controls="acc-p5"><span>Ипотечный брокер</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p5" role="region" aria-labelledby="acc-h5" hidden><p class="ls-p">По «помощь в получении ипотеки спб» в топ-10 ипотечные брокеры и Карты, bankcreditdeposit на 9 месте с отдельной страницей (8 фраз, 6 500). У нас раздел «Ипотека» – развилка.</p><ul class="ls-bullets"><li>Что делает брокер, когда нужен, сколько стоит и когда платит клиент.</li><li>Кейсы отказов и одобрений, программы, документы, сроки.</li><li>Ссылки на подстраницы ипотеки, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h6" aria-expanded="false" aria-controls="acc-p6"><span>Рефинансирование с большой кредитной нагрузкой</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p6" role="region" aria-labelledby="acc-h6" hidden><p class="ls-p">Ниша из разбора конкурентов: рефинансирование по головным фразам занято банками, работают узкие запросы.</p><ul class="ls-bullets"><li>Что такое ПДН и как банк считает нагрузку (ссылка на статью 20.11.2026).</li><li>Банки, одобряющие при нагрузке выше 50 %, сроки, документы.</li><li>Пример расчёта, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h7" aria-expanded="false" aria-controls="acc-p7"><span>Кредит для ООО</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p7" role="region" aria-labelledby="acc-h7" hidden><p class="ls-p">Кластер «кредит для бизнеса» разбит по формам; у конкурентов подстраницы ИП и ООО (18 фраз).</p><ul class="ls-bullets"><li>Для кого, виды кредитов (оборотный, инвестиционный, овердрафт, лизинг), требования, документы.</li><li>Связь с «Кредит для бизнеса» и «Лизинг», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h8" aria-expanded="false" aria-controls="acc-p8"><span>Проверка кредитной истории</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p8" role="region" aria-labelledby="acc-h8" hidden><p class="ls-p">da.credit собирает 93 фразы на странице про НБКИ и скоринг-бюро, cfr-spb.ru и lioncredit.ru тоже. Это вход в воронку: проверка – диагноз – подбор банка.</p><ul class="ls-bullets"><li>Сервисная страница с формой: что проверяем, что получит клиент, срок, цена.</li><li>Связь со статьями блога про кредитную историю.</li><li>FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h9" aria-expanded="false" aria-controls="acc-p9"><span>Калькулятор долговой нагрузки</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p9" role="region" aria-labelledby="acc-h9" hidden><p class="ls-p">lioncredit.ru собирает запросы отдельным калькулятором реструктуризации, bankcreditdeposit – статьёй «снижаем ПДН». Калькулятор – и запросы, и диагностика клиента.</p><ul class="ls-bullets"><li>Калькулятор (разработка – у Заказчика по п. 2.2.3) и текст вокруг: как считается ПДН, нормативы ЦБ, что делать при ПДН выше 50 %.</li><li>Блок «рассчитайте и получите подбор банка», FAQ.</li><li>Статья про период охлаждения – в блоге.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h10" aria-expanded="false" aria-controls="acc-p10"><span>Перезалог авто под ПТС</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p10" role="region" aria-labelledby="acc-h10" hidden><p class="ls-p">zalog-spb.ru собирает «перезалог авто под птс» (175).</p><ul class="ls-bullets"><li>После страницы «Займ под залог ПТС».</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h11" aria-expanded="false" aria-controls="acc-p11"><span>Кредит под залог на погашение других кредитов</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p11" role="region" aria-labelledby="acc-h11" hidden><p class="ls-p">credit.club собирает 17 и 14 фраз на страницу по сумме и цели. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по цели.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h12" aria-expanded="false" aria-controls="acc-p12"><span>Кредит под залог на миллион рублей</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p12" role="region" aria-labelledby="acc-h12" hidden><p class="ls-p">credit.club: страницы по сумме. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по сумме (1–5 млн).</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h13" aria-expanded="false" aria-controls="acc-p13"><span>Кредит под залог спецтехники и грузовых авто</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p13" role="region" aria-labelledby="acc-h13" hidden><p class="ls-p">Низкий приоритет: мелкий спрос, у конкурентов (zalog-spb, mbkcredit) есть.</p><ul class="ls-bullets"><li>Одна общая страница.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h14" aria-expanded="false" aria-controls="acc-p14"><span>Перезалог</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p14" role="region" aria-labelledby="acc-h14" hidden><p class="ls-p">Страница «Перезалог» давала 90–130 визитов в месяц, треть поискового трафика 2025 года. С января 2026 трафика нет, в топ-10 по «перезалог недвижимости срочно» страницы нет. Кластер 18 фраз в Топвизоре, позиции 2–12.</p><ul class="ls-bullets"><li>Взять за основу структуру старой страницы (Tilda, снимок 13.07.2024): схемы «между банками» и «инвестор – банк», срочность, ставка от 3 %.</li><li>Первый экран: срок, аванс, ставка, сумма, «без предоплаты» (как у bank-partner1.ru и perezalog.com).</li><li>Блоки: перезалог с просрочками, с арестом ФССП, под меньшую ставку, из банка в банк; калькулятор; видео эксперта; цитата эксперта.</li><li>Два–три кейса с суммой, ставкой и сроком (данные даёт клиент); FAQ 6–8 вопросов; таблица «какие банки берут перезалог».</li><li>Ссылки на подстраницы «Перезалог квартиры» и «Перезалог с просрочками и арестом», с главной и раздела «Кредит под залог».</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h15" aria-expanded="false" aria-controls="acc-p15"><span>Кредит с плохой КИ</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p15" role="region" aria-labelledby="acc-h15" hidden><p class="ls-p">Кластер уже в топ-30 Яндекса по 32,1 % запросов, лучший по близости к топ-10. Спрос −44 % за девять месяцев, поэтому дожимать нужно первым и длинными фразами (с просрочками, без отказа, под залог).</p><ul class="ls-bullets"><li>Длинные фразы вместо головной: с просрочками, без отказа, с текущей просрочкой, после банкротства.</li><li>Блок «где реально одобряют»: таблица банков с датой обновления.</li><li>Стоимость, гарантии, цифры опыта, FAQ 6–8 вопросов.</li><li>Кейс по плохой КИ с суммой и ставкой.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h16" aria-expanded="false" aria-controls="acc-p16"><span>Рефинансирование ипотеки</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p16" role="region" aria-labelledby="acc-h16" hidden><p class="ls-p">Единственный крупный кластер ядра с ростом (+75 %), пик в январе. Страница в топ-50 Яндекса не входит. Тексты нужно поставить до декабря, чтобы успеть к январскому пику.</p><ul class="ls-bullets"><li>Условия рефинансирования по банкам, когда выгодно (разница ставок, остаток, срок), когда нет.</li><li>Расчёт на примере: остаток, ставка, срок, экономия.</li><li>Налоговый вычет при рефинансировании, перерегистрация залога, сроки сделки.</li><li>Таблица «какой банк одобрит», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h17" aria-expanded="false" aria-controls="acc-p17"><span>Кредит под залог, раздел</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p17" role="region" aria-labelledby="acc-h17" hidden><p class="ls-p">Раздел – развилка на 700–800 слов, текста для кластера нет. Главная забирает коммерческие кластеры. Головные фразы (102 запроса, 0 в топ-30) занимают банки и агрегаторы, работать нужно длинными.</p><ul class="ls-bullets"><li>Дописать раздел до коммерческой страницы: таблица условий (ставка, сумма, срок, документы), список банков, этапы, сроки.</li><li>Блоки «по типу объекта» со ссылками на подстраницы (квартира, доля, комната, дом, участок, коммерческая, ипотечная квартира).</li><li>Стоимость и гарантии, цифры опыта, кейсы, FAQ 6–8 вопросов, калькулятор.</li></ul></div></div></div>
+<h3 class="ls-h3">Что будет на каждой странице</h3><div class="leo-chips ls-screen-only" role="group" aria-label="Месяц" data-filter="acc-pages"><button type="button" class="ls-btn-reset leo-chip" aria-pressed="true" data-month="">Все</button><button type="button" class="ls-btn-reset leo-chip" aria-pressed="false" data-month="2026-10"><span>Октябрь, новые</span><span class="leo-chip__n">13</span></button><button type="button" class="ls-btn-reset leo-chip" aria-pressed="false" data-month="2026-11"><span>Ноябрь, доработка</span><span class="leo-chip__n">4</span></button><span class="leo-chips__s" aria-live="polite">Показано 17 из 17</span></div><div class="ls-acc" id="acc-pages"><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h1" aria-expanded="false" aria-controls="acc-p1"><span>Займ от частного инвестора</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p1" role="region" aria-labelledby="acc-h1" hidden><p class="ls-p">Ветки нет вовсе, ядро по ней 0 фраз. В топ-10 Яндекс Услуги, Авито, atlantcredit, mbkcredit, binkor, zalog-spb – то есть выдача брокерская, шанс высокий. На старом сайте схема «инвестор – банк» стояла в первом экране.</p><ul class="ls-bullets"><li>Чем частный инвестор отличается от банка: срок решения, ставка, сумма, документы, риски.</li><li>Порядок: оценка, договор, регистрация залога в Росреестре, расписка, как не нарваться на мошенников.</li><li>Что проверяем у инвестора и что фиксируем в договоре (гарантии).</li><li>Таблица «банк – частный инвестор – МФО», калькулятор, FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h2" aria-expanded="false" aria-controls="acc-p2"><span>Кредит под залог ипотечной квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p2" role="region" aria-labelledby="acc-h2" hidden><p class="ls-p">6 фраз в ядре без страницы. В топ-10 блог Домклик, re-finance, mbkcredit, банки; брокерская страница одна (mbkcredit) – шанс средний.</p><ul class="ls-bullets"><li>Можно ли заложить квартиру, пока ипотека не погашена: когда нужно согласие банка, когда нужен перезалог.</li><li>Схемы: рефинансирование с доп. суммой, кредит под вторую очередь залога, закрытие ипотеки новым кредитом.</li><li>Сумма и ставка по примеру расчёта; документы; сроки; ссылка на «Перезалог» и «Рефинансирование ипотеки».</li><li>FAQ 6–8 вопросов, кейс.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h3" aria-expanded="false" aria-controls="acc-p3"><span>Перезалог квартиры</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p3" role="region" aria-labelledby="acc-h3" hidden><p class="ls-p">Мы на 10 месте по «перезалог квартиры», лидер (bank-partner1.ru) держит 1–2 места по 6 фразам кластера. Подстраница нужна, чтобы страница «Перезалог» держала общий запрос, а эта – квартиру.</p><ul class="ls-bullets"><li>Пошагово: оценка, одобрение, погашение старого кредита, снятие и регистрация нового залога.</li><li>Сроки, расходы (оценка, страхование, пошлина), когда перезалог невыгоден.</li><li>Кейс с цифрами, FAQ 6–8 вопросов, таблица банков.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h4" aria-expanded="false" aria-controls="acc-p4"><span>Перезалог с просрочками и арестом</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p4" role="region" aria-labelledby="acc-h4" hidden><p class="ls-p">Лидеры закрывают этот интент отдельными блоками («с просрочками», «с арестом ФССП»). Выдача по «перезалог недвижимости срочно» целиком из узких специалистов.</p><ul class="ls-bullets"><li>Что возможно при просрочке и аресте: банк или частный инвестор, как снимается арест, сроки.</li><li>Риски и как их закрываем в договоре.</li><li>Кейс, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h5" aria-expanded="false" aria-controls="acc-p5"><span>Ипотечный брокер</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p5" role="region" aria-labelledby="acc-h5" hidden><p class="ls-p">По «помощь в получении ипотеки спб» в топ-10 ипотечные брокеры и Карты, bankcreditdeposit на 9 месте с отдельной страницей (8 фраз, 6 500). У нас раздел «Ипотека» – развилка.</p><ul class="ls-bullets"><li>Что делает брокер, когда нужен, сколько стоит и когда платит клиент.</li><li>Кейсы отказов и одобрений, программы, документы, сроки.</li><li>Ссылки на подстраницы ипотеки, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h6" aria-expanded="false" aria-controls="acc-p6"><span>Рефинансирование с большой кредитной нагрузкой</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p6" role="region" aria-labelledby="acc-h6" hidden><p class="ls-p">Ниша из разбора конкурентов: рефинансирование по головным фразам занято банками, работают узкие запросы.</p><ul class="ls-bullets"><li>Что такое ПДН и как банк считает нагрузку (ссылка на статью 20.11.2026).</li><li>Банки, одобряющие при нагрузке выше 50 %, сроки, документы.</li><li>Пример расчёта, FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h7" aria-expanded="false" aria-controls="acc-p7"><span>Кредит для ООО</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p7" role="region" aria-labelledby="acc-h7" hidden><p class="ls-p">Кластер «кредит для бизнеса» разбит по формам; у конкурентов подстраницы ИП и ООО (18 фраз).</p><ul class="ls-bullets"><li>Для кого, виды кредитов (оборотный, инвестиционный, овердрафт, лизинг), требования, документы.</li><li>Связь с «Кредит для бизнеса» и «Лизинг», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h8" aria-expanded="false" aria-controls="acc-p8"><span>Проверка кредитной истории</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p8" role="region" aria-labelledby="acc-h8" hidden><p class="ls-p">da.credit собирает 93 фразы на странице про НБКИ и скоринг-бюро, cfr-spb.ru и lioncredit.ru тоже. Это вход в воронку: проверка – диагноз – подбор банка.</p><ul class="ls-bullets"><li>Сервисная страница с формой: что проверяем, что получит клиент, срок, цена.</li><li>Связь со статьями блога про кредитную историю.</li><li>FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h9" aria-expanded="false" aria-controls="acc-p9"><span>Калькулятор долговой нагрузки</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p9" role="region" aria-labelledby="acc-h9" hidden><p class="ls-p">lioncredit.ru собирает запросы отдельным калькулятором реструктуризации, bankcreditdeposit – статьёй «снижаем ПДН». Калькулятор – и запросы, и диагностика клиента.</p><ul class="ls-bullets"><li>Калькулятор (разработка – у Заказчика по п. 2.2.3) и текст вокруг: как считается ПДН, нормативы ЦБ, что делать при ПДН выше 50 %.</li><li>Блок «рассчитайте и получите подбор банка», FAQ.</li><li>Статья про период охлаждения – в блоге.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h10" aria-expanded="false" aria-controls="acc-p10"><span>Перезалог авто под ПТС</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p10" role="region" aria-labelledby="acc-h10" hidden><p class="ls-p">zalog-spb.ru собирает «перезалог авто под птс» (175).</p><ul class="ls-bullets"><li>После страницы «Займ под залог ПТС».</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h11" aria-expanded="false" aria-controls="acc-p11"><span>Кредит под залог на погашение других кредитов</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p11" role="region" aria-labelledby="acc-h11" hidden><p class="ls-p">credit.club собирает 17 и 14 фраз на страницу по сумме и цели. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по цели.</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h12" aria-expanded="false" aria-controls="acc-p12"><span>Кредит под залог на миллион рублей</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p12" role="region" aria-labelledby="acc-h12" hidden><p class="ls-p">credit.club: страницы по сумме. Второй приоритет.</p><ul class="ls-bullets"><li>Страница по сумме (1–5 млн).</li></ul></div></div><div class="ls-acc__i" data-month="2026-10"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h13" aria-expanded="false" aria-controls="acc-p13"><span>Кредит под залог спецтехники и грузовых авто</span><span class="ls-acc__m"><span>октябрь, новая</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p13" role="region" aria-labelledby="acc-h13" hidden><p class="ls-p">Низкий приоритет: мелкий спрос, у конкурентов (zalog-spb, mbkcredit) есть.</p><ul class="ls-bullets"><li>Одна общая страница.</li></ul></div></div><div class="ls-acc__i" data-month="2026-11"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h14" aria-expanded="false" aria-controls="acc-p14"><span>Перезалог</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p14" role="region" aria-labelledby="acc-h14" hidden><p class="ls-p">Страница «Перезалог» давала 90–130 визитов в месяц, треть поискового трафика 2025 года. С января 2026 трафика нет, в топ-10 по «перезалог недвижимости срочно» страницы нет. Кластер 18 фраз в Топвизоре, позиции 2–12.</p><ul class="ls-bullets"><li>Взять за основу структуру старой страницы (Tilda, снимок 13.07.2024): схемы «между банками» и «инвестор – банк», срочность, ставка от 3 %.</li><li>Первый экран: срок, аванс, ставка, сумма, «без предоплаты» (как у bank-partner1.ru и perezalog.com).</li><li>Блоки: перезалог с просрочками, с арестом ФССП, под меньшую ставку, из банка в банк; калькулятор; видео эксперта; цитата эксперта.</li><li>Два–три кейса с суммой, ставкой и сроком (данные даёт клиент); FAQ 6–8 вопросов; таблица «какие банки берут перезалог».</li><li>Ссылки на подстраницы «Перезалог квартиры» и «Перезалог с просрочками и арестом», с главной и раздела «Кредит под залог».</li></ul></div></div><div class="ls-acc__i" data-month="2026-11"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h15" aria-expanded="false" aria-controls="acc-p15"><span>Кредит с плохой КИ</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p15" role="region" aria-labelledby="acc-h15" hidden><p class="ls-p">Кластер уже в топ-30 Яндекса по 32,1 % запросов, лучший по близости к топ-10. Спрос −44 % за девять месяцев, поэтому дожимать нужно первым и длинными фразами (с просрочками, без отказа, под залог).</p><ul class="ls-bullets"><li>Длинные фразы вместо головной: с просрочками, без отказа, с текущей просрочкой, после банкротства.</li><li>Блок «где реально одобряют»: таблица банков с датой обновления.</li><li>Стоимость, гарантии, цифры опыта, FAQ 6–8 вопросов.</li><li>Кейс по плохой КИ с суммой и ставкой.</li></ul></div></div><div class="ls-acc__i" data-month="2026-11"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h16" aria-expanded="false" aria-controls="acc-p16"><span>Рефинансирование ипотеки</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p16" role="region" aria-labelledby="acc-h16" hidden><p class="ls-p">Единственный крупный кластер ядра с ростом (+75 %), пик в январе. Страница в топ-50 Яндекса не входит. Тексты нужно поставить до декабря, чтобы успеть к январскому пику.</p><ul class="ls-bullets"><li>Условия рефинансирования по банкам, когда выгодно (разница ставок, остаток, срок), когда нет.</li><li>Расчёт на примере: остаток, ставка, срок, экономия.</li><li>Налоговый вычет при рефинансировании, перерегистрация залога, сроки сделки.</li><li>Таблица «какой банк одобрит», FAQ 6–8 вопросов.</li></ul></div></div><div class="ls-acc__i" data-month="2026-11"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="acc-h17" aria-expanded="false" aria-controls="acc-p17"><span>Кредит под залог, раздел</span><span class="ls-acc__m"><span>ноябрь, доработка</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="acc-p17" role="region" aria-labelledby="acc-h17" hidden><p class="ls-p">Раздел – развилка на 700–800 слов, текста для кластера нет. Главная забирает коммерческие кластеры. Головные фразы (102 запроса, 0 в топ-30) занимают банки и агрегаторы, работать нужно длинными.</p><ul class="ls-bullets"><li>Дописать раздел до коммерческой страницы: таблица условий (ставка, сумма, срок, документы), список банков, этапы, сроки.</li><li>Блоки «по типу объекта» со ссылками на подстраницы (квартира, доля, комната, дом, участок, коммерческая, ипотечная квартира).</li><li>Стоимость и гарантии, цифры опыта, кейсы, FAQ 6–8 вопросов, калькулятор.</li></ul></div></div></div>
 
-<h2 class="ls-h2">Что появится на всех страницах услуг</h2>
+<h2 class="ls-h2" id="pages">Что появится на всех страницах услуг</h2>
 <ul class="ls-bullets">
 <li>Стоимость услуги и когда платит клиент, «без предоплаты» в первом экране.</li>
 <li>Что фиксируем в договоре: срок, стоимость, конфиденциальность.</li>
@@ -497,9 +731,45 @@ a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);colo
 <li>Вопросы и ответы, кейс по услуге с суммой, ставкой и сроком, реквизиты в подвале.</li>
 </ul>
 
+<p class="ls-screen-only" style="margin:var(--sp-5) 0 0"><a class="leo-link" href="#top"><span>К началу отчёта</span><span class="leo-arrow" aria-hidden="true">→</span></a></p>
 <footer class="ls-sign"><p><b>Леонид Мулякин</b> · LEOSEO · 16 октября 2026</p><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:14px"></span></footer>
 </main></div>
-<script>
+<script>/* LEOSEO — interactions for plain-HTML pages (React components do this themselves).
+   [data-tilt] link cards: tilt ±5° + lift 6 px following the pointer. .leo-bar: .is-scrolled after 8 px, anchor scroll-spy.
+   Respects prefers-reduced-motion. */
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tilt(el){
+    el.addEventListener('pointermove', function(e){
+      if (reduce || e.pointerType === 'touch') return;
+      var r = el.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+      el.classList.add('is-tilting');
+      el.style.transform = 'perspective(800px) rotateX(' + (-py * 10).toFixed(2) + 'deg) rotateY(' + (px * 10).toFixed(2) + 'deg) translateY(var(--tilt-lift))';
+    });
+    el.addEventListener('pointerleave', function(){ el.classList.remove('is-tilting'); el.style.transform = ''; });
+  }
+  var io;
+  function init(){
+    [].forEach.call(document.querySelectorAll('[data-tilt]'), tilt);
+    [].forEach.call(document.querySelectorAll('.leo-bar'), function(b){
+      var on = function(){ b.classList.toggle('is-scrolled', window.scrollY > 8); };
+      on(); window.addEventListener('scroll', on, { passive: true });
+      var links = [].slice.call(b.querySelectorAll('.leo-bar__a[href^="#"]'));
+      var els = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+      if (!('IntersectionObserver' in window) || !els.length) return;
+      var vis = {};
+      io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ vis[e.target.id] = e.isIntersecting; });
+        var cur = els.filter(function(el){ return vis[el.id]; })[0];
+        if (!cur) { var above = els.filter(function(el){ return el.getBoundingClientRect().top < 120; }); cur = above[above.length - 1]; }
+        links.forEach(function(a){ if (cur && a.getAttribute('href') === '#' + cur.id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+      }, { rootMargin: '-72px 0px -55% 0px' });
+      els.forEach(function(el){ io.observe(el); });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script><script>
 (function(){
 var MS=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],ML=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'],ROMAN=['I','II','III','IV'];
 function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
@@ -574,6 +844,10 @@ function renderLine(box){
   box.innerHTML='';box.appendChild(svg);
 }
 document.querySelectorAll('[data-line]').forEach(function(box){renderLine(box);if(window.ResizeObserver){var w=0;new ResizeObserver(function(){var x=Math.round(box.getBoundingClientRect().width);if(x&&x!==w){w=x;renderLine(box)}}).observe(box)}});
+/* чипы-фильтры: аккордеон по месяцам */
+document.querySelectorAll('.leo-chips[data-filter]').forEach(function(g){var acc=document.getElementById(g.getAttribute('data-filter')),chips=[].slice.call(g.querySelectorAll('.leo-chip')),items=[].slice.call(acc.querySelectorAll('.ls-acc__i')),st=g.querySelector('.leo-chips__s');
+  chips.forEach(function(c){c.addEventListener('click',function(){var m=c.getAttribute('data-month');chips.forEach(function(x){x.setAttribute('aria-pressed',x===c?'true':'false')});var n=0;
+    items.forEach(function(it){var on=!m||it.getAttribute('data-month')===m;it.hidden=!on;if(on)n++});st.textContent='Показано '+n+' из '+items.length})})});
 /* сегменты: период графика */
 document.querySelectorAll('.ls-seg[data-for]').forEach(function(seg){var box=document.getElementById(seg.getAttribute('data-for')),btns=[].slice.call(seg.querySelectorAll('.ls-seg__o'));
   function set(i){btns.forEach(function(b,j){b.setAttribute('aria-checked',i===j?'true':'false');b.tabIndex=i===j?0:-1});box._st.period=btns[i].getAttribute('data-value');render(box)}
@@ -592,7 +866,7 @@ document.querySelectorAll('.ls-range[data-points]').forEach(function(r){var pts=
   inp.addEventListener('input',upd);upd()});
 /* аккордеон */
 document.querySelectorAll('.ls-acc').forEach(function(acc){var btns=[].slice.call(acc.querySelectorAll('.ls-acc__b'));
-  btns.forEach(function(b,i){b.addEventListener('click',function(){var on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',on?'true':'false');document.getElementById(b.getAttribute('aria-controls')).hidden=!on;b.querySelector('.ls-acc__g').textContent=on?'−':'+'});
+  btns.forEach(function(b,i){b.addEventListener('click',function(){var on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',on?'true':'false');document.getElementById(b.getAttribute('aria-controls')).hidden=!on});
     b.addEventListener('keydown',function(e){var j=null;if(e.key==='ArrowDown')j=(i+1)%btns.length;else if(e.key==='ArrowUp')j=(i-1+btns.length)%btns.length;else if(e.key==='Home')j=0;else if(e.key==='End')j=btns.length-1;if(j!=null){e.preventDefault();btns[j].focus()}})})});
 })();
 </script></body></html>
