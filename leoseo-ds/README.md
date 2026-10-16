@@ -19,6 +19,7 @@
   `ls-chg` (изменения), `ls-why` (причины), `ls-plan` + `ls-tag` (план по месяцам), `ls-fc` (прогноз), `ls-sign`, `ls-cols`;
   интерактив: `ls-card`/`ls-cards` (карточки метрика/страница/задача), `ls-seg` (сегменты), `ls-tabs`, `ls-tgl` (переключатель), `ls-range` + `ls-outs` (ползунок и выводы), `ls-acc` (аккордеон), `ls-car` (карусель), `ls-prog` (прогресс). Поведение – на странице своим JS (образец в build_demo.py).
 - `assets/` — логотип для тёмного (`-light`) и светлого (`-dark`) фона, фон сайта `bg-leoseo.webp`.
+- `tokens/motion.css`, `components/mechanics.css`, `assets/leo-interactions.js` — механики с сайта leoseo.ru (16.10, вторая итерация): фокус-ринг, кнопки `leo-btn` с `leo-glow`, карточки `leo-card`/`leo-sheen`/`leo-reveal`/`data-tilt`, чипы `leo-chip`, бейджи `leo-badge`, липкая шапка `leo-bar` со скролл-спаем, подсказка `leo-hint`, состояния форм `leo-input`/`leo-check`. JS подключать на страницу вместе с CSS.
 
 Ширина контента в системе 1080 px; в демо по просьбе Леонида (16.10.2026) переопределяется на 1440 px (`--content-max`).
 

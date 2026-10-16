@@ -1,0 +1,36 @@
+/* LEOSEO — motion, focus and state tokens (mechanics from leoseo.ru).
+   Motion is a response to hover / press only. Nothing animates on scroll. */
+:root{
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* durations: colour+border / lift+rotate / sheen; lifts: card hover / tilt card */
+  --dur-fast:.16s;
+  --dur-lift:.26s;
+  --dur-sheen:.9s;
+  --lift:-2px;
+  --tilt-lift:-6px;
+  --tilt-max:5deg;
+
+  --focus-ring-color:var(--cu-300);  /* #e0a268 */
+  --focus-ring-width:2px;
+  --focus-ring-offset:2px;
+
+  --copper-tint:rgba(193,129,78,.12);   /* selected chip, copper badge */
+  --copper-edge:rgba(193,129,78,.55);   /* copper badge border */
+  --bar-bg:rgba(13,13,16,.72);          /* sticky toolbar */
+  --bar-bg-scrolled:rgba(8,8,10,.9);
+  --bar-blur:14px;
+  --bar-h:60px;
+
+  --state-error:#e07a5f;    /* 6.6:1 on --bg-deep; always with «!» and text */
+  --state-success:#8cbf9a;  /* 9.3:1 on --bg-deep; always with «✓» and text */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --dur-fast:0s;
+    --dur-lift:0s;
+    --dur-sheen:0s;
+    --lift:0px;
+    --tilt-lift:0px;
+    --tilt-max:0deg;
+  }
+}
