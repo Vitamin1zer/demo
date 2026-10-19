@@ -1,0 +1,798 @@
+<!doctype html><html lang="ru"><head>
+<meta name="robots" content="noindex, nofollow"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>danast.su – отчёт № 2, 19.09–18.10.2026 · LEOSEO</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><style>/* tokens/fonts.css */
+/* Google Fonts (OFL, web licence). Manrope — display + figures; Golos Text — running text. Both have full Cyrillic. */
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap');
+
+/* tokens/colors.css */
+/* LEOSEO — colour tokens. One screen theme: dark (:root).
+   The light palette exists only for print/PDF (@media print) and for print-preview cards ([data-theme="print"]).
+   Contrast figures: dark — against the page (#0d0d10 + background art at 18 %, 99.9th percentile pixel);
+   print — against white. */
+
+:root{
+  /* raw — ink (dark) */
+  --n-deep:#08080a;--n-bg:#0d0d10;--n-s1:#131318;--n-s2:#191920;--n-grid:#23232b;
+  --ink-0:#f6f3ee;--ink-1:#e8e4dd;--ink-2:#b5aea3;--ink-3:#9a9287;
+  /* raw — paper (print) */
+  --p-bg:#ffffff;--p-s1:#f7f5f1;--p-s2:#efece6;--p-grid:#e7e3dc;
+  --pk-0:#14161a;--pk-1:#2b2824;--pk-2:#544e46;--pk-3:#6e675e;
+  /* raw — copper */
+  --cu-300:#e0a268;--cu-500:#c1814e;--cu-600:#b06f3c;--cu-700:#985e30;
+  /* raw — blue (data) */
+  --blue-500:#5b8fd6;--blue-700:#3d6fb8;
+  /* raw — sand (third data series) */
+  --sand-500:#7a7268;--sand-600:#8a8278;
+
+  --bg-image-opacity:.18;
+}
+
+:root,[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-deep:var(--n-deep);       /* tracks, wells, inset areas */
+  --bg:var(--n-bg);              /* page, under the background art */
+  --surface-1:var(--n-s1);       /* cards, figure frames — opaque, hides the art */
+  --surface-2:var(--n-s2);       /* tooltip, hover, selected segment */
+  --text-strong:var(--ink-0);    /* headings, lead — 14.7:1 */
+  --text-body:var(--ink-1);      /* running text — 12.8:1 */
+  --text-muted:var(--ink-2);     /* table heads, legend — 7.4:1 */
+  --text-faint:var(--ink-3);     /* source, captions — 5.3:1 */
+  --line:rgba(246,243,238,.10);
+  --line-strong:rgba(246,243,238,.18);
+  --grid:var(--n-grid);
+  --accent:var(--cu-500);        /* graphics — 5.1:1; on surface 5.8:1 */
+  --accent-text:var(--cu-300);   /* copper as text/link — 7.4:1 */
+  --accent-line:var(--cu-500);
+  --data-1:var(--blue-500);      /* on surface-1 5.6:1 */
+  --data-2:var(--cu-500);        /* on surface-1 5.8:1 */
+  --data-3:var(--sand-500);      /* on surface-1 3.9:1 — graphics only */
+  --up:var(--cu-300);
+  --down:var(--ink-0);
+  --focus:var(--cu-300);
+  --hover:rgba(246,243,238,.04);
+}
+
+[data-theme="print"]{
+  color-scheme:light;
+  --bg-deep:var(--p-s2);--bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+  --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+  --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+  --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+  --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+  --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:rgba(20,22,26,.04);
+}
+
+@media print{
+  :root,[data-theme="dark"]{
+    color-scheme:light;
+    --bg-deep:var(--p-s2);           /* 17.8:1 strong / 5.6:1 faint on white */
+    --bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+    --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+    --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+    --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+    --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+    --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:transparent;
+  }
+}
+
+/* tokens/typography.css */
+/* Six-step scale. Body 17 px desktop / 16 px phone and print. */
+:root{
+  --font-display:'Manrope',-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-text:'Golos Text','Manrope',-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-num:'Manrope',-apple-system,'Segoe UI',Arial,sans-serif; /* always with tabular-nums */
+
+  --fs-1:14px;  /* source, caption, table head, legend, axis */
+  --fs-2:17px;  /* body, table cells */
+  --fs-3:20px;  /* lead, H3 */
+  --fs-4:24px;  /* callout, accent numbers */
+  --fs-5:30px;  /* H2 */
+  --fs-6:40px;  /* H1 */
+
+  --fw-text:400;
+  --fw-medium:500;
+  --fw-semibold:600;
+  --fw-bold:700;
+  --fw-display:800;
+
+  --lh-text:1.6;
+  --lh-lead:1.5;
+  --lh-h3:1.3;
+  --lh-h2:1.2;
+  --lh-h1:1.12;
+  --ls-display:-.015em;
+
+  --measure:68ch;       /* running text ≈ 65–72 chars of Golos */
+  --measure-lead:36em;  /* lead at 20 px ≈ 60–65 chars */
+
+  /* semantic */
+  --text-h1:var(--fw-display) var(--fs-6)/var(--lh-h1) var(--font-display);
+  --text-h2:var(--fw-display) var(--fs-5)/var(--lh-h2) var(--font-display);
+  --text-h3:var(--fw-bold) var(--fs-3)/var(--lh-h3) var(--font-display);
+  --text-lead:var(--fw-text) var(--fs-3)/var(--lh-lead) var(--font-text);
+  --text-body-font:var(--fw-text) var(--fs-2)/var(--lh-text) var(--font-text);
+  --text-small:var(--fw-text) var(--fs-1)/1.5 var(--font-text);
+}
+@media (max-width:600px){
+  :root{--fs-2:16px;--fs-3:18px;--fs-4:20px;--fs-5:24px;--fs-6:30px}
+}
+@media print{
+  :root{--fs-1:12px;--fs-2:15px;--fs-3:17px;--fs-4:20px;--fs-5:24px;--fs-6:32px}
+}
+
+/* tokens/spacing.css */
+/* 8 px step. --sp-h (4 px) only inside dense rows. */
+:root{
+  --sp-h:4px;
+  --sp-1:8px;--sp-2:16px;--sp-3:24px;--sp-4:32px;--sp-5:40px;--sp-6:48px;--sp-7:64px;--sp-8:80px;--sp-9:96px;
+
+  --content-max:1080px;   /* page column */
+  --page-pad:24px;        /* side padding */
+  --hit:44px;             /* min tap target */
+
+  --radius:0;             /* straight corners; 2 px max for tiny marks, never above 4 */
+  --border:1px;           /* thin lines instead of shadows */
+  --rule-accent:2px;      /* «Вывод» left rule */
+
+  /* semantic */
+  --space-section:var(--sp-8);  /* above H2 */
+  --space-block:var(--sp-3);    /* between figure/table and text */
+  --space-para:var(--sp-2);
+}
+@media (max-width:600px){
+  :root{--page-pad:16px;--space-section:var(--sp-7)}
+}
+
+/* tokens/motion.css */
+/* LEOSEO — motion, focus and state tokens (mechanics from leoseo.ru).
+   Motion is a response to hover / press only. Nothing animates on scroll. */
+:root{
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* durations: colour+border / lift+rotate / sheen; lifts: card hover / tilt card */
+  --dur-fast:.16s;
+  --dur-lift:.26s;
+  --dur-sheen:.9s;
+  --lift:-2px;
+  --tilt-lift:-6px;
+  --tilt-max:5deg;
+
+  --focus-ring-color:var(--cu-300);  /* #e0a268 */
+  --focus-ring-width:2px;
+  --focus-ring-offset:2px;
+
+  --copper-tint:rgba(193,129,78,.12);   /* selected chip, copper badge */
+  --copper-edge:rgba(193,129,78,.55);   /* copper badge border */
+  --bar-bg:rgba(13,13,16,.72);          /* sticky toolbar */
+  --bar-bg-scrolled:rgba(8,8,10,.9);
+  --bar-blur:14px;
+  --bar-h:60px;
+
+  --state-error:#e07a5f;    /* 6.6:1 on --bg-deep; always with «!» and text */
+  --state-success:#8cbf9a;  /* 9.3:1 on --bg-deep; always with «✓» and text */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --dur-fast:0s;
+    --dur-lift:0s;
+    --dur-sheen:0s;
+    --lift:0px;
+    --tilt-lift:0px;
+    --tilt-max:0deg;
+  }
+}
+
+/* tokens/base.css */
+/* Element defaults for report pages + print geometry. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text-body);font:var(--text-body-font);font-feature-settings:"kern"}
+/* fixed background art, as on leoseo.ru */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(bg-leoseo.webp) center/cover no-repeat;opacity:var(--bg-image-opacity)}
+.ls-no-art::before,body.ls-no-art::before{display:none}
+a{color:var(--accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--text-strong)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
+::selection{background:var(--accent);color:var(--n-bg)}
+
+.ls-screen-only{}
+.ls-print-only{display:none}
+.ls-break-before{}
+.ls-avoid-break{break-inside:avoid}
+
+@page{size:A4;margin:18mm 16mm 18mm 16mm}
+@media print{
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body::before{display:none}
+  .ls-screen-only{display:none!important}
+  .ls-print-only{display:block}
+  .ls-break-before{break-before:page}
+}
+
+/* components/components.css */
+/* Component classes (ls-*). Used by the React components in Claude Design; usable in plain HTML too. */
+
+/* page */
+.ls-page{background:transparent;color:var(--text-body);font:var(--text-body-font);min-height:100%}
+.ls-page__inner{max-width:var(--content-max);margin:0 auto;padding:var(--sp-6) var(--page-pad) var(--sp-9)}
+
+/* logo — url resolved relative to this file */
+.ls-logo{display:inline-block;aspect-ratio:201/40;background:url(leoseo-logo-light.svg) left center/contain no-repeat;flex:none}
+[data-theme="print"] .ls-logo{background-image:url(leoseo-logo-dark.svg)}
+@media print{.ls-logo,[data-theme] .ls-logo{background-image:url(leoseo-logo-dark.svg)!important}}
+
+/* report header */
+.ls-head{margin:0 0 var(--sp-6)}
+.ls-head__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:wrap;padding-bottom:var(--sp-2);border-bottom:var(--border) solid var(--line)}
+.ls-head__client{font:var(--fw-semibold) var(--fs-1)/1.4 var(--font-display);color:var(--text-muted)}
+.ls-h1{font:var(--text-h1);letter-spacing:var(--ls-display);color:var(--text-strong);margin:var(--sp-6) 0 var(--sp-3);max-width:22em;text-wrap:balance}
+.ls-head__meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--sp-2) var(--sp-4);margin:0}
+.ls-head__meta div{min-width:0}
+.ls-head__meta dt{font:var(--text-small);color:var(--text-faint);margin:0 0 2px}
+.ls-head__meta dd{font:var(--fw-medium) var(--fs-1)/1.5 var(--font-text);color:var(--text-body);margin:0}
+
+/* headings & text */
+.ls-h2{font:var(--text-h2);letter-spacing:var(--ls-display);color:var(--text-strong);margin:var(--space-section) 0 var(--sp-2);padding-top:var(--sp-3);border-top:var(--border) solid var(--line-strong);max-width:24em;text-wrap:balance;break-after:avoid}
+.ls-h2:first-child{margin-top:0}
+.ls-h3{font:var(--text-h3);color:var(--text-strong);margin:var(--sp-4) 0 var(--sp-1);max-width:30em;text-wrap:balance;break-after:avoid}
+.ls-h3:first-child{margin-top:0}
+.ls-lead{font:var(--text-lead);color:var(--text-strong);max-width:var(--measure-lead);margin:0 0 var(--sp-3);text-wrap:pretty}
+.ls-p{max-width:var(--measure);margin:0 0 var(--space-para);text-wrap:pretty}
+.ls-p:last-child{margin-bottom:0}
+.ls-bullets{max-width:var(--measure);margin:0 0 var(--space-para);padding-left:var(--sp-3)}
+.ls-bullets li{margin:0 0 var(--sp-1);padding-left:var(--sp-h)}
+.ls-bullets li::marker{color:var(--accent)}
+.ls-note{font:var(--text-small);color:var(--text-faint);max-width:var(--measure);margin:var(--sp-1) 0 var(--sp-2)}
+.ls-note b{color:var(--text-muted);font-weight:var(--fw-semibold)}
+
+/* callout quote */
+.ls-quote{margin:var(--sp-5) 0;padding:var(--sp-3) 0;border-top:var(--border) solid var(--line-strong);border-bottom:var(--border) solid var(--line-strong);max-width:46em;break-inside:avoid}
+.ls-quote p{font:var(--fw-semibold) var(--fs-4)/1.4 var(--font-display);color:var(--text-strong);margin:0;text-wrap:pretty}
+.ls-quote footer{font:var(--text-small);color:var(--text-faint);margin-top:var(--sp-2)}
+
+/* conclusion */
+.ls-conc{margin:var(--sp-5) 0;padding:var(--sp-h) 0 var(--sp-h) var(--sp-3);border-left:var(--rule-accent) solid var(--accent-line);max-width:calc(var(--measure) + var(--sp-3));break-inside:avoid}
+.ls-conc__t{font:var(--fw-bold) var(--fs-1)/1.4 var(--font-display);color:var(--accent-text);margin:0 0 var(--sp-1)}
+.ls-conc__b{font:var(--fw-medium) var(--fs-3)/1.5 var(--font-text);color:var(--text-strong);margin:0}
+.ls-conc__b p{margin:0 0 var(--sp-1)}
+
+/* figure */
+.ls-fig{margin:var(--space-block) 0;break-inside:avoid}
+.ls-fig__frame{position:relative;border:var(--border) solid var(--line);background:var(--surface-1);padding:var(--sp-2) var(--sp-2) var(--sp-1)}
+.ls-fig__title{font:var(--fw-bold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong);margin:0 0 var(--sp-1)}
+.ls-fig__cap{font:var(--text-small);color:var(--text-faint);margin:var(--sp-1) 0 0}
+.ls-legend{display:flex;flex-wrap:wrap;gap:var(--sp-1) var(--sp-3);font:var(--text-small);color:var(--text-muted);margin:0 0 var(--sp-1);padding:0;list-style:none}
+.ls-legend li{display:flex;align-items:center;gap:var(--sp-1)}
+.ls-legend i{display:inline-block;width:10px;height:10px;flex:none}
+.ls-legend i.is-line{width:16px;height:2px}
+.ls-chart{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.ls-chart text{font-family:var(--font-text);font-size:var(--fs-1);fill:var(--text-faint);font-variant-numeric:tabular-nums}
+.ls-chart .yr{fill:var(--text-muted);font-weight:var(--fw-semibold)}
+.ls-chart .lbl{font-family:var(--font-display);font-weight:var(--fw-bold)}
+.ls-tip{position:absolute;z-index:2;pointer-events:none;background:var(--surface-2);border:var(--border) solid var(--line-strong);color:var(--text-strong);font:var(--text-small);padding:var(--sp-1) 12px;min-width:170px}
+.ls-tip__h{font-weight:var(--fw-semibold);margin-bottom:2px}
+.ls-tip__r{display:flex;justify-content:space-between;gap:var(--sp-2);color:var(--text-muted)}
+.ls-tip__r b{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-tip__r i{display:inline-block;width:8px;height:8px;margin-right:6px}
+@media print{.ls-tip{display:none!important}}
+
+/* number table */
+.ls-table{width:100%;border-collapse:collapse;margin:var(--sp-2) 0 var(--sp-1);font:var(--text-body-font);table-layout:auto}
+.ls-table caption{caption-side:bottom;text-align:left;font:var(--text-small);color:var(--text-faint);padding-top:var(--sp-1)}
+.ls-table th{text-align:left;font:var(--fw-medium) var(--fs-1)/1.35 var(--font-text);color:var(--text-muted);padding:var(--sp-1) 12px;border-bottom:var(--border) solid var(--line-strong);vertical-align:bottom}
+.ls-table td{padding:10px 12px;border-bottom:var(--border) solid var(--line);vertical-align:baseline}
+.ls-table th:first-child,.ls-table td:first-child{padding-left:0}
+.ls-table th:last-child,.ls-table td:last-child{padding-right:0}
+.ls-table .num{text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ls-table tfoot td{border-top:var(--border) solid var(--line-strong);border-bottom:0;color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-share{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.ls-share__bar{position:relative;width:96px;height:8px;background:var(--bg-deep);outline:1px solid var(--line);outline-offset:-1px;flex:none}
+.ls-share__bar span{position:absolute;inset:0 auto 0 0;background:var(--data-1)}
+.ls-share b{min-width:3.6em;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums}
+@media (max-width:600px){
+  .ls-table{font-size:15px}
+  .ls-table th,.ls-table td{padding-left:6px;padding-right:6px}
+  .ls-share{flex-direction:column;align-items:flex-end;gap:4px}
+  .ls-share__bar{width:56px;height:6px}
+}
+
+/* change list */
+.ls-chg{list-style:none;margin:var(--sp-2) 0;padding:0;max-width:40em}
+.ls-chg li{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);padding:10px 0;min-height:var(--hit);border-bottom:var(--border) solid var(--line)}
+.ls-chg li:first-child{border-top:var(--border) solid var(--line)}
+.ls-chg__v{font:var(--fw-bold) var(--fs-2)/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--down)}
+.ls-chg__v.is-up{color:var(--up)}
+.ls-chg__v.is-flat{color:var(--text-muted)}
+.ls-chg__a{display:inline-block;width:1em;text-align:center;margin-right:2px;font-weight:var(--fw-semibold)}
+
+/* reasons */
+.ls-why{list-style:none;margin:var(--sp-2) 0 0;padding:0;counter-reset:w}
+.ls-why>li{counter-increment:w;position:relative;padding:var(--sp-3) 0 var(--sp-3) 64px;border-top:var(--border) solid var(--line)}
+.ls-why>li::before{content:counter(w);position:absolute;left:0;top:var(--sp-3);font:var(--fw-display) var(--fs-5)/1 var(--font-num);color:var(--accent);font-variant-numeric:tabular-nums}
+.ls-why>li>.ls-h3{margin:0 0 var(--sp-1)}
+@media (max-width:600px){.ls-why>li{padding-left:44px}}
+
+/* plan month */
+.ls-plan{border:var(--border) solid var(--line-strong);background:var(--surface-1);padding:var(--sp-3);margin:0 0 var(--sp-2)}
+.ls-plan__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap;margin:0 0 var(--sp-2)}
+.ls-plan__h h3{margin:0}
+.ls-plan__n{font:var(--text-small);color:var(--text-faint)}
+.ls-plan ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));column-gap:var(--sp-4)}
+.ls-plan li{padding:12px 0;border-top:var(--border) solid var(--line);display:grid;gap:var(--sp-h);align-content:start;break-inside:avoid}
+.ls-plan__pg{font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-plan__m{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sp-h) var(--sp-1);font:var(--text-small);color:var(--text-faint)}
+.ls-plan__m .q{color:var(--text-muted)}
+.ls-plan__m .v{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-muted);white-space:nowrap}
+.ls-tag{display:inline-block;font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);padding:3px 6px;border:var(--border) solid var(--line-strong);color:var(--text-muted);white-space:nowrap}
+.ls-tag.is-new{color:var(--accent-text);border-color:var(--accent-line)}
+
+/* forecast */
+.ls-fc{margin:var(--space-block) 0;break-inside:avoid}
+.ls-fc__grp{padding:var(--sp-2) 0;border-top:var(--border) solid var(--line)}
+.ls-fc__grp:last-of-type{border-bottom:var(--border) solid var(--line)}
+.ls-fc__t{font:var(--fw-bold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong);margin:0 0 var(--sp-1)}
+.ls-fc__row{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr);align-items:center;gap:var(--sp-2);min-height:32px}
+.ls-fc__nm{font:var(--text-small);color:var(--text-muted)}
+.ls-fc__row.is-main .ls-fc__nm{color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-fc__trk{position:relative;height:20px}
+.ls-fc__bar{position:absolute;left:0;top:4px;height:12px;background:var(--data-3)}
+.ls-fc__row.is-main .ls-fc__bar{background:var(--data-2)}
+.ls-fc__val{position:absolute;top:0;font:var(--fw-bold) var(--fs-1)/20px var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);padding-left:var(--sp-1);white-space:nowrap}
+.ls-fc__now{position:absolute;top:-6px;bottom:-6px;width:0;border-left:1px dashed var(--text-faint)}
+.ls-fc__key{display:flex;align-items:center;gap:var(--sp-1);font:var(--text-small);color:var(--text-faint);margin:var(--sp-1) 0 0}
+.ls-fc__key i{display:inline-block;width:0;height:14px;border-left:1px dashed var(--text-faint)}
+@media (max-width:600px){.ls-fc__row{grid-template-columns:minmax(0,7.5em) minmax(0,1fr);gap:var(--sp-1)}}
+
+/* signature */
+.ls-sign{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-top:var(--sp-8);padding-top:var(--sp-3);border-top:var(--border) solid var(--line);font:var(--text-small);color:var(--text-faint)}
+.ls-sign p{margin:0}
+.ls-sign b{color:var(--text-muted);font-weight:var(--fw-semibold)}
+
+/* columns */
+.ls-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--sp-3) var(--sp-5);align-items:start}
+
+/* page break marker on screen */
+.ls-pb{height:0;margin:0;border:0}
+@media print{.ls-pb{break-after:page}
+  .ls-page__inner{max-width:none;padding:0}
+  .ls-fig__frame{background:transparent}
+  .ls-plan{background:transparent}
+}
+
+/* ───── interactive ───── */
+.ls-btn-reset{appearance:none;background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;cursor:pointer;border-radius:0}
+
+/* card */
+.ls-card{position:relative;display:grid;align-content:start;gap:var(--sp-1);background:var(--surface-1);border:var(--border) solid var(--line);padding:var(--sp-2) var(--sp-3) var(--sp-3);min-width:0;color:var(--text-body);text-decoration:none}
+a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);color:var(--text-body)}
+.ls-card__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-card__t{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted);margin:0}
+.ls-card.is-page .ls-card__t,.ls-card.is-task .ls-card__t{font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-card__v{font:var(--fw-display) var(--fs-5)/1.1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);letter-spacing:var(--ls-display);margin:0}
+.ls-card.is-page .ls-card__v,.ls-card.is-task .ls-card__v{font:var(--fw-bold) var(--fs-3)/1.2 var(--font-num)}
+.ls-card__c{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-card__chg{font:var(--fw-bold) var(--fs-1)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--down);white-space:nowrap}
+.ls-card__chg.is-up{color:var(--up)}
+.ls-card__spark{display:block;width:100%;height:36px;margin-top:var(--sp-1)}
+.ls-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--sp-2);margin:var(--space-block) 0}
+.ls-status{font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);padding:3px 6px;border:var(--border) solid var(--line-strong);color:var(--text-muted);white-space:nowrap}
+.ls-status.is-done{color:var(--text-strong);border-color:var(--text-faint)}
+.ls-status.is-doing{color:var(--accent-text);border-color:var(--accent-line)}
+
+/* segmented control */
+.ls-seg{display:inline-flex;border:var(--border) solid var(--line-strong);background:var(--bg-deep);max-width:100%;flex-wrap:wrap}
+.ls-seg__o{min-height:36px;min-width:44px;padding:0 var(--sp-2);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);color:var(--text-muted);border-right:var(--border) solid var(--line)}
+.ls-seg__o:last-child{border-right:0}
+.ls-seg__o:hover{color:var(--text-strong)}
+.ls-seg__o[aria-checked="true"],.ls-seg__o[aria-selected="true"]{background:var(--surface-2);color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--text-strong)}
+.ls-seg__o:focus-visible{outline-offset:-2px}
+.ls-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-1) var(--sp-3);margin:var(--sp-3) 0 calc(-1 * var(--sp-1))}
+.ls-tabs{display:flex;gap:0;border-bottom:var(--border) solid var(--line-strong);overflow-x:auto;scrollbar-width:none}
+.ls-tabs .ls-seg__o{border:0;background:none;min-height:44px;padding:0 var(--sp-2)}
+.ls-tabs .ls-seg__o:first-child{padding-left:0}
+.ls-tabs .ls-seg__o[aria-selected="true"]{background:none;box-shadow:inset 0 -2px 0 var(--accent)}
+
+/* toggle */
+.ls-tgl{display:inline-flex;align-items:center;gap:12px;min-height:44px;font:var(--text-small);color:var(--text-muted);cursor:pointer;user-select:none}
+.ls-tgl:hover{color:var(--text-strong)}
+.ls-tgl__sw{position:relative;width:36px;height:20px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);flex:none}
+.ls-tgl__sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--text-faint)}
+.ls-tgl[aria-checked="true"]{color:var(--text-strong)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw{border-color:var(--accent-line)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw::after{left:18px;background:var(--accent)}
+.ls-tgl__dot{display:inline-block;width:10px;height:10px;flex:none}
+
+/* range slider */
+.ls-range{display:grid;gap:var(--sp-1);margin:var(--sp-2) 0;max-width:40em}
+.ls-range__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-range__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-range__o{font:var(--fw-display) var(--fs-4)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-range__o small{font:var(--fw-medium) var(--fs-1)/1 var(--font-text);color:var(--text-faint);margin-left:6px}
+.ls-range input{-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:0;background:transparent;cursor:pointer}
+.ls-range input::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--accent) var(--p),var(--bg-deep) var(--p));outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-track{height:4px;background:var(--bg-deep);outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-progress{height:4px;background:var(--accent)}
+.ls-range input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input::-moz-range-thumb{width:16px;height:16px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input:focus-visible{outline:none}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range input:focus-visible::-moz-range-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range__ax{display:flex;justify-content:space-between;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums;margin-top:calc(-1 * var(--sp-1))}
+.ls-outs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:var(--sp-2);margin:var(--sp-2) 0}
+.ls-out{border-top:var(--border) solid var(--line-strong);padding-top:var(--sp-1)}
+.ls-out dt{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-out dd{margin:var(--sp-h) 0 0;font:var(--fw-display) var(--fs-4)/1.2 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong)}
+
+/* accordion */
+.ls-acc{margin:var(--space-block) 0;border-top:var(--border) solid var(--line-strong)}
+.ls-acc__i{border-bottom:var(--border) solid var(--line)}
+.ls-acc__h{margin:0}
+.ls-acc__b{display:flex;width:100%;align-items:center;justify-content:space-between;gap:var(--sp-2);min-height:56px;padding:var(--sp-1) 0;text-align:left;font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-acc__b:hover{color:var(--accent-text)}
+.ls-acc__b:focus-visible{outline-offset:-2px}
+.ls-acc__m{display:flex;align-items:center;gap:var(--sp-2);font:var(--text-small);color:var(--text-faint);flex:none}
+.ls-acc__g{display:inline-grid;place-items:center;width:28px;height:28px;border:var(--border) solid var(--line-strong);font:var(--fw-medium) 18px/1 var(--font-display);color:var(--text-muted)}
+.ls-acc__p{padding:0 0 var(--sp-3)}
+.ls-acc__p[hidden]{display:none}
+@media print{.ls-acc__p[hidden]{display:block}.ls-acc__g{display:none}}
+
+/* carousel */
+.ls-car{margin:var(--space-block) 0}
+.ls-car__h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);margin:0 0 var(--sp-2)}
+.ls-car__nav{display:flex;gap:var(--sp-1)}
+.ls-car__btn{display:inline-grid;place-items:center;width:44px;height:44px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);color:var(--text-strong);font:var(--fw-semibold) 18px/1 var(--font-display)}
+.ls-car__btn:hover{background:var(--surface-2)}
+.ls-car__btn:disabled{color:var(--text-faint);border-color:var(--line);cursor:default;background:transparent}
+.ls-car__trk{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(min(84%,300px),calc((100% - 2 * var(--sp-2)) / 3));gap:var(--sp-2);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:auto}
+.ls-car__trk::-webkit-scrollbar{display:none}
+.ls-car__trk>*{scroll-snap-align:start}
+.ls-car__trk:focus-visible{outline-offset:4px}
+.ls-car__dots{display:flex;justify-content:center;gap:0;margin-top:var(--sp-1)}
+.ls-car__dot{display:inline-grid;place-items:center;width:32px;height:44px}
+.ls-car__dot span{display:block;width:8px;height:8px;border:1px solid var(--text-faint)}
+.ls-car__dot[aria-current="true"] span{background:var(--text-strong);border-color:var(--text-strong)}
+.ls-car__dot:focus-visible{outline-offset:-6px}
+@media print{.ls-car__trk{grid-auto-flow:row;grid-template-columns:1fr 1fr;overflow:visible}.ls-car__nav,.ls-car__dots{display:none}}
+@media (max-width:600px){.ls-car__nav{display:none}}
+
+/* progress */
+.ls-prog{margin:var(--sp-2) 0;max-width:40em}
+.ls-prog__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);margin-bottom:var(--sp-1)}
+.ls-prog__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-prog__v{font:var(--fw-bold) var(--fs-2)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-prog__v small{font:var(--text-small);color:var(--text-faint);margin-left:6px}
+.ls-prog__t{position:relative;height:8px;background:var(--bg-deep);outline:1px solid var(--line-strong);outline-offset:-1px;display:flex}
+.ls-prog__d{background:var(--accent);height:100%}
+.ls-prog__w{height:100%;background:repeating-linear-gradient(90deg,var(--text-faint) 0 2px,transparent 2px 6px);opacity:.6}
+.ls-prog__k{display:flex;flex-wrap:wrap;gap:var(--sp-h) var(--sp-3);font:var(--text-small);color:var(--text-faint);margin-top:var(--sp-1)}
+.ls-prog__k i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+@media (max-width:600px){.ls-seg__o{min-height:44px}}
+
+/* components/mechanics.css */
+/* LEOSEO — interaction layer (leo-*). Adds hover/press motion, focus, buttons, chips, badges,
+   sticky toolbar, form states. Base ls-* rules stay untouched; refinements below extend them.
+   Doc-only forced states: .is-hover / .is-active / .is-focus mirror :hover / :active / :focus-visible. */
+
+/* focus — everywhere */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible,
+.is-focus{outline:var(--focus-ring-width) solid var(--focus-ring-color)!important;outline-offset:var(--focus-ring-offset)!important}
+.ls-range input:focus-visible{outline:none!important}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.ls-range input:focus-visible::-moz-range-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+@media (min-width:601px){.ls-tabs{overflow:visible}}
+
+/* arrows & links */
+.leo-arrow{display:inline-block;transition:transform var(--dur-lift) var(--ease)}
+:is(a,button,.leo-card):is(:hover,.is-hover)>.leo-arrow,
+:is(a,button,.leo-card):is(:hover,.is-hover) .leo-reveal .leo-arrow{transform:translateX(4px)}
+.leo-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent-text);font:var(--fw-semibold) var(--fs-2)/1.4 var(--font-display);text-decoration:none;transition:color var(--dur-fast) var(--ease)}
+.leo-link:is(:hover,.is-hover){color:var(--text-strong)}
+
+/* ───── buttons ───── */
+.leo-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-1);min-height:44px;padding:0 20px;font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;border:1px solid transparent;border-radius:0;cursor:pointer;text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-btn--sm{min-height:36px;padding:0 14px}
+.leo-btn--lg{min-height:52px;padding:0 28px;font-size:var(--fs-2)}
+.leo-btn--block{display:flex;width:100%}
+@media (max-width:600px){.leo-btn--sm{min-height:44px}}
+.leo-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--n-deep)}
+.leo-btn--primary:is(:hover,.is-hover){background:var(--cu-300);border-color:var(--cu-300);color:var(--n-deep)}
+.leo-btn--primary:is(:active,.is-active){background:var(--cu-600);border-color:var(--cu-600);transform:translateY(1px)}
+.leo-btn--outline{background:var(--bg);border-color:var(--line-strong);color:var(--text-strong)}
+.leo-btn--outline:is(:hover,.is-hover){border-color:var(--accent-line);color:var(--accent-text)}
+.leo-btn--outline:is(:active,.is-active){background:var(--surface-2);transform:translateY(1px)}
+.leo-btn--ghost{background:transparent;color:var(--text-muted)}
+.leo-btn--ghost:is(:hover,.is-hover){background:var(--hover);color:var(--text-strong)}
+.leo-btn--ghost:is(:active,.is-active){background:rgba(246,243,238,.08);transform:translateY(1px)}
+.leo-btn:is(:disabled,[aria-disabled="true"]):not(.is-loading){background:transparent;border-color:var(--line);color:var(--text-faint);opacity:.6;cursor:not-allowed;transform:none}
+.leo-btn--ghost:is(:disabled,[aria-disabled="true"]):not(.is-loading){border-color:transparent}
+.leo-btn.is-loading{cursor:progress}
+.leo-btn.is-loading:is(:hover,:active){transform:none}
+.leo-spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;flex:none;animation:leo-rot .7s linear infinite}
+@keyframes leo-rot{to{transform:rotate(1turn)}}
+
+/* glow wrapper: copper edge rests in one corner, rotates on hover / focus */
+.leo-glow{position:relative;display:inline-flex;padding:1px;isolation:isolate;overflow:hidden;background:var(--line-strong);vertical-align:middle}
+.leo-glow--block{display:flex;width:100%}
+.leo-glow::before{content:"";position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;translate:-50% -50%;z-index:-1;
+  background:conic-gradient(from 0deg,transparent 0 62%,var(--cu-300) 80%,transparent 92%);animation:leo-rot 3.2s linear infinite;animation-play-state:paused}
+.leo-glow:is(:hover,:focus-within,.is-hover)::before{animation-play-state:running}
+.leo-glow>.leo-btn{border-color:transparent;flex:1}
+.leo-glow>.leo-btn--outline{background:var(--bg)}
+
+/* ───── cards (extends .ls-card) ───── */
+.leo-card{position:relative;overflow:hidden;cursor:pointer;
+  transition:transform var(--dur-lift) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-card:is(:hover,.is-hover){transform:translateY(var(--lift));border-color:var(--accent-line)}
+.leo-card:is(:active,.is-active){transform:translateY(0)}
+.leo-card[data-tilt]{transform-style:preserve-3d;will-change:transform}
+.leo-card[data-tilt].is-tilting{transition:transform .08s linear,border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-sheen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(246,243,238,.08) 50%,transparent 70%);transform:translateX(-110%)}
+.leo-sheen:is(:hover,.is-hover)::after{transform:translateX(110%);transition:transform var(--dur-sheen) var(--ease)}
+.leo-reveal{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp-1);font:var(--fw-semibold) var(--fs-1)/1.4 var(--font-display);color:var(--accent-text);opacity:0;transform:translateY(4px);
+  transition:opacity var(--dur-fast) var(--ease),transform var(--dur-lift) var(--ease)}
+.leo-card:is(:hover,:focus-visible,.is-hover) .leo-reveal{opacity:1;transform:none}
+@media (hover:none){.leo-reveal{opacity:1;transform:none}}
+.ls-card.is-featured{background:var(--surface-2);border-color:var(--accent-line)}
+.ls-card__badge{position:absolute;top:var(--sp-2);right:var(--sp-2)}
+.ls-card.is-featured .ls-card__top{padding-right:96px}
+@media print{.leo-reveal{display:none}.leo-card{transform:none!important}}
+
+/* ───── chips & badges ───── */
+.leo-chips{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1);margin:var(--sp-2) 0 0}
+.leo-chip{display:inline-flex;align-items:center;gap:var(--sp-1);min-height:36px;padding:0 14px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-medium) var(--fs-1)/1 var(--font-text);cursor:pointer;border-radius:0;
+  transition:color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-chip:is(:hover,.is-hover){color:var(--text-strong);border-color:var(--text-faint)}
+.leo-chip:is(:active,.is-active){transform:translateY(1px)}
+.leo-chip[aria-pressed="true"]{background:var(--copper-tint);border-color:var(--accent-line);color:var(--text-strong)}
+.leo-chip:disabled{opacity:.45;cursor:not-allowed;transform:none;color:var(--text-faint);border-color:var(--line)}
+.leo-chip__n{font:var(--fw-semibold) var(--fs-1)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-faint)}
+.leo-chip[aria-pressed="true"] .leo-chip__n{color:var(--accent-text)}
+.leo-chips__s{margin-left:auto;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums}
+@media (max-width:600px){.leo-chip{min-height:44px}.leo-chips__s{margin-left:0;width:100%}}
+@media print{.leo-chips{display:none}}
+
+.leo-badge,.ls-tag,.ls-status{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;white-space:nowrap;vertical-align:middle}
+.leo-badge--copper,.ls-tag.is-new{color:var(--accent-text);border-color:var(--copper-edge);background:var(--copper-tint)}
+.leo-badge--mono{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);background:var(--bg-deep)}
+.leo-badge--dot,.ls-status,.ls-status:is(.is-done,.is-doing,.is-todo){border-color:transparent;padding-left:0;background:transparent}
+.leo-badge--dot::before,.ls-status::before{content:"";width:7px;height:7px;background:currentColor;flex:none}
+.leo-badge--dot.is-copper,.ls-status.is-doing{color:var(--accent-text)}
+.leo-badge--dot.is-ink,.ls-status.is-done{color:var(--text-strong)}
+.leo-badge--dot.is-faint,.ls-status.is-todo{color:var(--text-faint)}
+.ls-status.is-todo::before,.leo-badge--dot.is-faint::before{background:transparent;border:1px solid currentColor}
+
+/* ───── segments, tabs, accordion ───── */
+.ls-seg__o{transition:color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.ls-seg__o:is(:hover,.is-hover):not(:disabled){color:var(--text-strong);background:var(--hover)}
+.ls-seg__o:is(:active,.is-active):not(:disabled){background:rgba(246,243,238,.08)}
+.ls-seg__o[aria-checked="true"]{background:var(--surface-2);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-seg__o:disabled{color:var(--text-faint);opacity:.45;cursor:not-allowed}
+.ls-tabs .ls-seg__o{box-shadow:inset 0 -2px 0 transparent;transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.ls-tabs .ls-seg__o:is(:hover,.is-hover):not(:disabled){background:none;box-shadow:inset 0 -2px 0 var(--line-strong)}
+.ls-tabs .ls-seg__o[aria-selected="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-acc__b{transition:color var(--dur-fast) var(--ease)}
+.ls-acc__b:is(:hover,.is-hover){color:var(--accent-text)}
+.ls-acc__g{font-size:0;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.ls-acc__g::before{content:"+";display:block;font:var(--fw-medium) 20px/1 var(--font-display);transition:transform var(--dur-lift) var(--ease)}
+.ls-acc__b[aria-expanded="true"] .ls-acc__g::before{transform:rotate(45deg)}
+.ls-acc__b:is(:hover,.is-hover) .ls-acc__g{border-color:var(--accent-line);color:var(--accent-text)}
+
+/* ───── tooltips, table rows, carousel, slider ───── */
+.ls-table tbody tr{transition:background-color var(--dur-fast) var(--ease)}
+.ls-table tbody tr:is(:hover,.is-hover){background:var(--hover)}
+.ls-table tbody tr:is(:hover,.is-hover) td:first-child{color:var(--text-strong)}
+.ls-car__trk{padding-block:var(--sp-1);margin-block:calc(-1 * var(--sp-1))}
+.ls-car__btn{transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-car__btn:is(:hover,.is-hover):not(:disabled){border-color:var(--accent-line);color:var(--accent-text);background:var(--bg-deep)}
+.ls-car__btn:is(:active,.is-active):not(:disabled){transform:translateY(1px)}
+.ls-car__btn:disabled{opacity:.5;cursor:not-allowed}
+.ls-car__dot span{transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease)}
+.ls-car__dot:hover span{border-color:var(--text-strong)}
+.ls-range input::-webkit-slider-thumb{transition:background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-range input:hover::-webkit-slider-thumb{background:var(--cu-300)}
+.ls-range input:active::-webkit-slider-thumb{background:var(--accent);transform:scale(1.1)}
+.ls-range input:hover::-moz-range-thumb{background:var(--cu-300)}
+.ls-range input:active{cursor:grabbing}
+.ls-range.is-disabled{opacity:.5}
+.ls-range input:disabled{cursor:not-allowed}
+.ls-range input:disabled::-webkit-slider-thumb{background:var(--text-faint)}
+.ls-range input:disabled::-moz-range-thumb{background:var(--text-faint)}
+.ls-range.is-disabled input::-webkit-slider-runnable-track{background:var(--bg-deep)}
+
+.leo-hint{position:relative;display:inline;border-bottom:1px dotted var(--text-faint);cursor:help;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.leo-hint:is(:hover,:focus-visible,.is-hover){border-bottom-color:var(--accent);color:var(--text-strong)}
+.leo-hint__b{position:absolute;left:0;bottom:calc(100% + 8px);z-index:6;width:max-content;max-width:min(300px,80vw);background:var(--surface-2);border:1px solid var(--line-strong);padding:var(--sp-1) 12px;font:var(--text-small);color:var(--text-strong);text-align:left;white-space:normal;
+  opacity:0;visibility:hidden;transform:translateY(4px);pointer-events:none;transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease),visibility var(--dur-fast)}
+.leo-hint:is(:hover,:focus-visible,.is-hover) .leo-hint__b{opacity:1;visibility:visible;transform:none}
+@media print{.leo-hint{border-bottom:0}.leo-hint__b{display:none}}
+
+/* ───── sticky report toolbar ───── */
+.leo-bar{position:sticky;top:0;z-index:30;background:var(--bar-bg);-webkit-backdrop-filter:blur(var(--bar-blur));backdrop-filter:blur(var(--bar-blur));border-bottom:1px solid var(--line)}
+.leo-bar.is-scrolled{background:var(--bar-bg-scrolled)}
+.leo-bar__in{max-width:var(--content-max);margin:0 auto;padding:0 var(--page-pad);min-height:var(--bar-h);display:flex;align-items:center;gap:var(--sp-3)}
+.leo-bar__nav{display:flex;flex:1;min-width:0;gap:var(--sp-h);overflow-x:auto;scrollbar-width:none}
+.leo-bar__nav::-webkit-scrollbar{display:none}
+.leo-bar__a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;color:var(--text-muted);text-decoration:none;font:var(--fw-medium) var(--fs-1)/1 var(--font-display);white-space:nowrap;box-shadow:inset 0 -2px 0 transparent;
+  transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.leo-bar__a:is(:hover,.is-hover){color:var(--text-body)}
+.leo-bar__a[aria-current="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.leo-bar__a:focus-visible{outline-offset:-2px!important}
+.ls-h2[id]{scroll-margin-top:calc(var(--bar-h) + var(--sp-2))}
+@media (max-width:600px){.leo-bar__in{gap:var(--sp-2)}.leo-bar .ls-logo{display:none}}
+@media print{.leo-bar{display:none!important}}
+
+/* ───── form ───── */
+.leo-form{display:grid;gap:var(--sp-3);max-width:36em;margin:var(--space-block) 0}
+.leo-field{display:grid;gap:6px}
+.leo-field__l{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted)}
+.leo-field__l i{font-style:normal;color:var(--text-faint)}
+.leo-input{width:100%;min-height:48px;padding:12px 14px;background:var(--bg-deep);border:1px solid var(--line-strong);border-radius:0;color:var(--text-strong);font:var(--text-body-font);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+textarea.leo-input{min-height:120px;resize:vertical;line-height:1.5}
+.leo-input::placeholder{color:var(--text-faint)}
+.leo-input:is(:hover,.is-hover):not(:disabled){border-color:var(--text-faint)}
+.leo-input:is(:focus,.is-focus){border-color:var(--accent-line);background:var(--n-deep)}
+.leo-field.is-error .leo-input{border-color:var(--state-error)}
+.leo-field.is-success .leo-input{border-color:var(--state-success)}
+.leo-input:disabled{opacity:.5;cursor:not-allowed}
+.leo-field__m{display:flex;gap:var(--sp-1);align-items:baseline;font:var(--text-small);color:var(--text-faint);margin:0}
+.leo-field.is-error .leo-field__m{color:var(--state-error)}
+.leo-field.is-success .leo-field__m{color:var(--state-success)}
+.leo-field__ic{display:inline-grid;place-items:center;width:16px;height:16px;flex:none;border:1px solid currentColor;font:var(--fw-bold) 11px/1 var(--font-display);transform:translateY(2px)}
+.leo-check{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:10px 0;cursor:pointer;font:var(--text-small);color:var(--text-muted);position:relative}
+.leo-check input{position:absolute;opacity:0;width:20px;height:20px;margin:0;top:10px;left:0}
+.leo-check__b{display:grid;place-items:center;width:20px;height:20px;flex:none;border:1px solid var(--line-strong);background:var(--bg-deep);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-check:is(:hover,.is-hover) .leo-check__b{border-color:var(--accent-line)}
+.leo-check input:checked+.leo-check__b{background:var(--accent);border-color:var(--accent)}
+.leo-check input:checked+.leo-check__b::after{content:"✓";font:var(--fw-bold) 14px/1 var(--font-display);color:var(--n-deep)}
+.leo-check input:focus-visible+.leo-check__b,.leo-check.is-focus .leo-check__b{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.leo-check.is-error .leo-check__b{border-color:var(--state-error)}
+.leo-check.is-disabled{opacity:.5;cursor:not-allowed}
+.leo-check a{color:var(--accent-text)}
+
+/* reduced motion: everything off */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0s!important;animation:none!important}
+  .leo-card,.leo-card[data-tilt]{transform:none!important}
+  .leo-sheen::after{display:none}
+  .leo-reveal{opacity:1;transform:none}
+}
+
+:root{--content-max:1440px}
+.ls-tw{overflow-x:auto}
+.ls-chart .hit{fill:transparent}
+.ls-fig__wrap{position:relative}
+.ls-acc .ls-acc__b b{font-family:var(--font-display);color:var(--text-strong)}
+.ls-plan li .ls-p{color:var(--text-body)}
+@page{@top-left{content:"LEOSEO · danast.su";font:500 9pt Manrope,sans-serif;color:#6e675e;vertical-align:bottom;padding-bottom:4mm}
+@top-right{content:"Отчёт № 2 · 19.09–18.10.2026";font:500 9pt Manrope,sans-serif;color:#6e675e;vertical-align:bottom;padding-bottom:4mm}
+@bottom-right{content:counter(page) " / " counter(pages);font:500 9pt Manrope,sans-serif;color:#6e675e}}
+@page:first{@top-left{content:none}@top-right{content:none}}
+</style></head><body>
+<div class="ls-page" id="top">
+<div class="leo-bar"><div class="leo-bar__in"><a href="#top" aria-label="LEOSEO, к началу отчёта" style="display:inline-flex;min-height:44px;align-items:center"><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:18px"></span></a>
+<nav class="leo-bar__nav" aria-label="Разделы отчёта"><a class="leo-bar__a" href="#poisk">Поиск</a><a class="leo-bar__a" href="#google">Google</a><a class="leo-bar__a" href="#yandex">Яндекс</a><a class="leo-bar__a" href="#raboty">Работы</a><a class="leo-bar__a" href="#plan">План</a></nav>
+<span class="leo-glow"><button type="button" class="leo-btn leo-btn--outline leo-btn--sm" onclick="window.print()">Печать / PDF</button></span></div></div>
+<main class="ls-page__inner">
+<header class="ls-head">
+<div class="ls-head__bar"><span class="ls-head__client">Отчёт № 2 · danast.su</span></div>
+<h1 class="ls-h1">Каталог переехал на боевой сайт, переходов из поиска стало почти вдвое больше</h1>
+<dl class="ls-head__meta"><div><dt>Период</dt><dd>19 сентября – 18 октября 2026</dd></div><div><dt>Договор</dt><dd>№ 059 от 19.08.2026</dd></div><div><dt>Источники</dt><dd>Яндекс Метрика, Google Search Console, Яндекс Вебмастер</dd></div><div><dt>Данные на</dt><dd>19 октября 2026</dd></div></dl>
+</header>
+
+<p class="ls-lead">За второй месяц новая структура каталога, разделы Epiroc и ITJ, поиск, формы и корзина заработали на боевом сайте. Визитов из поиска стало 43 против 23 в прошлом периоде, кликов в Google 52 против 27. В индексе Google 14 937 страниц, Яндекс 8 октября включил в поиск первые разделы с новыми текстами.</p>
+<div class="ls-cards"><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Визиты из поиска</h4></div><p class="ls-card__v">43</p><p class="ls-card__c"><span class="ls-card__chg is-up">↑ +87 %</span> к прошлому периоду<br>Яндекс 16, Google 27</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Клики в Google</h4></div><p class="ls-card__v">52</p><p class="ls-card__c"><span class="ls-card__chg is-up">↑ +93 %</span> к прошлому периоду</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Показы в Google</h4></div><p class="ls-card__v">2 580</p><p class="ls-card__c"><span class="ls-card__chg is-up">↑ +38 %</span> к прошлому периоду</p></article><article class="ls-card is-metric"><div class="ls-card__top"><h4 class="ls-card__t">Страниц в индексе Google</h4></div><p class="ls-card__v">14 937</p><p class="ls-card__c">на 18 сентября было 11 559</p></article></div>
+
+<h2 class="ls-h2" id="poisk">Переходы из поиска</h2>
+<p class="ls-p">Яндекс привёл 16 визитов против 6 в прошлом периоде, Google – 27 против 17. С 30 сентября, когда каталог переехал на боевой сайт, визиты из поиска идут почти каждый день: 28 из 43 за 19 дней. Визиты считаются так же, как в отчёте за первый месяц: по последнему значимому переходу.</p>
+<figure class="ls-fig"><p class="ls-fig__title">Визиты из поиска по дням</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i style="background:var(--data-1)"></i>Google</li><li><i style="background:var(--data-2)"></i>Яндекс</li></ul><div class="ls-fig__wrap"><div id="ch-visits" data-bars='{"x": ["2026-08-19", "2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26", "2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-10", "2026-10-11", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-17", "2026-10-18"], "series": [{"name": "Google", "values": [0, 0, 1, 0, 1, 2, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 3, 0, 0, 4, 0, 0, 1, 0, 0, 2, 0, 0, 1, 1, 0, 0, 2, 1, 2, 1, 0, 1, 1, 1, 0, 0, 2, 1, 1, 2, 3, 2, 1, 1, 0]}, {"name": "Яндекс", "values": [0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1, 0, 6, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}], "label": "Визиты из поиска по дням, 19 августа – 18 октября 2026", "marks": [{"i": 31, "t": "период 2"}, {"i": 42, "t": "каталог на боевом"}]}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Яндекс Метрика, последний значимый переход, данные на 19 октября 2026.</figcaption></figure>
+
+<h2 class="ls-h2" id="google">Google: показов больше на треть, кликов почти вдвое</h2>
+<p class="ls-p">Показов в выдаче Google 2 580 против 1 863, кликов 52 против 27. Средняя позиция 16,2 против 14,4: в выдачу вошли новые страницы каталога, и большинство из них стартует с дальних мест.</p>
+<figure class="ls-fig"><p class="ls-fig__title">Показы сайта в поиске Google по дням</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Показы</li></ul><div class="ls-fig__wrap"><div id="ch-gsc" data-line='{"x": ["2026-08-20", "2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26", "2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-10", "2026-10-11", "2026-10-12", "2026-10-13", "2026-10-14", "2026-10-15", "2026-10-16", "2026-10-17", "2026-10-18"], "series": [{"name": "Показы", "values": [2, 2, 5, 7, 34, 37, 48, 47, 38, 31, 168, 96, 72, 59, 85, 62, 38, 139, 170, 96, 53, 47, 39, 22, 122, 59, 60, 71, 87, 67, 42, 61, 145, 157, 127, 55, 45, 57, 55, 130, 66, 90, 50, 38, 29, 33, 114, 60, 66, 96, 92, 41, 272, 120, 79, 168, 74, 85, 77, 56], "color": "var(--data-1)"}], "label": "Показы сайта в поиске Google по дням", "marks": [{"i": 30, "t": "период 2"}, {"i": 41, "t": "каталог на боевом"}], "extra": {"name": "Клики", "values": [0, 1, 0, 0, 2, 2, 2, 2, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 0, 2, 2, 0, 0, 1, 1, 0, 0, 5, 1, 2, 0, 2, 7, 4, 1, 1, 2, 1, 3, 2, 1, 2, 0, 0, 0, 1, 4, 3, 1, 1, 0, 0, 2, 1, 5, 3, 1, 1, 1]}}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Google Search Console, данные на 19 октября 2026.</figcaption></figure>
+<h3 class="ls-h3">Какие страницы приносят переходы</h3>
+<p class="ls-p">Больше всего кликов дают карточки запчастей Komatsu: их ищут по номеру детали. Карточки Epiroc появились в выдаче Google в первые недели после загрузки.</p>
+<div class="ls-tw"><table class="ls-table"><caption>Google Search Console, клики и показы по страницам. Сумма по страницам больше итога сайта: Google считает показ для каждой страницы, попавшей в выдачу.</caption><thead><tr><th scope="col">Страницы</th><th class="num" scope="col">Клики, 19.08–18.09</th><th class="num" scope="col">Клики, 19.09–18.10</th><th class="num" scope="col">Показы, 19.09–18.10</th><th class="num" scope="col">Страниц в выдаче</th></tr></thead><tbody><tr><td>Запчасти Komatsu</td><td class="num">17</td><td class="num">35</td><td class="num">1 303</td><td class="num">683</td></tr><tr><td>Разделы подшипников и страницы марок</td><td class="num">2</td><td class="num">6</td><td class="num">830</td><td class="num">82</td></tr><tr><td>Главная</td><td class="num">6</td><td class="num">5</td><td class="num">63</td><td class="num">1</td></tr><tr><td>Доставка, оплата и другие страницы</td><td class="num">3</td><td class="num">3</td><td class="num">291</td><td class="num">8</td></tr><tr><td>Запчасти Epiroc</td><td class="num">0</td><td class="num">2</td><td class="num">137</td><td class="num">65</td></tr><tr><td>Карточки и подразделы подшипников</td><td class="num">0</td><td class="num">1</td><td class="num">410</td><td class="num">47</td></tr><tr><td>Запчасти Caterpillar и Cummins</td><td class="num">0</td><td class="num">0</td><td class="num">39</td><td class="num">19</td></tr><tr><td>Подшипники ITJ</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">1</td></tr></tbody></table></div>
+<h3 class="ls-h3">По каким запросам показывается сайт</h3>
+<p class="ls-p">41 из 228 запросов, по которым Google показывал сайт, это номера деталей. По ним сайт в среднем на 7-м месте, по общим запросам вроде «подшипники NSK оптом» и «подшипник Komatsu» – на 30-м. Общие запросы ведут на страницы марок и разделов, тексты для них идут по плану.</p>
+<div class="ls-tw"><table class="ls-table"><caption>Google Search Console, 19.09–18.10.2026, запросы с наибольшим числом показов.</caption><thead><tr><th scope="col">Запрос</th><th class="num" scope="col">Показы</th><th class="num" scope="col">Клики</th><th class="num" scope="col">Средняя позиция</th></tr></thead><tbody><tr><td>ai91946</td><td class="num">106</td><td class="num">0</td><td class="num">3,5</td></tr><tr><td>подшипник komatsu</td><td class="num">49</td><td class="num">0</td><td class="num">15,5</td></tr><tr><td>подшипники koyo купить</td><td class="num">49</td><td class="num">0</td><td class="num">44,5</td></tr><tr><td>подшипники nsk оптом</td><td class="num">47</td><td class="num">0</td><td class="num">16,6</td></tr><tr><td>подшипники nsk купить оптом</td><td class="num">44</td><td class="num">0</td><td class="num">15,8</td></tr><tr><td>запчасти atlas copco</td><td class="num">33</td><td class="num">0</td><td class="num">34,9</td></tr><tr><td>5231410</td><td class="num">30</td><td class="num">0</td><td class="num">8,3</td></tr><tr><td>втулка 802040028 keisa распорная</td><td class="num">28</td><td class="num">0</td><td class="num">10,0</td></tr><tr><td>подшипник nsk купить</td><td class="num">25</td><td class="num">0</td><td class="num">26,3</td></tr><tr><td>kg подшипники производитель</td><td class="num">23</td><td class="num">0</td><td class="num">26,1</td></tr><tr><td>5023774</td><td class="num">22</td><td class="num">0</td><td class="num">8,9</td></tr><tr><td>купить подшипник для спецтехники</td><td class="num">22</td><td class="num">0</td><td class="num">30,6</td></tr></tbody></table></div>
+
+<h3 class="ls-h3">Индекс Google</h3>
+<p class="ls-p">До начала работ в индексе Google было 3 страницы, на 18 сентября – 11 559, на 12 октября – 14 937. Ещё 557 тыс. адресов каталога Google уже обнаружил и добавляет постепенно, по мере обхода: это карточки Komatsu и новые карточки Epiroc.</p>
+<figure class="ls-fig"><p class="ls-fig__title">Страниц сайта в индексе Google</p><div class="ls-fig__frame"><ul class="ls-legend"><li><i class="is-line" style="background:var(--data-1)"></i>Страниц в индексе</li></ul><div class="ls-fig__wrap"><div id="ch-index" data-line='{"x": ["2026-08-21", "2026-08-22", "2026-08-23", "2026-08-24", "2026-08-25", "2026-08-26", "2026-08-27", "2026-08-28", "2026-08-29", "2026-08-30", "2026-08-31", "2026-09-01", "2026-09-02", "2026-09-03", "2026-09-04", "2026-09-05", "2026-09-06", "2026-09-07", "2026-09-08", "2026-09-09", "2026-09-10", "2026-09-11", "2026-09-12", "2026-09-13", "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18", "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23", "2026-09-24", "2026-09-25", "2026-09-26", "2026-09-27", "2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04", "2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-10", "2026-10-11", "2026-10-12"], "series": [{"name": "Страниц в индексе", "values": [590, 9617, 9617, 9617, 9617, 9617, 9617, 9617, 10220, 10220, 10220, 10220, 10220, 10220, 10220, 11380, 11380, 11380, 11380, 11380, 11380, 11380, 11380, 11380, 11380, 11559, 11559, 11559, 11559, 11606, 11606, 11606, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 12647, 14013, 14013, 14013, 14013, 14013, 14937, 14937, 14937], "color": "var(--data-1)"}], "label": "Страниц сайта в индексе Google", "marks": [{"i": 29, "t": "период 2"}, {"i": 40, "t": "каталог на боевом"}]}'></div><div class="ls-tip" style="display:none" role="status"></div></div></div><figcaption class="ls-fig__cap">Источник: Google Search Console, отчёт «Индексирование страниц», обновлён 12 октября 2026, данные на 19 октября 2026.</figcaption></figure>
+
+<h2 class="ls-h2" id="yandex">Яндекс</h2>
+<p class="ls-p">8 октября в поиск Яндекса вошли раздел «Запчасти Epiroc» и его подразделы, разделы шарикоподшипников серий 6000, 6200 и 6300, закрытые 2RS и ZZ, миниатюрные, тонкосерийные, шарнирные ШС и GE и раздел «Запчасти Caterpillar», все с новыми текстами и заголовками. 11 октября вошла страница FAQ.</p>
+<p class="ls-p">В Яндексе сайт находят по названию компании и по номерам деталей Komatsu, например 562-22-52830, 14Y-32-07310 и 195-60-58190. Ошибок сайта в диагностике Вебмастера нет.</p>
+<p class="ls-note">Графики и выгрузки Яндекс Вебмастера с начала октября работают с перебоями, статистика запросов доступна только до 6 октября. Поэтому переходы из Яндекса в этом отчёте взяты из Метрики.</p>
+<aside class="ls-conc" aria-label="Вывод"><p class="ls-conc__t">Позиции</p><div class="ls-conc__b"><p>Съём позиций по ядру на 2 000 запросов идёт сейчас. Позиции в Яндексе и Google добавим, как только он закончится.</p></div></aside>
+
+<h2 class="ls-h2" id="raboty">Работы за период</h2>
+<p class="ls-p">Подробности раскрываются по нажатию.</p>
+<div class="ls-acc"><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h1" aria-expanded="false" aria-controls="w-p1"><span><b>Каталог и механика сайта на боевом</b><br><span class="ls-note" style="display:inline">Новая структура, поиск, формы, корзина, фильтры над выдачей, плитка разделов</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p1" role="region" aria-labelledby="w-h1" hidden><ul class="ls-bullets"><li>30 сентября на боевой сайт перенесены новая структура каталога, 5 943 новые и 13 300 обновлённых позиций, 217 новых разделов, перенаправления со старых адресов и карта сайта.</li><li>12 октября перенесены механика и техническая оптимизация тестового сайта без смены оформления: канонические адреса, запрет индексации служебных страниц, разметка организации с реквизитами, карточка товара, страницы «О компании» и «Изготовление по чертежу» с новым содержанием, меню.</li><li>Над выдачей появилась панель фильтров: размер и артикул одной строкой, марки, наличие, срок поставки, сортировка. Разделы на главной и в каталоге выводятся плиткой.</li><li>Формы запроса и контактов и корзина работают в новом оформлении.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h2" aria-expanded="false" aria-controls="w-p2"><span><b>Каталог запчастей Epiroc</b><br><span class="ls-note" style="display:inline">196 988 карточек на сайте, 1 999 с уникальными описаниями</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p2" role="region" aria-labelledby="w-h2" hidden><ul class="ls-bullets"><li>Каталог поставщика разобран и разложен на 45 подразделов по типу детали.</li><li>На сайт загружено 196 988 карточек с ценой, весом, кодом ТН ВЭД и применяемостью по моделям техники.</li><li>По 91 308 номерам деталей проверен спрос в Яндексе, отобраны 2 000 карточек, которые ищут, и для 1 999 из них написаны описания с вопросами и ответами.</li><li>Страницы марок Epiroc, Komatsu, Caterpillar и Cummins склеены с разделами запчастей, чтобы в поиске не было двух страниц на один запрос.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h3" aria-expanded="false" aria-controls="w-p3"><span><b>Каталог подшипников ITJ</b><br><span class="ls-note" style="display:inline">9 054 карточки, 18 подразделов и 5 подборок</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p3" role="region" aria-labelledby="w-h3" hidden><ul class="ls-bullets"><li>Раздел «Подшипники ITJ», страница марки, 18 подразделов по типам и подборки: крупногабаритные, двух- и четырёхрядные, для ветрогенераторов, металлургии и прокатных станов.</li><li>9 054 карточки с размерами, грузоподъёмностью, частотой вращения, массой и фотографиями серий.</li><li>Сведения о представительстве ITJ и сертификат на странице «О компании».</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h4" aria-expanded="false" aria-controls="w-p4"><span><b>Тексты разделов каталога</b><br><span class="ls-note" style="display:inline">40 текстов с собственными мета-тегами</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p4" role="region" aria-labelledby="w-h4" hidden><ul class="ls-bullets"><li>8 разделов Epiroc и 32 раздела подшипников и запчастей: серии 6000, 6200, 6300, закрытые 2RS и ZZ, конические, игольчатые, корпусные, шарнирные, Komatsu, Caterpillar, Cummins и другие.</li><li>У каждого раздела свои Title и Description, тексты построены по запросам раздела. 8 октября Яндекс включил первые из них в поиск.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h5" aria-expanded="false" aria-controls="w-p5"><span><b>Техническая оптимизация и поиск по сайту</b><br><span class="ls-note" style="display:inline">Разметка товаров, индекс поиска на 201 893 позиции, ответ за 0,3 с</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p5" role="region" aria-labelledby="w-h5" hidden><ul class="ls-bullets"><li>Разметка товара, предложения, списков, вопросов и ответов и хлебных крошек для расширенных сниппетов.</li><li>Поиск по сайту дозагружен новыми позициями, подсказки под строкой поиска, запрос из двух слов отвечает за 0,3 с вместо 23.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h6" aria-expanded="false" aria-controls="w-p6"><span><b>Предложения поставщиков</b><br><span class="ls-note" style="display:inline">Сроки и цены разных поставщиков в карточке, корзине и выдаче</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p6" role="region" aria-labelledby="w-h6" hidden><ul class="ls-bullets"><li>Модуль предложений: в карточке выбор срока поставки с ценой, в выдаче фильтр по сроку, профили загрузки цен и остатков. Работает и без прайсов поставщиков, ждёт первый прайс.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h7" aria-expanded="false" aria-controls="w-p7"><span><b>Товарный фид для Яндекса и справочники</b><br><span class="ls-note" style="display:inline">danast.su/yandex.yml, разбор 16 площадок</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p7" role="region" aria-labelledby="w-h7" hidden><ul class="ls-bullets"><li>Фид товаров для Яндекс Бизнеса и Товаров: позиции со склада и карточки Epiroc с описаниями, цены с НДС, обновление каждую ночь.</li><li>По 16 справочникам и площадкам определено, как обновить данные компании: где нужен кабинет, где форма правки, где регистрация.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h8" aria-expanded="false" aria-controls="w-p8"><span><b>Ссылочное продвижение</b><br><span class="ls-note" style="display:inline">Анкор-лист, отбор площадок, стратегия на октябрь–декабрь</span></span><span class="ls-acc__m"><span class="ls-tag">документы</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p8" role="region" aria-labelledby="w-h8" hidden><ul class="ls-bullets"><li>Анкор-лист на 68 ссылок, отбор 184 площадок, стратегия и реестр размещений на октябрь–декабрь.</li></ul></div></div><div class="ls-acc__i"><h3 class="ls-acc__h"><button type="button" class="ls-btn-reset ls-acc__b" id="w-h9" aria-expanded="false" aria-controls="w-p9"><span><b>Безопасность хостинга</b><br><span class="ls-note" style="display:inline">Проверка по уведомлению хостинга 14 октября</span></span><span class="ls-acc__m"><span class="ls-tag">боевой</span><span class="ls-acc__g" aria-hidden="true">+</span></span></button></h3><div class="ls-acc__p" id="w-p9" role="region" aria-labelledby="w-h9" hidden><ul class="ls-bullets"><li>Проверены файлы из уведомления хостинга: это устаревшие файлы прежнего сайта в корзине хостинга и старом архиве. Они удалены, работающие сайты чистые.</li></ul></div></div></div>
+
+<h2 class="ls-h2" id="plan">План на следующий период</h2>
+<section class="ls-plan"><div class="ls-plan__h"><h3 class="ls-h3">19 октября – 18 ноября 2026</h3><span class="ls-plan__n">12 направлений</span></div><ul><li><span class="ls-plan__pg">Описания карточек Epiroc, вторая волна</span><span class="ls-p" style="margin:0">Описания для карточек запчастей Epiroc с ценой (около 125 тысяч позиций): тип детали, номер, применяемость по сериям и моделям техники, вес и код ТН ВЭД, условия поставки.</span></li><li><span class="ls-plan__pg">Тексты разделов, вторая очередь контент-плана</span><span class="ls-p" style="margin:0">Сорок текстов с мета-тегами: подшипниковые разделы, перенесённые с октября (конические метрические, по ГОСТ, опорные ролики, двухрядные радиально-упорные, ступичные узлы NSK ZA, комплекты VKBA, опорно-поворотные круги RKS, запчасти для снегоходов), раздел «Подшипники ITJ» с подразделами и подборками, страницы марок витрины.</span><span class="ls-plan__m"><span class="q">Нужно от вас: ответы из списка сведений о компании: сроки поставки, гарантия</span></span></li><li><span class="ls-plan__pg">Поиск по сайту</span><span class="ls-p" style="margin:0">Обновление поискового индекса по карточкам Epiroc с новыми названиями, индекс по каталогу ITJ, подсказки по обозначениям ITJ.</span></li><li><span class="ls-plan__pg">Размещение внешних ссылок</span><span class="ls-p" style="margin:0">Размещение ссылок на отобранных донорах по анкор-листу в пределах бюджета 15 000 рублей: разделы подшипников по типам, страницы марок и главная.</span></li><li><span class="ls-plan__pg">Проверка индексации после переноса</span><span class="ls-p" style="margin:0">Отправка новых адресов на переобход в Яндекс Вебмастер и Google Search Console: раздел и подразделы ITJ, подборки, разделы Epiroc, карточки с текстами.</span></li><li><span class="ls-plan__pg">Изображения каталога</span><span class="ls-p" style="margin:0">Единые заглушки для карточек без фото: типовые изображения для шестнадцати типов подшипников (около 4 250 карточек) и двадцать изображений для запчастей Komatsu и Epiroc.</span></li><li><span class="ls-plan__pg">Страница «Гарантии»</span><span class="ls-p" style="margin:0">Условия гарантии на подшипники и запчасти, порядок приёма претензий, перечень документов, контакты для обращений.</span><span class="ls-plan__m"><span class="q">Нужно от вас: срок и условия гарантии, порядок возврата и замены</span></span></li><li><span class="ls-plan__pg">Раздел «Статьи» и первые материалы</span><span class="ls-p" style="margin:0">Шаблон списка статей и шаблон статьи, вывод свежих материалов на главной.</span><span class="ls-plan__m"><span class="q">Нужно от вас: согласование тем статей</span></span></li><li><span class="ls-plan__pg">Справочники и карты</span><span class="ls-p" style="margin:0">Сверка и обновление карточек компании в Яндекс Бизнесе, 2ГИС и Google: название, адрес склада, телефон 8 (800) 201-2048, почта, график работы, ссылка на сайт, категории, описание, фотографии.</span><span class="ls-plan__m"><span class="q">Нужно от вас: доступы к кабинетам или роль редактора, фотографии склада и офиса</span></span></li><li><span class="ls-plan__pg">Реквизиты, страница 404 и описания изображений</span><span class="ls-p" style="margin:0">Реквизиты ООО «ДаНаст» на странице контактов и в подвале.</span><span class="ls-plan__m"><span class="q">Нужно от вас: подтверждение реквизитов и почты для публикации</span></span></li><li><span class="ls-plan__pg">Прайсы поставщиков</span><span class="ls-p" style="margin:0">Приём первого прайса поставщика в модуль предложений: шаблон файла со сроками и ценами, загрузка, проверка вариантов срока поставки в карточке, в выдаче и в корзине.</span><span class="ls-plan__m"><span class="q">Нужно от вас: прайс поставщика со сроками поставки</span></span></li><li><span class="ls-plan__pg">Товарный фид для Яндекс Бизнеса</span><span class="ls-p" style="margin:0">Автоматический фид YML по адресу danast.su/yandex.yml: товары в наличии на складе и карточки Epiroc с описаниями, цены с НДС, фото или изображение раздела, характеристики, ежедневное обновление.</span><span class="ls-plan__m"><span class="q">Нужно от вас: доступ к кабинету Яндекс Бизнеса или роль редактора</span></span></li></ul></section>
+
+<p class="ls-screen-only" style="margin:var(--sp-5) 0 0"><a class="leo-link" href="#top"><span>К началу отчёта</span><span class="leo-arrow" aria-hidden="true">→</span></a></p>
+<footer class="ls-sign"><p><b>Леонид Мулякин</b> · LEOSEO · 21 октября 2026</p><span class="ls-logo" role="img" aria-label="LEOSEO" style="height:14px"></span></footer>
+</main></div>
+<script>/* LEOSEO — interactions for plain-HTML pages (React components do this themselves).
+   [data-tilt] link cards: tilt ±5° + lift 6 px following the pointer. .leo-bar: .is-scrolled after 8 px, anchor scroll-spy.
+   Respects prefers-reduced-motion. */
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function tilt(el){
+    el.addEventListener('pointermove', function(e){
+      if (reduce || e.pointerType === 'touch') return;
+      var r = el.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+      el.classList.add('is-tilting');
+      el.style.transform = 'perspective(800px) rotateX(' + (-py * 10).toFixed(2) + 'deg) rotateY(' + (px * 10).toFixed(2) + 'deg) translateY(var(--tilt-lift))';
+    });
+    el.addEventListener('pointerleave', function(){ el.classList.remove('is-tilting'); el.style.transform = ''; });
+  }
+  var io;
+  function init(){
+    [].forEach.call(document.querySelectorAll('[data-tilt]'), tilt);
+    [].forEach.call(document.querySelectorAll('.leo-bar'), function(b){
+      var on = function(){ b.classList.toggle('is-scrolled', window.scrollY > 8); };
+      on(); window.addEventListener('scroll', on, { passive: true });
+      var links = [].slice.call(b.querySelectorAll('.leo-bar__a[href^="#"]'));
+      var els = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); }).filter(Boolean);
+      if (!('IntersectionObserver' in window) || !els.length) return;
+      var vis = {};
+      io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ vis[e.target.id] = e.isIntersecting; });
+        var cur = els.filter(function(el){ return vis[el.id]; })[0];
+        if (!cur) { var above = els.filter(function(el){ return el.getBoundingClientRect().top < 120; }); cur = above[above.length - 1]; }
+        links.forEach(function(a){ if (cur && a.getAttribute('href') === '#' + cur.id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+      }, { rootMargin: '-72px 0px -55% 0px' });
+      els.forEach(function(el){ io.observe(el); });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script><script>
+(function(){
+var MS=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function ticks(max){var raw=max/4,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,step=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;if(step<1)step=1;var top=Math.ceil(max/step)*step,out=[];for(var v=0;v<=top+1e-9;v+=step)out.push(v);return out}
+function lab(d){var p=d.split('-');return{s:p[2]+'.'+p[1],f:(+p[2])+' '+MS[+p[1]-1]+' '+p[0]}}
+function svgOf(box,d,W,H){var NS='http://www.w3.org/2000/svg',svg=document.createElementNS(NS,'svg');svg.setAttribute('class','ls-chart');svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.setAttribute('role','img');svg.setAttribute('aria-label',d.label);
+  svg.el=function(t,a,txt){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e};return svg}
+function frame(svg,tk,yp,padL,W,padR){tk.forEach(function(t){svg.el('line',{x1:padL,x2:W-padR,y1:yp(t),y2:yp(t),stroke:t===0?'var(--line-strong)':'var(--grid)','stroke-width':1,'shape-rendering':'crispEdges'});svg.el('text',{x:padL-8,y:yp(t)+4,'text-anchor':'end'},fmt(t))})}
+function marks(svg,d,xp,padT,ph){var narrow=+svg.getAttribute('width')<640;(d.marks||[]).forEach(function(m,k){var x=xp(m.i);svg.el('line',{x1:x,x2:x,y1:padT,y2:padT+ph,stroke:'var(--text-faint)','stroke-dasharray':'3 3','stroke-width':1});var right=narrow&&x>(+svg.getAttribute('width'))*0.55;svg.el('text',{x:right?x-5:x+5,y:padT+11+(narrow?k*15:0),'text-anchor':right?'end':'start',style:'fill:var(--text-muted)'},m.t)})}
+function tipAt(box,html,x,y,W){var tip=box.parentNode.querySelector('.ls-tip');tip.innerHTML=html;var tw=210,left=x+14+tw>W?Math.max(0,x-tw-14):x+14;tip.style.left=left+'px';tip.style.top=Math.max(0,y)+'px';tip.style.display='block'}
+function hideTip(box){box.parentNode.querySelector('.ls-tip').style.display='none'}
+function bars(box){var d=JSON.parse(box.getAttribute('data-bars')),x=d.x,n=x.length,cols=['var(--data-1)','var(--data-2)'];
+  var W=Math.round(box.getBoundingClientRect().width)||720,H=Math.round(Math.max(220,Math.min(300,W*0.36))),padL=40,padR=6,padT=20,padB=30,pw=W-padL-padR,ph=H-padT-padB;
+  var tot=x.map(function(_,i){return d.series.reduce(function(s,se){return s+(se.values[i]||0)},0)}),tk=ticks(Math.max.apply(null,tot.concat([2]))),top=tk[tk.length-1];
+  var yp=function(v){return padT+ph-v/top*ph},band=pw/n,bw=Math.max(2,Math.min(16,band*0.7)),xp=function(i){return padL+i*band+band/2},every=Math.max(1,Math.ceil(46/band));
+  var svg=svgOf(box,d,W,H);frame(svg,tk,yp,padL,W,padR);marks(svg,d,function(i){return padL+i*band},padT,ph);
+  var hi=svg.el('rect',{x:0,y:padT,width:band,height:ph,fill:'var(--hover)',visibility:'hidden'});
+  x.forEach(function(day,i){var acc=0;d.series.forEach(function(s,si){var v=s.values[i]||0;if(!v)return;var y0=yp(acc),y1=yp(acc+v);acc+=v;svg.el('rect',{x:xp(i)-bw/2,y:y1,width:bw,height:Math.max(0,y0-y1-(si?1:0)),fill:cols[si],'shape-rendering':'crispEdges'})});
+    if(i%every===0)svg.el('text',{x:xp(i),y:padT+ph+18,'text-anchor':'middle'},lab(day).s)});
+  x.forEach(function(day,i){var r=svg.el('rect',{'class':'hit',x:padL+i*band,y:padT,width:band,height:ph+padB});function show(){hi.setAttribute('x',padL+i*band);hi.setAttribute('visibility','visible');
+    var rows=d.series.map(function(s,si){return'<div class="ls-tip__r"><span><i style="background:'+cols[si]+'"></i>'+s.name+'</span><b>'+fmt(s.values[i]||0)+'</b></div>'}).join('')+'<div class="ls-tip__r"><span>Всего</span><b>'+fmt(tot[i])+'</b></div>';
+    tipAt(box,'<div class="ls-tip__h">'+lab(day).f+'</div>'+rows,xp(i),yp(tot[i])-30,W)}r.addEventListener('pointerenter',show);r.addEventListener('pointerdown',show)});
+  svg.addEventListener('pointerleave',function(){hi.setAttribute('visibility','hidden');hideTip(box)});box.innerHTML='';box.appendChild(svg)}
+function line(box){var d=JSON.parse(box.getAttribute('data-line')),x=d.x,n=x.length,s=d.series[0];
+  var W=Math.round(box.getBoundingClientRect().width)||720,H=Math.round(Math.max(220,Math.min(300,W*0.36))),padL=56,padR=10,padT=20,padB=30,pw=W-padL-padR,ph=H-padT-padB;
+  var tk=ticks(Math.max.apply(null,s.values.concat([2]))),top=tk[tk.length-1],yp=function(v){return padT+ph-v/top*ph},xp=function(i){return padL+(n<=1?pw/2:i/(n-1)*pw)},every=Math.max(1,Math.ceil(46/(pw/Math.max(1,n-1))));
+  var svg=svgOf(box,d,W,H);frame(svg,tk,yp,padL,W,padR);marks(svg,d,xp,padT,ph);
+  x.forEach(function(day,i){if(i%every===0)svg.el('text',{x:xp(i),y:padT+ph+18,'text-anchor':'middle'},lab(day).s)});
+  var dd='';s.values.forEach(function(v,i){dd+=(i?'L':'M')+xp(i).toFixed(1)+' '+yp(v).toFixed(1)});svg.el('path',{d:dd,fill:'none',stroke:s.color,'stroke-width':2.5,'stroke-linejoin':'round','stroke-linecap':'round'});
+  var cross=svg.el('line',{x1:0,x2:0,y1:padT,y2:padT+ph,stroke:'var(--line-strong)','stroke-width':1,visibility:'hidden'}),dot=svg.el('circle',{r:4,fill:s.color,stroke:'var(--surface-1)','stroke-width':2,visibility:'hidden'});
+  function move(e){var r=svg.getBoundingClientRect(),i=Math.max(0,Math.min(n-1,Math.round((e.clientX-r.left-padL)/pw*(n-1))));cross.setAttribute('x1',xp(i));cross.setAttribute('x2',xp(i));cross.setAttribute('visibility','visible');dot.setAttribute('cx',xp(i));dot.setAttribute('cy',yp(s.values[i]));dot.setAttribute('visibility','visible');
+    var rows='<div class="ls-tip__r"><span><i style="background:'+s.color+'"></i>'+s.name+'</span><b>'+fmt(s.values[i])+'</b></div>'+(d.extra?'<div class="ls-tip__r"><span>'+d.extra.name+'</span><b>'+fmt(d.extra.values[i])+'</b></div>':'');
+    tipAt(box,'<div class="ls-tip__h">'+lab(x[i]).f+'</div>'+rows,xp(i),padT,W)}
+  svg.addEventListener('pointermove',move);svg.addEventListener('pointerdown',move);svg.addEventListener('pointerleave',function(){cross.setAttribute('visibility','hidden');dot.setAttribute('visibility','hidden');hideTip(box)});box.innerHTML='';box.appendChild(svg)}
+function watch(box,fn){fn(box);if(window.ResizeObserver){var w=0;new ResizeObserver(function(){var x=Math.round(box.getBoundingClientRect().width);if(x&&x!==w){w=x;fn(box)}}).observe(box)}}
+document.querySelectorAll('[data-bars]').forEach(function(b){watch(b,bars)});document.querySelectorAll('[data-line]').forEach(function(b){watch(b,line)});
+document.querySelectorAll('.ls-acc').forEach(function(acc){var btns=[].slice.call(acc.querySelectorAll('.ls-acc__b'));
+  btns.forEach(function(b,i){b.addEventListener('click',function(){var on=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',on?'true':'false');document.getElementById(b.getAttribute('aria-controls')).hidden=!on});
+    b.addEventListener('keydown',function(e){var j=null;if(e.key==='ArrowDown')j=(i+1)%btns.length;else if(e.key==='ArrowUp')j=(i-1+btns.length)%btns.length;if(j!=null){e.preventDefault();btns[j].focus()}})})});
+window.addEventListener('beforeprint',function(){document.querySelectorAll('.ls-acc__b').forEach(function(b){b.setAttribute('aria-expanded','true');document.getElementById(b.getAttribute('aria-controls')).hidden=false})});
+})();
+</script></body></html>
