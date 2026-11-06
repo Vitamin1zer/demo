@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Почему снизился трафик Google · У Зубного</title>
+<style>/* Google Fonts (OFL, web licence). Manrope — display + figures; Golos Text — running text. Both have full Cyrillic. */
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap');
+
+/* LEOSEO — colour tokens. One screen theme: dark (:root).
+   The light palette exists only for print/PDF (@media print) and for print-preview cards ([data-theme="print"]).
+   Contrast figures: dark — against the page (#0d0d10 + background art at 18 %, 99.9th percentile pixel);
+   print — against white. */
+
+:root{
+  /* raw — ink (dark) */
+  --n-deep:#08080a;--n-bg:#0d0d10;--n-s1:#131318;--n-s2:#191920;--n-grid:#23232b;
+  --ink-0:#f6f3ee;--ink-1:#e8e4dd;--ink-2:#b5aea3;--ink-3:#9a9287;
+  /* raw — paper (print) */
+  --p-bg:#ffffff;--p-s1:#f7f5f1;--p-s2:#efece6;--p-grid:#e7e3dc;
+  --pk-0:#14161a;--pk-1:#2b2824;--pk-2:#544e46;--pk-3:#6e675e;
+  /* raw — copper */
+  --cu-300:#e0a268;--cu-500:#c1814e;--cu-600:#b06f3c;--cu-700:#985e30;
+  /* raw — blue (data) */
+  --blue-500:#5b8fd6;--blue-700:#3d6fb8;
+  /* raw — sand (third data series) */
+  --sand-500:#7a7268;--sand-600:#8a8278;
+
+  --bg-image-opacity:.18;
+}
+
+:root,[data-theme="dark"]{
+  color-scheme:dark;
+  --bg-deep:var(--n-deep);       /* tracks, wells, inset areas */
+  --bg:var(--n-bg);              /* page, under the background art */
+  --surface-1:var(--n-s1);       /* cards, figure frames — opaque, hides the art */
+  --surface-2:var(--n-s2);       /* tooltip, hover, selected segment */
+  --text-strong:var(--ink-0);    /* headings, lead — 14.7:1 */
+  --text-body:var(--ink-1);      /* running text — 12.8:1 */
+  --text-muted:var(--ink-2);     /* table heads, legend — 7.4:1 */
+  --text-faint:var(--ink-3);     /* source, captions — 5.3:1 */
+  --line:rgba(246,243,238,.10);
+  --line-strong:rgba(246,243,238,.18);
+  --grid:var(--n-grid);
+  --accent:var(--cu-500);        /* graphics — 5.1:1; on surface 5.8:1 */
+  --accent-text:var(--cu-300);   /* copper as text/link — 7.4:1 */
+  --accent-line:var(--cu-500);
+  --data-1:var(--blue-500);      /* on surface-1 5.6:1 */
+  --data-2:var(--cu-500);        /* on surface-1 5.8:1 */
+  --data-3:var(--sand-500);      /* on surface-1 3.9:1 — graphics only */
+  --up:var(--cu-300);
+  --down:var(--ink-0);
+  --focus:var(--cu-300);
+  --hover:rgba(246,243,238,.04);
+}
+
+[data-theme="print"]{
+  color-scheme:light;
+  --bg-deep:var(--p-s2);--bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+  --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+  --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+  --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+  --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+  --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:rgba(20,22,26,.04);
+}
+
+@media print{
+  :root,[data-theme="dark"]{
+    color-scheme:light;
+    --bg-deep:var(--p-s2);           /* 17.8:1 strong / 5.6:1 faint on white */
+    --bg:var(--p-bg);--surface-1:var(--p-s1);--surface-2:var(--p-s2);
+    --text-strong:var(--pk-0);--text-body:var(--pk-1);--text-muted:var(--pk-2);--text-faint:var(--pk-3);
+    --line:rgba(20,22,26,.12);--line-strong:rgba(20,22,26,.24);--grid:var(--p-grid);
+    --accent:var(--cu-600);--accent-text:var(--cu-700);--accent-line:var(--cu-600);
+    --data-1:var(--blue-700);--data-2:var(--cu-600);--data-3:var(--sand-600);
+    --up:var(--cu-700);--down:var(--pk-0);--focus:var(--cu-700);--hover:transparent;
+  }
+}
+
+/* Six-step scale. Body 17 px desktop / 16 px phone and print. */
+:root{
+  --font-display:'Manrope',-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-text:'Golos Text','Manrope',-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-num:'Manrope',-apple-system,'Segoe UI',Arial,sans-serif; /* always with tabular-nums */
+
+  --fs-1:14px;  /* source, caption, table head, legend, axis */
+  --fs-2:17px;  /* body, table cells */
+  --fs-3:20px;  /* lead, H3 */
+  --fs-4:24px;  /* callout, accent numbers */
+  --fs-5:30px;  /* H2 */
+  --fs-6:40px;  /* H1 */
+
+  --fw-text:400;
+  --fw-medium:500;
+  --fw-semibold:600;
+  --fw-bold:700;
+  --fw-display:800;
+
+  --lh-text:1.6;
+  --lh-lead:1.5;
+  --lh-h3:1.3;
+  --lh-h2:1.2;
+  --lh-h1:1.12;
+  --ls-display:-.015em;
+
+  --measure:68ch;       /* running text ≈ 65–72 chars of Golos */
+  --measure-lead:36em;  /* lead at 20 px ≈ 60–65 chars */
+
+  /* semantic */
+  --text-h1:var(--fw-display) var(--fs-6)/var(--lh-h1) var(--font-display);
+  --text-h2:var(--fw-display) var(--fs-5)/var(--lh-h2) var(--font-display);
+  --text-h3:var(--fw-bold) var(--fs-3)/var(--lh-h3) var(--font-display);
+  --text-lead:var(--fw-text) var(--fs-3)/var(--lh-lead) var(--font-text);
+  --text-body-font:var(--fw-text) var(--fs-2)/var(--lh-text) var(--font-text);
+  --text-small:var(--fw-text) var(--fs-1)/1.5 var(--font-text);
+}
+@media (max-width:600px){
+  :root{--fs-2:16px;--fs-3:18px;--fs-4:20px;--fs-5:24px;--fs-6:30px}
+}
+@media print{
+  :root{--fs-1:12px;--fs-2:15px;--fs-3:17px;--fs-4:20px;--fs-5:24px;--fs-6:32px}
+}
+
+/* 8 px step. --sp-h (4 px) only inside dense rows. */
+:root{
+  --sp-h:4px;
+  --sp-1:8px;--sp-2:16px;--sp-3:24px;--sp-4:32px;--sp-5:40px;--sp-6:48px;--sp-7:64px;--sp-8:80px;--sp-9:96px;
+
+  --content-max:1080px;   /* page column */
+  --page-pad:24px;        /* side padding */
+  --hit:44px;             /* min tap target */
+
+  --radius:0;             /* straight corners; 2 px max for tiny marks, never above 4 */
+  --border:1px;           /* thin lines instead of shadows */
+  --rule-accent:2px;      /* «Вывод» left rule */
+
+  /* semantic */
+  --space-section:var(--sp-8);  /* above H2 */
+  --space-block:var(--sp-3);    /* between figure/table and text */
+  --space-para:var(--sp-2);
+}
+@media (max-width:600px){
+  :root{--page-pad:16px;--space-section:var(--sp-7)}
+}
+
+/* LEOSEO — motion, focus and state tokens (mechanics from leoseo.ru).
+   Motion is a response to hover / press only. Nothing animates on scroll. */
+:root{
+  --ease:cubic-bezier(.22,.61,.36,1);
+  /* durations: colour+border / lift+rotate / sheen; lifts: card hover / tilt card */
+  --dur-fast:.16s;
+  --dur-lift:.26s;
+  --dur-sheen:.9s;
+  --lift:-2px;
+  --tilt-lift:-6px;
+  --tilt-max:5deg;
+
+  --focus-ring-color:var(--cu-300);  /* #e0a268 */
+  --focus-ring-width:2px;
+  --focus-ring-offset:2px;
+
+  --copper-tint:rgba(193,129,78,.12);   /* selected chip, copper badge */
+  --copper-edge:rgba(193,129,78,.55);   /* copper badge border */
+  --bar-bg:rgba(13,13,16,.72);          /* sticky toolbar */
+  --bar-bg-scrolled:rgba(8,8,10,.9);
+  --bar-blur:14px;
+  --bar-h:60px;
+
+  --state-error:#e07a5f;    /* 6.6:1 on --bg-deep; always with «!» and text */
+  --state-success:#8cbf9a;  /* 9.3:1 on --bg-deep; always with «✓» and text */
+}
+@media (prefers-reduced-motion:reduce){
+  :root{
+    --dur-fast:0s;
+    --dur-lift:0s;
+    --dur-sheen:0s;
+    --lift:0px;
+    --tilt-lift:0px;
+    --tilt-max:0deg;
+  }
+}
+
+/* Element defaults for report pages + print geometry. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text-body);font:var(--text-body-font);font-feature-settings:"kern"}
+/* fixed background art, as on leoseo.ru */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url(bg-leoseo.webp) center/cover no-repeat;opacity:var(--bg-image-opacity)}
+.ls-no-art::before,body.ls-no-art::before{display:none}
+a{color:var(--accent-text);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--text-strong)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+b,strong{color:var(--text-strong);font-weight:var(--fw-semibold)}
+::selection{background:var(--accent);color:var(--n-bg)}
+
+.ls-screen-only{}
+.ls-print-only{display:none}
+.ls-break-before{}
+.ls-avoid-break{break-inside:avoid}
+
+@page{size:A4;margin:18mm 16mm 18mm 16mm}
+@media print{
+  body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body::before{display:none}
+  .ls-screen-only{display:none!important}
+  .ls-print-only{display:block}
+  .ls-break-before{break-before:page}
+}
+
+/* Component classes (ls-*). Used by the React components in Claude Design; usable in plain HTML too. */
+
+/* page */
+.ls-page{background:transparent;color:var(--text-body);font:var(--text-body-font);min-height:100%}
+.ls-page__inner{max-width:var(--content-max);margin:0 auto;padding:var(--sp-6) var(--page-pad) var(--sp-9)}
+
+/* logo — url resolved relative to this file */
+.ls-logo{display:inline-block;aspect-ratio:201/40;background:url(leoseo-logo-light.svg) left center/contain no-repeat;flex:none}
+[data-theme="print"] .ls-logo{background-image:url(leoseo-logo-dark.svg)}
+@media print{.ls-logo,[data-theme] .ls-logo{background-image:url(leoseo-logo-dark.svg)!important}}
+
+/* report header */
+.ls-head{margin:0 0 var(--sp-6)}
+.ls-head__bar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);flex-wrap:wrap;padding-bottom:var(--sp-2);border-bottom:var(--border) solid var(--line)}
+.ls-head__client{font:var(--fw-semibold) var(--fs-1)/1.4 var(--font-display);color:var(--text-muted)}
+.ls-h1{font:var(--text-h1);letter-spacing:var(--ls-display);color:var(--text-strong);margin:var(--sp-6) 0 var(--sp-3);max-width:22em;text-wrap:balance}
+.ls-head__meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--sp-2) var(--sp-4);margin:0}
+.ls-head__meta div{min-width:0}
+.ls-head__meta dt{font:var(--text-small);color:var(--text-faint);margin:0 0 2px}
+.ls-head__meta dd{font:var(--fw-medium) var(--fs-1)/1.5 var(--font-text);color:var(--text-body);margin:0}
+
+/* headings & text */
+.ls-h2{font:var(--text-h2);letter-spacing:var(--ls-display);color:var(--text-strong);margin:var(--space-section) 0 var(--sp-2);padding-top:var(--sp-3);border-top:var(--border) solid var(--line-strong);max-width:24em;text-wrap:balance;break-after:avoid}
+.ls-h2:first-child{margin-top:0}
+.ls-h3{font:var(--text-h3);color:var(--text-strong);margin:var(--sp-4) 0 var(--sp-1);max-width:30em;text-wrap:balance;break-after:avoid}
+.ls-h3:first-child{margin-top:0}
+.ls-lead{font:var(--text-lead);color:var(--text-strong);max-width:var(--measure-lead);margin:0 0 var(--sp-3);text-wrap:pretty}
+.ls-p{max-width:var(--measure);margin:0 0 var(--space-para);text-wrap:pretty}
+.ls-p:last-child{margin-bottom:0}
+.ls-bullets{max-width:var(--measure);margin:0 0 var(--space-para);padding-left:var(--sp-3)}
+.ls-bullets li{margin:0 0 var(--sp-1);padding-left:var(--sp-h)}
+.ls-bullets li::marker{color:var(--accent)}
+.ls-note{font:var(--text-small);color:var(--text-faint);max-width:var(--measure);margin:var(--sp-1) 0 var(--sp-2)}
+.ls-note b{color:var(--text-muted);font-weight:var(--fw-semibold)}
+
+/* callout quote */
+.ls-quote{margin:var(--sp-5) 0;padding:var(--sp-3) 0;border-top:var(--border) solid var(--line-strong);border-bottom:var(--border) solid var(--line-strong);max-width:46em;break-inside:avoid}
+.ls-quote p{font:var(--fw-semibold) var(--fs-4)/1.4 var(--font-display);color:var(--text-strong);margin:0;text-wrap:pretty}
+.ls-quote footer{font:var(--text-small);color:var(--text-faint);margin-top:var(--sp-2)}
+
+/* conclusion */
+.ls-conc{margin:var(--sp-5) 0;padding:var(--sp-h) 0 var(--sp-h) var(--sp-3);border-left:var(--rule-accent) solid var(--accent-line);max-width:calc(var(--measure) + var(--sp-3));break-inside:avoid}
+.ls-conc__t{font:var(--fw-bold) var(--fs-1)/1.4 var(--font-display);color:var(--accent-text);margin:0 0 var(--sp-1)}
+.ls-conc__b{font:var(--fw-medium) var(--fs-3)/1.5 var(--font-text);color:var(--text-strong);margin:0}
+.ls-conc__b p{margin:0 0 var(--sp-1)}
+
+/* figure */
+.ls-fig{margin:var(--space-block) 0;break-inside:avoid}
+.ls-fig__frame{position:relative;border:var(--border) solid var(--line);background:var(--surface-1);padding:var(--sp-2) var(--sp-2) var(--sp-1)}
+.ls-fig__title{font:var(--fw-bold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong);margin:0 0 var(--sp-1)}
+.ls-fig__cap{font:var(--text-small);color:var(--text-faint);margin:var(--sp-1) 0 0}
+.ls-legend{display:flex;flex-wrap:wrap;gap:var(--sp-1) var(--sp-3);font:var(--text-small);color:var(--text-muted);margin:0 0 var(--sp-1);padding:0;list-style:none}
+.ls-legend li{display:flex;align-items:center;gap:var(--sp-1)}
+.ls-legend i{display:inline-block;width:10px;height:10px;flex:none}
+.ls-legend i.is-line{width:16px;height:2px}
+.ls-chart{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.ls-chart text{font-family:var(--font-text);font-size:var(--fs-1);fill:var(--text-faint);font-variant-numeric:tabular-nums}
+.ls-chart .yr{fill:var(--text-muted);font-weight:var(--fw-semibold)}
+.ls-chart .lbl{font-family:var(--font-display);font-weight:var(--fw-bold)}
+.ls-tip{position:absolute;z-index:2;pointer-events:none;background:var(--surface-2);border:var(--border) solid var(--line-strong);color:var(--text-strong);font:var(--text-small);padding:var(--sp-1) 12px;min-width:170px}
+.ls-tip__h{font-weight:var(--fw-semibold);margin-bottom:2px}
+.ls-tip__r{display:flex;justify-content:space-between;gap:var(--sp-2);color:var(--text-muted)}
+.ls-tip__r b{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-tip__r i{display:inline-block;width:8px;height:8px;margin-right:6px}
+@media print{.ls-tip{display:none!important}}
+
+/* number table */
+.ls-table{width:100%;border-collapse:collapse;margin:var(--sp-2) 0 var(--sp-1);font:var(--text-body-font);table-layout:auto}
+.ls-table caption{caption-side:bottom;text-align:left;font:var(--text-small);color:var(--text-faint);padding-top:var(--sp-1)}
+.ls-table th{text-align:left;font:var(--fw-medium) var(--fs-1)/1.35 var(--font-text);color:var(--text-muted);padding:var(--sp-1) 12px;border-bottom:var(--border) solid var(--line-strong);vertical-align:bottom}
+.ls-table td{padding:10px 12px;border-bottom:var(--border) solid var(--line);vertical-align:baseline}
+.ls-table th:first-child,.ls-table td:first-child{padding-left:0}
+.ls-table th:last-child,.ls-table td:last-child{padding-right:0}
+.ls-table .num{text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ls-table tfoot td{border-top:var(--border) solid var(--line-strong);border-bottom:0;color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-share{display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.ls-share__bar{position:relative;width:96px;height:8px;background:var(--bg-deep);outline:1px solid var(--line);outline-offset:-1px;flex:none}
+.ls-share__bar span{position:absolute;inset:0 auto 0 0;background:var(--data-1)}
+.ls-share b{min-width:3.6em;text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums}
+@media (max-width:600px){
+  .ls-table{font-size:15px}
+  .ls-table th,.ls-table td{padding-left:6px;padding-right:6px}
+  .ls-share{flex-direction:column;align-items:flex-end;gap:4px}
+  .ls-share__bar{width:56px;height:6px}
+}
+
+/* change list */
+.ls-chg{list-style:none;margin:var(--sp-2) 0;padding:0;max-width:40em}
+.ls-chg li{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);padding:10px 0;min-height:var(--hit);border-bottom:var(--border) solid var(--line)}
+.ls-chg li:first-child{border-top:var(--border) solid var(--line)}
+.ls-chg__v{font:var(--fw-bold) var(--fs-2)/1.4 var(--font-num);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--down)}
+.ls-chg__v.is-up{color:var(--up)}
+.ls-chg__v.is-flat{color:var(--text-muted)}
+.ls-chg__a{display:inline-block;width:1em;text-align:center;margin-right:2px;font-weight:var(--fw-semibold)}
+
+/* reasons */
+.ls-why{list-style:none;margin:var(--sp-2) 0 0;padding:0;counter-reset:w}
+.ls-why>li{counter-increment:w;position:relative;padding:var(--sp-3) 0 var(--sp-3) 64px;border-top:var(--border) solid var(--line)}
+.ls-why>li::before{content:counter(w);position:absolute;left:0;top:var(--sp-3);font:var(--fw-display) var(--fs-5)/1 var(--font-num);color:var(--accent);font-variant-numeric:tabular-nums}
+.ls-why>li>.ls-h3{margin:0 0 var(--sp-1)}
+@media (max-width:600px){.ls-why>li{padding-left:44px}}
+
+/* plan month */
+.ls-plan{border:var(--border) solid var(--line-strong);background:var(--surface-1);padding:var(--sp-3);margin:0 0 var(--sp-2)}
+.ls-plan__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);flex-wrap:wrap;margin:0 0 var(--sp-2)}
+.ls-plan__h h3{margin:0}
+.ls-plan__n{font:var(--text-small);color:var(--text-faint)}
+.ls-plan ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));column-gap:var(--sp-4)}
+.ls-plan li{padding:12px 0;border-top:var(--border) solid var(--line);display:grid;gap:var(--sp-h);align-content:start;break-inside:avoid}
+.ls-plan__pg{font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-plan__m{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sp-h) var(--sp-1);font:var(--text-small);color:var(--text-faint)}
+.ls-plan__m .q{color:var(--text-muted)}
+.ls-plan__m .v{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-muted);white-space:nowrap}
+.ls-tag{display:inline-block;font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);padding:3px 6px;border:var(--border) solid var(--line-strong);color:var(--text-muted);white-space:nowrap}
+.ls-tag.is-new{color:var(--accent-text);border-color:var(--accent-line)}
+
+/* forecast */
+.ls-fc{margin:var(--space-block) 0;break-inside:avoid}
+.ls-fc__grp{padding:var(--sp-2) 0;border-top:var(--border) solid var(--line)}
+.ls-fc__grp:last-of-type{border-bottom:var(--border) solid var(--line)}
+.ls-fc__t{font:var(--fw-bold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong);margin:0 0 var(--sp-1)}
+.ls-fc__row{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr);align-items:center;gap:var(--sp-2);min-height:32px}
+.ls-fc__nm{font:var(--text-small);color:var(--text-muted)}
+.ls-fc__row.is-main .ls-fc__nm{color:var(--text-strong);font-weight:var(--fw-semibold)}
+.ls-fc__trk{position:relative;height:20px}
+.ls-fc__bar{position:absolute;left:0;top:4px;height:12px;background:var(--data-3)}
+.ls-fc__row.is-main .ls-fc__bar{background:var(--data-2)}
+.ls-fc__val{position:absolute;top:0;font:var(--fw-bold) var(--fs-1)/20px var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);padding-left:var(--sp-1);white-space:nowrap}
+.ls-fc__now{position:absolute;top:-6px;bottom:-6px;width:0;border-left:1px dashed var(--text-faint)}
+.ls-fc__key{display:flex;align-items:center;gap:var(--sp-1);font:var(--text-small);color:var(--text-faint);margin:var(--sp-1) 0 0}
+.ls-fc__key i{display:inline-block;width:0;height:14px;border-left:1px dashed var(--text-faint)}
+@media (max-width:600px){.ls-fc__row{grid-template-columns:minmax(0,7.5em) minmax(0,1fr);gap:var(--sp-1)}}
+
+/* signature */
+.ls-sign{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-top:var(--sp-8);padding-top:var(--sp-3);border-top:var(--border) solid var(--line);font:var(--text-small);color:var(--text-faint)}
+.ls-sign p{margin:0}
+.ls-sign b{color:var(--text-muted);font-weight:var(--fw-semibold)}
+
+/* columns */
+.ls-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:var(--sp-3) var(--sp-5);align-items:start}
+
+/* page break marker on screen */
+.ls-pb{height:0;margin:0;border:0}
+@media print{.ls-pb{break-after:page}
+  .ls-page__inner{max-width:none;padding:0}
+  .ls-fig__frame{background:transparent}
+  .ls-plan{background:transparent}
+}
+
+/* ───── interactive ───── */
+.ls-btn-reset{appearance:none;background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;cursor:pointer;border-radius:0}
+
+/* card */
+.ls-card{position:relative;display:grid;align-content:start;gap:var(--sp-1);background:var(--surface-1);border:var(--border) solid var(--line);padding:var(--sp-2) var(--sp-3) var(--sp-3);min-width:0;color:var(--text-body);text-decoration:none}
+a.ls-card:hover{border-color:var(--line-strong);background:var(--surface-2);color:var(--text-body)}
+.ls-card__top{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-card__t{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted);margin:0}
+.ls-card.is-page .ls-card__t,.ls-card.is-task .ls-card__t{font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-card__v{font:var(--fw-display) var(--fs-5)/1.1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);letter-spacing:var(--ls-display);margin:0}
+.ls-card.is-page .ls-card__v,.ls-card.is-task .ls-card__v{font:var(--fw-bold) var(--fs-3)/1.2 var(--font-num)}
+.ls-card__c{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-card__chg{font:var(--fw-bold) var(--fs-1)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--down);white-space:nowrap}
+.ls-card__chg.is-up{color:var(--up)}
+.ls-card__spark{display:block;width:100%;height:36px;margin-top:var(--sp-1)}
+.ls-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:var(--sp-2);margin:var(--space-block) 0}
+.ls-status{font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);padding:3px 6px;border:var(--border) solid var(--line-strong);color:var(--text-muted);white-space:nowrap}
+.ls-status.is-done{color:var(--text-strong);border-color:var(--text-faint)}
+.ls-status.is-doing{color:var(--accent-text);border-color:var(--accent-line)}
+
+/* segmented control */
+.ls-seg{display:inline-flex;border:var(--border) solid var(--line-strong);background:var(--bg-deep);max-width:100%;flex-wrap:wrap}
+.ls-seg__o{min-height:36px;min-width:44px;padding:0 var(--sp-2);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);color:var(--text-muted);border-right:var(--border) solid var(--line)}
+.ls-seg__o:last-child{border-right:0}
+.ls-seg__o:hover{color:var(--text-strong)}
+.ls-seg__o[aria-checked="true"],.ls-seg__o[aria-selected="true"]{background:var(--surface-2);color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--text-strong)}
+.ls-seg__o:focus-visible{outline-offset:-2px}
+.ls-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-1) var(--sp-3);margin:var(--sp-3) 0 calc(-1 * var(--sp-1))}
+.ls-tabs{display:flex;gap:0;border-bottom:var(--border) solid var(--line-strong);overflow-x:auto;scrollbar-width:none}
+.ls-tabs .ls-seg__o{border:0;background:none;min-height:44px;padding:0 var(--sp-2)}
+.ls-tabs .ls-seg__o:first-child{padding-left:0}
+.ls-tabs .ls-seg__o[aria-selected="true"]{background:none;box-shadow:inset 0 -2px 0 var(--accent)}
+
+/* toggle */
+.ls-tgl{display:inline-flex;align-items:center;gap:12px;min-height:44px;font:var(--text-small);color:var(--text-muted);cursor:pointer;user-select:none}
+.ls-tgl:hover{color:var(--text-strong)}
+.ls-tgl__sw{position:relative;width:36px;height:20px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);flex:none}
+.ls-tgl__sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--text-faint)}
+.ls-tgl[aria-checked="true"]{color:var(--text-strong)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw{border-color:var(--accent-line)}
+.ls-tgl[aria-checked="true"] .ls-tgl__sw::after{left:18px;background:var(--accent)}
+.ls-tgl__dot{display:inline-block;width:10px;height:10px;flex:none}
+
+/* range slider */
+.ls-range{display:grid;gap:var(--sp-1);margin:var(--sp-2) 0;max-width:40em}
+.ls-range__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2)}
+.ls-range__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-range__o{font:var(--fw-display) var(--fs-4)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-range__o small{font:var(--fw-medium) var(--fs-1)/1 var(--font-text);color:var(--text-faint);margin-left:6px}
+.ls-range input{-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:0;background:transparent;cursor:pointer}
+.ls-range input::-webkit-slider-runnable-track{height:4px;background:linear-gradient(to right,var(--accent) var(--p),var(--bg-deep) var(--p));outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-track{height:4px;background:var(--bg-deep);outline:1px solid var(--line-strong)}
+.ls-range input::-moz-range-progress{height:4px;background:var(--accent)}
+.ls-range input::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;margin-top:-8px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input::-moz-range-thumb{width:16px;height:16px;background:var(--text-strong);border:2px solid var(--bg);border-radius:0}
+.ls-range input:focus-visible{outline:none}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range input:focus-visible::-moz-range-thumb{outline:2px solid var(--focus);outline-offset:2px}
+.ls-range__ax{display:flex;justify-content:space-between;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums;margin-top:calc(-1 * var(--sp-1))}
+.ls-outs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:var(--sp-2);margin:var(--sp-2) 0}
+.ls-out{border-top:var(--border) solid var(--line-strong);padding-top:var(--sp-1)}
+.ls-out dt{font:var(--text-small);color:var(--text-faint);margin:0}
+.ls-out dd{margin:var(--sp-h) 0 0;font:var(--fw-display) var(--fs-4)/1.2 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong)}
+
+/* accordion */
+.ls-acc{margin:var(--space-block) 0;border-top:var(--border) solid var(--line-strong)}
+.ls-acc__i{border-bottom:var(--border) solid var(--line)}
+.ls-acc__h{margin:0}
+.ls-acc__b{display:flex;width:100%;align-items:center;justify-content:space-between;gap:var(--sp-2);min-height:56px;padding:var(--sp-1) 0;text-align:left;font:var(--fw-semibold) var(--fs-2)/1.35 var(--font-display);color:var(--text-strong)}
+.ls-acc__b:hover{color:var(--accent-text)}
+.ls-acc__b:focus-visible{outline-offset:-2px}
+.ls-acc__m{display:flex;align-items:center;gap:var(--sp-2);font:var(--text-small);color:var(--text-faint);flex:none}
+.ls-acc__g{display:inline-grid;place-items:center;width:28px;height:28px;border:var(--border) solid var(--line-strong);font:var(--fw-medium) 18px/1 var(--font-display);color:var(--text-muted)}
+.ls-acc__p{padding:0 0 var(--sp-3)}
+.ls-acc__p[hidden]{display:none}
+@media print{.ls-acc__p[hidden]{display:block}.ls-acc__g{display:none}}
+
+/* carousel */
+.ls-car{margin:var(--space-block) 0}
+.ls-car__h{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2);margin:0 0 var(--sp-2)}
+.ls-car__nav{display:flex;gap:var(--sp-1)}
+.ls-car__btn{display:inline-grid;place-items:center;width:44px;height:44px;border:var(--border) solid var(--line-strong);background:var(--bg-deep);color:var(--text-strong);font:var(--fw-semibold) 18px/1 var(--font-display)}
+.ls-car__btn:hover{background:var(--surface-2)}
+.ls-car__btn:disabled{color:var(--text-faint);border-color:var(--line);cursor:default;background:transparent}
+.ls-car__trk{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(min(84%,300px),calc((100% - 2 * var(--sp-2)) / 3));gap:var(--sp-2);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;scroll-behavior:auto}
+.ls-car__trk::-webkit-scrollbar{display:none}
+.ls-car__trk>*{scroll-snap-align:start}
+.ls-car__trk:focus-visible{outline-offset:4px}
+.ls-car__dots{display:flex;justify-content:center;gap:0;margin-top:var(--sp-1)}
+.ls-car__dot{display:inline-grid;place-items:center;width:32px;height:44px}
+.ls-car__dot span{display:block;width:8px;height:8px;border:1px solid var(--text-faint)}
+.ls-car__dot[aria-current="true"] span{background:var(--text-strong);border-color:var(--text-strong)}
+.ls-car__dot:focus-visible{outline-offset:-6px}
+@media print{.ls-car__trk{grid-auto-flow:row;grid-template-columns:1fr 1fr;overflow:visible}.ls-car__nav,.ls-car__dots{display:none}}
+@media (max-width:600px){.ls-car__nav{display:none}}
+
+/* progress */
+.ls-prog{margin:var(--sp-2) 0;max-width:40em}
+.ls-prog__h{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-2);margin-bottom:var(--sp-1)}
+.ls-prog__l{font:var(--fw-medium) var(--fs-2)/1.4 var(--font-text);color:var(--text-strong)}
+.ls-prog__v{font:var(--fw-bold) var(--fs-2)/1.4 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);white-space:nowrap}
+.ls-prog__v small{font:var(--text-small);color:var(--text-faint);margin-left:6px}
+.ls-prog__t{position:relative;height:8px;background:var(--bg-deep);outline:1px solid var(--line-strong);outline-offset:-1px;display:flex}
+.ls-prog__d{background:var(--accent);height:100%}
+.ls-prog__w{height:100%;background:repeating-linear-gradient(90deg,var(--text-faint) 0 2px,transparent 2px 6px);opacity:.6}
+.ls-prog__k{display:flex;flex-wrap:wrap;gap:var(--sp-h) var(--sp-3);font:var(--text-small);color:var(--text-faint);margin-top:var(--sp-1)}
+.ls-prog__k i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+@media (max-width:600px){.ls-seg__o{min-height:44px}}
+
+/* LEOSEO — interaction layer (leo-*). Adds hover/press motion, focus, buttons, chips, badges,
+   sticky toolbar, form states. Base ls-* rules stay untouched; refinements below extend them.
+   Doc-only forced states: .is-hover / .is-active / .is-focus mirror :hover / :active / :focus-visible. */
+
+/* focus — everywhere */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible,
+.is-focus{outline:var(--focus-ring-width) solid var(--focus-ring-color)!important;outline-offset:var(--focus-ring-offset)!important}
+.ls-range input:focus-visible{outline:none!important}
+.ls-range input:focus-visible::-webkit-slider-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.ls-range input:focus-visible::-moz-range-thumb{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+@media (min-width:601px){.ls-tabs{overflow:visible}}
+
+/* arrows & links */
+.leo-arrow{display:inline-block;transition:transform var(--dur-lift) var(--ease)}
+:is(a,button,.leo-card):is(:hover,.is-hover)>.leo-arrow,
+:is(a,button,.leo-card):is(:hover,.is-hover) .leo-reveal .leo-arrow{transform:translateX(4px)}
+.leo-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--accent-text);font:var(--fw-semibold) var(--fs-2)/1.4 var(--font-display);text-decoration:none;transition:color var(--dur-fast) var(--ease)}
+.leo-link:is(:hover,.is-hover){color:var(--text-strong)}
+
+/* ───── buttons ───── */
+.leo-btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-1);min-height:44px;padding:0 20px;font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;border:1px solid transparent;border-radius:0;cursor:pointer;text-decoration:none;white-space:nowrap;-webkit-tap-highlight-color:transparent;
+  transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-btn--sm{min-height:36px;padding:0 14px}
+.leo-btn--lg{min-height:52px;padding:0 28px;font-size:var(--fs-2)}
+.leo-btn--block{display:flex;width:100%}
+@media (max-width:600px){.leo-btn--sm{min-height:44px}}
+.leo-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--n-deep)}
+.leo-btn--primary:is(:hover,.is-hover){background:var(--cu-300);border-color:var(--cu-300);color:var(--n-deep)}
+.leo-btn--primary:is(:active,.is-active){background:var(--cu-600);border-color:var(--cu-600);transform:translateY(1px)}
+.leo-btn--outline{background:var(--bg);border-color:var(--line-strong);color:var(--text-strong)}
+.leo-btn--outline:is(:hover,.is-hover){border-color:var(--accent-line);color:var(--accent-text)}
+.leo-btn--outline:is(:active,.is-active){background:var(--surface-2);transform:translateY(1px)}
+.leo-btn--ghost{background:transparent;color:var(--text-muted)}
+.leo-btn--ghost:is(:hover,.is-hover){background:var(--hover);color:var(--text-strong)}
+.leo-btn--ghost:is(:active,.is-active){background:rgba(246,243,238,.08);transform:translateY(1px)}
+.leo-btn:is(:disabled,[aria-disabled="true"]):not(.is-loading){background:transparent;border-color:var(--line);color:var(--text-faint);opacity:.6;cursor:not-allowed;transform:none}
+.leo-btn--ghost:is(:disabled,[aria-disabled="true"]):not(.is-loading){border-color:transparent}
+.leo-btn.is-loading{cursor:progress}
+.leo-btn.is-loading:is(:hover,:active){transform:none}
+.leo-spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;flex:none;animation:leo-rot .7s linear infinite}
+@keyframes leo-rot{to{transform:rotate(1turn)}}
+
+/* glow wrapper: copper edge rests in one corner, rotates on hover / focus */
+.leo-glow{position:relative;display:inline-flex;padding:1px;isolation:isolate;overflow:hidden;background:var(--line-strong);vertical-align:middle}
+.leo-glow--block{display:flex;width:100%}
+.leo-glow::before{content:"";position:absolute;left:50%;top:50%;width:200%;aspect-ratio:1;translate:-50% -50%;z-index:-1;
+  background:conic-gradient(from 0deg,transparent 0 62%,var(--cu-300) 80%,transparent 92%);animation:leo-rot 3.2s linear infinite;animation-play-state:paused}
+.leo-glow:is(:hover,:focus-within,.is-hover)::before{animation-play-state:running}
+.leo-glow>.leo-btn{border-color:transparent;flex:1}
+.leo-glow>.leo-btn--outline{background:var(--bg)}
+
+/* ───── cards (extends .ls-card) ───── */
+.leo-card{position:relative;overflow:hidden;cursor:pointer;
+  transition:transform var(--dur-lift) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-card:is(:hover,.is-hover){transform:translateY(var(--lift));border-color:var(--accent-line)}
+.leo-card:is(:active,.is-active){transform:translateY(0)}
+.leo-card[data-tilt]{transform-style:preserve-3d;will-change:transform}
+.leo-card[data-tilt].is-tilting{transition:transform .08s linear,border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-sheen::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 30%,rgba(246,243,238,.08) 50%,transparent 70%);transform:translateX(-110%)}
+.leo-sheen:is(:hover,.is-hover)::after{transform:translateX(110%);transition:transform var(--dur-sheen) var(--ease)}
+.leo-reveal{display:inline-flex;align-items:center;gap:6px;margin-top:var(--sp-1);font:var(--fw-semibold) var(--fs-1)/1.4 var(--font-display);color:var(--accent-text);opacity:0;transform:translateY(4px);
+  transition:opacity var(--dur-fast) var(--ease),transform var(--dur-lift) var(--ease)}
+.leo-card:is(:hover,:focus-visible,.is-hover) .leo-reveal{opacity:1;transform:none}
+@media (hover:none){.leo-reveal{opacity:1;transform:none}}
+.ls-card.is-featured{background:var(--surface-2);border-color:var(--accent-line)}
+.ls-card__badge{position:absolute;top:var(--sp-2);right:var(--sp-2)}
+.ls-card.is-featured .ls-card__top{padding-right:96px}
+@media print{.leo-reveal{display:none}.leo-card{transform:none!important}}
+
+/* ───── chips & badges ───── */
+.leo-chips{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1);margin:var(--sp-2) 0 0}
+.leo-chip{display:inline-flex;align-items:center;gap:var(--sp-1);min-height:36px;padding:0 14px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-medium) var(--fs-1)/1 var(--font-text);cursor:pointer;border-radius:0;
+  transition:color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.leo-chip:is(:hover,.is-hover){color:var(--text-strong);border-color:var(--text-faint)}
+.leo-chip:is(:active,.is-active){transform:translateY(1px)}
+.leo-chip[aria-pressed="true"]{background:var(--copper-tint);border-color:var(--accent-line);color:var(--text-strong)}
+.leo-chip:disabled{opacity:.45;cursor:not-allowed;transform:none;color:var(--text-faint);border-color:var(--line)}
+.leo-chip__n{font:var(--fw-semibold) var(--fs-1)/1 var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-faint)}
+.leo-chip[aria-pressed="true"] .leo-chip__n{color:var(--accent-text)}
+.leo-chips__s{margin-left:auto;font:var(--text-small);color:var(--text-faint);font-variant-numeric:tabular-nums}
+@media (max-width:600px){.leo-chip{min-height:44px}.leo-chips__s{margin-left:0;width:100%}}
+@media print{.leo-chips{display:none}}
+
+.leo-badge,.ls-tag,.ls-status{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border:1px solid var(--line-strong);background:transparent;color:var(--text-muted);font:var(--fw-semibold) var(--fs-1)/1 var(--font-display);letter-spacing:.01em;white-space:nowrap;vertical-align:middle}
+.leo-badge--copper,.ls-tag.is-new{color:var(--accent-text);border-color:var(--copper-edge);background:var(--copper-tint)}
+.leo-badge--mono{font-family:var(--font-num);font-variant-numeric:tabular-nums;color:var(--text-strong);background:var(--bg-deep)}
+.leo-badge--dot,.ls-status,.ls-status:is(.is-done,.is-doing,.is-todo){border-color:transparent;padding-left:0;background:transparent}
+.leo-badge--dot::before,.ls-status::before{content:"";width:7px;height:7px;background:currentColor;flex:none}
+.leo-badge--dot.is-copper,.ls-status.is-doing{color:var(--accent-text)}
+.leo-badge--dot.is-ink,.ls-status.is-done{color:var(--text-strong)}
+.leo-badge--dot.is-faint,.ls-status.is-todo{color:var(--text-faint)}
+.ls-status.is-todo::before,.leo-badge--dot.is-faint::before{background:transparent;border:1px solid currentColor}
+
+/* ───── segments, tabs, accordion ───── */
+.ls-seg__o{transition:color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.ls-seg__o:is(:hover,.is-hover):not(:disabled){color:var(--text-strong);background:var(--hover)}
+.ls-seg__o:is(:active,.is-active):not(:disabled){background:rgba(246,243,238,.08)}
+.ls-seg__o[aria-checked="true"]{background:var(--surface-2);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-seg__o:disabled{color:var(--text-faint);opacity:.45;cursor:not-allowed}
+.ls-tabs .ls-seg__o{box-shadow:inset 0 -2px 0 transparent;transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.ls-tabs .ls-seg__o:is(:hover,.is-hover):not(:disabled){background:none;box-shadow:inset 0 -2px 0 var(--line-strong)}
+.ls-tabs .ls-seg__o[aria-selected="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.ls-acc__b{transition:color var(--dur-fast) var(--ease)}
+.ls-acc__b:is(:hover,.is-hover){color:var(--accent-text)}
+.ls-acc__g{font-size:0;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.ls-acc__g::before{content:"+";display:block;font:var(--fw-medium) 20px/1 var(--font-display);transition:transform var(--dur-lift) var(--ease)}
+.ls-acc__b[aria-expanded="true"] .ls-acc__g::before{transform:rotate(45deg)}
+.ls-acc__b:is(:hover,.is-hover) .ls-acc__g{border-color:var(--accent-line);color:var(--accent-text)}
+
+/* ───── tooltips, table rows, carousel, slider ───── */
+.ls-table tbody tr{transition:background-color var(--dur-fast) var(--ease)}
+.ls-table tbody tr:is(:hover,.is-hover){background:var(--hover)}
+.ls-table tbody tr:is(:hover,.is-hover) td:first-child{color:var(--text-strong)}
+.ls-car__trk{padding-block:var(--sp-1);margin-block:calc(-1 * var(--sp-1))}
+.ls-car__btn{transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-car__btn:is(:hover,.is-hover):not(:disabled){border-color:var(--accent-line);color:var(--accent-text);background:var(--bg-deep)}
+.ls-car__btn:is(:active,.is-active):not(:disabled){transform:translateY(1px)}
+.ls-car__btn:disabled{opacity:.5;cursor:not-allowed}
+.ls-car__dot span{transition:background-color var(--dur-fast) var(--ease),border-color var(--dur-fast) var(--ease)}
+.ls-car__dot:hover span{border-color:var(--text-strong)}
+.ls-range input::-webkit-slider-thumb{transition:background-color var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease)}
+.ls-range input:hover::-webkit-slider-thumb{background:var(--cu-300)}
+.ls-range input:active::-webkit-slider-thumb{background:var(--accent);transform:scale(1.1)}
+.ls-range input:hover::-moz-range-thumb{background:var(--cu-300)}
+.ls-range input:active{cursor:grabbing}
+.ls-range.is-disabled{opacity:.5}
+.ls-range input:disabled{cursor:not-allowed}
+.ls-range input:disabled::-webkit-slider-thumb{background:var(--text-faint)}
+.ls-range input:disabled::-moz-range-thumb{background:var(--text-faint)}
+.ls-range.is-disabled input::-webkit-slider-runnable-track{background:var(--bg-deep)}
+
+.leo-hint{position:relative;display:inline;border-bottom:1px dotted var(--text-faint);cursor:help;transition:border-color var(--dur-fast) var(--ease),color var(--dur-fast) var(--ease)}
+.leo-hint:is(:hover,:focus-visible,.is-hover){border-bottom-color:var(--accent);color:var(--text-strong)}
+.leo-hint__b{position:absolute;left:0;bottom:calc(100% + 8px);z-index:6;width:max-content;max-width:min(300px,80vw);background:var(--surface-2);border:1px solid var(--line-strong);padding:var(--sp-1) 12px;font:var(--text-small);color:var(--text-strong);text-align:left;white-space:normal;
+  opacity:0;visibility:hidden;transform:translateY(4px);pointer-events:none;transition:opacity var(--dur-fast) var(--ease),transform var(--dur-fast) var(--ease),visibility var(--dur-fast)}
+.leo-hint:is(:hover,:focus-visible,.is-hover) .leo-hint__b{opacity:1;visibility:visible;transform:none}
+@media print{.leo-hint{border-bottom:0}.leo-hint__b{display:none}}
+
+/* ───── sticky report toolbar ───── */
+.leo-bar{position:sticky;top:0;z-index:30;background:var(--bar-bg);-webkit-backdrop-filter:blur(var(--bar-blur));backdrop-filter:blur(var(--bar-blur));border-bottom:1px solid var(--line)}
+.leo-bar.is-scrolled{background:var(--bar-bg-scrolled)}
+.leo-bar__in{max-width:var(--content-max);margin:0 auto;padding:0 var(--page-pad);min-height:var(--bar-h);display:flex;align-items:center;gap:var(--sp-3)}
+.leo-bar__nav{display:flex;flex:1;min-width:0;gap:var(--sp-h);overflow-x:auto;scrollbar-width:none}
+.leo-bar__nav::-webkit-scrollbar{display:none}
+.leo-bar__a{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;color:var(--text-muted);text-decoration:none;font:var(--fw-medium) var(--fs-1)/1 var(--font-display);white-space:nowrap;box-shadow:inset 0 -2px 0 transparent;
+  transition:color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease)}
+.leo-bar__a:is(:hover,.is-hover){color:var(--text-body)}
+.leo-bar__a[aria-current="true"]{color:var(--text-strong);box-shadow:inset 0 -2px 0 var(--accent)}
+.leo-bar__a:focus-visible{outline-offset:-2px!important}
+.ls-h2[id]{scroll-margin-top:calc(var(--bar-h) + var(--sp-2))}
+@media (max-width:600px){.leo-bar__in{gap:var(--sp-2)}.leo-bar .ls-logo{display:none}}
+@media print{.leo-bar{display:none!important}}
+
+/* ───── form ───── */
+.leo-form{display:grid;gap:var(--sp-3);max-width:36em;margin:var(--space-block) 0}
+.leo-field{display:grid;gap:6px}
+.leo-field__l{font:var(--fw-medium) var(--fs-1)/1.4 var(--font-text);color:var(--text-muted)}
+.leo-field__l i{font-style:normal;color:var(--text-faint)}
+.leo-input{width:100%;min-height:48px;padding:12px 14px;background:var(--bg-deep);border:1px solid var(--line-strong);border-radius:0;color:var(--text-strong);font:var(--text-body-font);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+textarea.leo-input{min-height:120px;resize:vertical;line-height:1.5}
+.leo-input::placeholder{color:var(--text-faint)}
+.leo-input:is(:hover,.is-hover):not(:disabled){border-color:var(--text-faint)}
+.leo-input:is(:focus,.is-focus){border-color:var(--accent-line);background:var(--n-deep)}
+.leo-field.is-error .leo-input{border-color:var(--state-error)}
+.leo-field.is-success .leo-input{border-color:var(--state-success)}
+.leo-input:disabled{opacity:.5;cursor:not-allowed}
+.leo-field__m{display:flex;gap:var(--sp-1);align-items:baseline;font:var(--text-small);color:var(--text-faint);margin:0}
+.leo-field.is-error .leo-field__m{color:var(--state-error)}
+.leo-field.is-success .leo-field__m{color:var(--state-success)}
+.leo-field__ic{display:inline-grid;place-items:center;width:16px;height:16px;flex:none;border:1px solid currentColor;font:var(--fw-bold) 11px/1 var(--font-display);transform:translateY(2px)}
+.leo-check{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:10px 0;cursor:pointer;font:var(--text-small);color:var(--text-muted);position:relative}
+.leo-check input{position:absolute;opacity:0;width:20px;height:20px;margin:0;top:10px;left:0}
+.leo-check__b{display:grid;place-items:center;width:20px;height:20px;flex:none;border:1px solid var(--line-strong);background:var(--bg-deep);
+  transition:border-color var(--dur-fast) var(--ease),background-color var(--dur-fast) var(--ease)}
+.leo-check:is(:hover,.is-hover) .leo-check__b{border-color:var(--accent-line)}
+.leo-check input:checked+.leo-check__b{background:var(--accent);border-color:var(--accent)}
+.leo-check input:checked+.leo-check__b::after{content:"✓";font:var(--fw-bold) 14px/1 var(--font-display);color:var(--n-deep)}
+.leo-check input:focus-visible+.leo-check__b,.leo-check.is-focus .leo-check__b{outline:var(--focus-ring-width) solid var(--focus-ring-color);outline-offset:var(--focus-ring-offset)}
+.leo-check.is-error .leo-check__b{border-color:var(--state-error)}
+.leo-check.is-disabled{opacity:.5;cursor:not-allowed}
+.leo-check a{color:var(--accent-text)}
+
+/* reduced motion: everything off */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition-duration:0s!important;animation:none!important}
+  .leo-card,.leo-card[data-tilt]{transform:none!important}
+  .leo-sheen::after{display:none}
+  .leo-reveal{opacity:1;transform:none}
+}
+</style>
+<style>
+:root{--content-max:1440px}html{scroll-behavior:smooth}body{isolation:isolate}section{scroll-margin-top:86px}
+.ls-page__inner{padding-top:30px}.ls-head{margin-bottom:36px}.ls-logo{width:150px;height:30px}
+.ls-h1{max-width:19em;margin-top:64px;font-size:clamp(36px,5.2vw,72px);line-height:1.04}
+.ls-lead{max-width:69ch}.ls-h2{margin-top:80px}.lede{font-size:clamp(18px,1.5vw,22px);line-height:1.55;max-width:68ch}
+.topnav{display:flex;gap:22px;overflow-x:auto;white-space:nowrap;margin-top:24px;padding-bottom:10px;scrollbar-width:thin}
+.topnav a{font-size:14px;color:var(--text-muted);text-decoration:none}.topnav a:hover{color:var(--text-strong)}
+.headmeta{color:var(--text-faint);font-size:14px;margin:16px 0 0}.intro-rule{max-width:950px;border-left:2px solid var(--accent);padding:1px 0 1px 20px;margin:32px 0}
+.intro-rule p{margin:0;font-size:18px;line-height:1.55;color:var(--text-strong)}
+.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:34px;align-items:start}
+.split .ls-fig{margin-top:0}.ls-fig__frame{padding:22px 24px 16px}.ls-fig__cap{max-width:82ch;line-height:1.55}
+.legend{display:flex;gap:20px;flex-wrap:wrap;color:var(--text-muted);font-size:13px;margin:4px 0 14px}.legend span:before{content:"";display:inline-block;vertical-align:middle;width:20px;height:3px;margin-right:7px;background:var(--legend)}
+.legend .dashed:before{height:0;border-top:2px dashed var(--legend);background:none}
+.chart-mobile,.mobile-tip{display:none}.table-wrap{max-width:100%;overflow-x:auto}.ls-table{min-width:600px}.ls-table td,.ls-table th{line-height:1.45}.ls-table td:first-child{max-width:390px}
+.sources{columns:2;column-gap:55px;padding-left:20px;max-width:1100px}.sources li{break-inside:avoid;margin-bottom:12px;color:var(--text-muted);font-size:14px;line-height:1.5}
+.event-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;padding:20px 0;border-top:1px solid var(--line)}
+.event-row time{font-family:var(--font-display);font-weight:700;color:var(--accent-text)}.event-row p{margin:4px 0 0;color:var(--text-muted)}
+.confidence{font-size:13px;color:var(--text-faint);margin-left:8px;white-space:nowrap}.section-note{max-width:1000px;color:var(--text-muted)}
+details.method{border-top:1px solid var(--line);padding:18px 0}details.method:last-child{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;color:var(--text-strong);font-weight:600}details p,details li{max-width:95ch;color:var(--text-muted)}
+.steps{counter-reset:n;list-style:none;padding:0}.steps li{counter-increment:n;display:grid;grid-template-columns:38px 1fr;gap:14px;padding:16px 0;border-top:1px solid var(--line);max-width:1000px}.steps li:before{content:counter(n,decimal-leading-zero);font-weight:700;color:var(--accent-text)}
+.sources a,.ls-p a,.event-row a,.section-note a{overflow-wrap:anywhere}.ls-chart text{fill:var(--text-muted);font-variant-numeric:tabular-nums}
+@media(max-width:760px){.ls-page__inner{padding-top:20px}.ls-h1{margin-top:46px}.ls-h2{margin-top:60px}.split{grid-template-columns:1fr;gap:24px}.event-row{grid-template-columns:1fr;gap:3px}.sources{columns:1}.ls-fig__frame{padding:16px 12px}.chart-desktop{display:none}.chart-mobile,.mobile-tip{display:block}.intro-rule p{font-size:17px}}
+@media print{.topnav{display:none}.ls-h1{margin-top:30px}.ls-h2{margin-top:35px}.chart-mobile{display:none}.chart-desktop{display:block}.sources{columns:1}.ls-fig{break-inside:avoid}.event-row{break-inside:avoid}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body class="ls-page">
+<main class="ls-page__inner">
+<header class="ls-head">
+  <div class="ls-head__bar"><a class="ls-logo" href="https://leoseo.ru/" aria-label="LEOSEO"></a><span class="ls-head__client">У Зубного</span></div>
+  <nav class="topnav ls-screen-only" aria-label="Разделы отчёта"><a href="#traffic">Трафик</a><a href="#updates">Обновления</a><a href="#demand">Спрос</a><a href="#ai">Нейроответы</a><a href="#signals">Кликовые сигналы</a><a href="#actions">Что проверить</a><a href="#sources">Источники</a></nav>
+  <h1 class="ls-h1">Почему снизился трафик из Google</h1>
+  <p class="ls-lead lede">Данные поиска, обновления алгоритмов и спрос на стоматологические услуги в Петербурге.</p>
+  <p class="headmeta">Период анализа: до 31 октября 2026 года включительно · подготовлено 6 ноября 2026 года</p>
+  <div class="intro-rule"><p>Снижение началось до августовского spam update. Визиты из Google в целевом регионе тоже сократились. Одной доказанной причины в доступных данных нет.</p></div>
+</header>
+
+<section id="traffic">
+<h2 class="ls-h2">Когда началось снижение</h2>
+<p class="ls-p">В Search Console клики по всему сайту снизились с <b>1 392 в июле до 791 в августе и 480 в сентябре</b>. Это подтверждается Метрикой по Петербургу и области, хотя темп снижения в двух системах различается.</p>
+<figure class="ls-fig"><div class="ls-fig__frame"><p class="ls-fig__title">Клики из Google: семидневное среднее</p><div class="legend"><span style="--legend:#c1814e">Клики по сайту</span><span class="dashed" style="--legend:#5b8fd6">Начало обновления Google</span></div><div class="chart-desktop"><svg class="ls-chart" role="img" aria-label="Среднее число кликов в день за 7 дней с марта по октябрь 2026 года" viewBox="0 0 1100 300" xmlns="http://www.w3.org/2000/svg"><line x1="34" y1="268.0" x2="1088" y2="268.0" stroke="var(--line-strong)"/><text x="27" y="272.0" text-anchor="end" style="font-size:10px">0</text><line x1="34" y1="183.7" x2="1088" y2="183.7" stroke="var(--line-strong)"/><text x="27" y="187.7" text-anchor="end" style="font-size:10px">20</text><line x1="34" y1="99.3" x2="1088" y2="99.3" stroke="var(--line-strong)"/><text x="27" y="103.3" text-anchor="end" style="font-size:10px">40</text><line x1="34" y1="15.0" x2="1088" y2="15.0" stroke="var(--line-strong)"/><text x="27" y="19.0" text-anchor="end" style="font-size:10px">60</text><line x1="146.3" y1="15" x2="146.3" y2="268" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="383.9" y1="15" x2="383.9" y2="268" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="768.3" y1="15" x2="768.3" y2="268" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="928.2" y1="15" x2="928.2" y2="268" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><polyline fill="none" stroke="#c1814e" stroke-width="2.5" stroke-linejoin="round" points="59.9,99.3 64.2,101.7 68.6,111.4 72.9,114.4 77.2,122.2 81.5,118.0 85.8,122.2 90.2,118.0 94.5,116.8 98.8,115.0 103.1,116.2 107.4,117.4 111.8,120.4 116.1,119.8 120.4,127.0 124.7,127.0 129.0,128.8 133.4,121.6 137.7,113.8 142.0,106.0 146.3,98.1 150.6,78.2 155.0,66.2 159.3,59.0 163.6,54.8 167.9,49.9 172.2,59.0 176.5,57.2 180.9,71.0 185.2,65.0 189.5,56.0 193.8,69.8 198.1,87.3 202.5,86.1 206.8,93.9 211.1,86.1 215.4,100.5 219.7,102.3 224.1,93.9 228.4,92.1 232.7,92.1 237.0,98.7 241.3,113.8 245.7,122.8 250.0,143.9 254.3,140.9 258.6,127.6 262.9,120.4 267.3,101.1 271.6,88.5 275.9,65.0 280.2,44.5 284.5,41.5 288.9,44.5 293.2,45.7 297.5,36.1 301.8,51.1 306.1,76.4 310.5,86.1 314.8,89.1 319.1,87.9 323.4,93.3 327.7,113.2 332.1,119.8 336.4,116.8 340.7,122.2 345.0,122.8 349.3,127.6 353.7,130.1 358.0,127.6 362.3,104.8 366.6,95.7 370.9,88.5 375.3,90.9 379.6,95.7 383.9,92.7 388.2,95.1 392.5,98.1 396.9,87.3 401.2,78.2 405.5,71.6 409.8,62.0 414.1,64.4 418.5,64.4 422.8,71.0 427.1,88.5 431.4,106.0 435.7,122.2 440.0,133.7 444.4,137.9 448.7,124.6 453.0,109.6 457.3,87.9 461.6,70.4 466.0,55.4 470.3,41.5 474.6,37.3 478.9,38.5 483.2,41.5 487.6,53.0 491.9,51.7 496.2,57.8 500.5,57.8 504.8,45.1 509.2,48.7 513.5,44.5 517.8,35.5 522.1,41.5 526.4,37.3 530.8,29.5 535.1,34.3 539.4,34.3 543.7,42.1 548.0,42.7 552.4,35.5 556.7,29.5 561.0,43.3 565.3,40.9 569.6,36.7 574.0,36.1 578.3,38.5 582.6,42.1 586.9,49.3 591.2,49.3 595.6,46.3 599.9,61.4 604.2,53.6 608.5,64.4 612.8,65.6 617.2,69.8 621.5,71.6 625.8,90.3 630.1,94.5 634.4,94.5 638.8,90.3 643.1,90.9 647.4,91.5 651.7,88.5 656.0,81.9 660.4,74.6 664.7,89.7 669.0,87.3 673.3,85.5 677.6,87.3 682.0,95.1 686.3,98.1 690.6,102.9 694.9,102.9 699.2,101.1 703.5,111.4 707.9,118.0 712.2,124.0 716.5,139.7 720.8,143.9 725.1,152.3 729.5,163.8 733.8,168.6 738.1,162.6 742.4,151.7 746.7,141.5 751.1,139.1 755.4,135.5 759.7,133.1 764.0,126.4 768.3,131.3 772.7,145.7 777.0,149.9 781.3,154.8 785.6,162.6 789.9,169.2 794.3,180.1 798.6,178.8 802.9,177.6 807.2,180.7 811.5,180.7 815.9,178.8 820.2,184.9 824.5,189.1 828.8,199.3 833.1,199.3 837.5,195.1 841.8,198.1 846.1,197.5 850.4,194.5 854.7,193.3 859.1,191.5 863.4,194.5 867.7,197.5 872.0,194.5 876.3,191.5 880.7,190.9 885.0,189.7 889.3,189.7 893.6,189.7 897.9,191.5 902.3,193.9 906.6,199.3 910.9,201.1 915.2,206.6 919.5,211.4 923.9,212.6 928.2,215.6 932.5,219.2 936.8,220.4 941.1,219.2 945.5,219.2 949.8,208.4 954.1,209.0 958.4,207.2 962.7,207.8 967.0,207.2 971.4,208.4 975.7,198.7 980.0,209.0 984.3,205.4 988.6,206.6 993.0,202.3 997.3,200.5 1001.6,201.7 1005.9,205.4 1010.2,199.9 1014.6,202.9 1018.9,200.5 1023.2,202.3 1027.5,204.1 1031.8,201.1 1036.2,200.5 1040.5,206.0 1044.8,210.2 1049.1,216.2 1053.4,217.4 1057.8,220.4 1062.1,223.4 1066.4,231.3 1070.7,228.2 1075.0,221.0 1079.4,217.4 1083.7,218.0 1088.0,212.6"/><text x="34.0" y="291" text-anchor="middle" style="font-size:12px">мар</text><text x="297.5" y="291" text-anchor="middle" style="font-size:12px">май</text><text x="561.0" y="291" text-anchor="middle" style="font-size:12px">июл</text><text x="828.8" y="291" text-anchor="middle" style="font-size:12px">сен</text><text x="1018.9" y="291" text-anchor="middle" style="font-size:12px">окт</text></svg></div><div class="chart-mobile"><svg class="ls-chart" role="img" aria-label="Среднее число кликов в день за 7 дней с марта по октябрь 2026 года" viewBox="0 0 350 220" xmlns="http://www.w3.org/2000/svg"><line x1="34" y1="188.0" x2="338" y2="188.0" stroke="var(--line-strong)"/><text x="27" y="192.0" text-anchor="end" style="font-size:10px">0</text><line x1="34" y1="130.3" x2="338" y2="130.3" stroke="var(--line-strong)"/><text x="27" y="134.3" text-anchor="end" style="font-size:10px">20</text><line x1="34" y1="72.7" x2="338" y2="72.7" stroke="var(--line-strong)"/><text x="27" y="76.7" text-anchor="end" style="font-size:10px">40</text><line x1="34" y1="15.0" x2="338" y2="15.0" stroke="var(--line-strong)"/><text x="27" y="19.0" text-anchor="end" style="font-size:10px">60</text><line x1="66.4" y1="15" x2="66.4" y2="188" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="134.9" y1="15" x2="134.9" y2="188" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="245.8" y1="15" x2="245.8" y2="188" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><line x1="291.9" y1="15" x2="291.9" y2="188" stroke="#5b8fd6" stroke-opacity=".55" stroke-dasharray="4 5"/><polyline fill="none" stroke="#c1814e" stroke-width="2.5" stroke-linejoin="round" points="41.5,72.7 42.7,74.3 44.0,80.9 45.2,83.0 46.5,88.3 47.7,85.4 49.0,88.3 50.2,85.4 51.4,84.6 52.7,83.4 53.9,84.2 55.2,85.0 56.4,87.1 57.7,86.7 58.9,91.6 60.2,91.6 61.4,92.8 62.7,87.9 63.9,82.6 65.1,77.2 66.4,71.8 67.6,58.2 68.9,50.0 70.1,45.1 71.4,42.2 72.6,38.9 73.9,45.1 75.1,43.8 76.4,53.3 77.6,49.2 78.9,43.0 80.1,52.5 81.3,64.4 82.6,63.6 83.8,69.0 85.1,63.6 86.3,73.5 87.6,74.7 88.8,69.0 90.1,67.7 91.3,67.7 92.6,72.3 93.8,82.6 95.0,88.7 96.3,103.1 97.5,101.1 98.8,92.0 100.0,87.1 101.3,73.9 102.5,65.3 103.8,49.2 105.0,35.2 106.3,33.1 107.5,35.2 108.8,36.0 110.0,29.4 111.2,39.7 112.5,57.0 113.7,63.6 115.0,65.7 116.2,64.8 117.5,68.5 118.7,82.1 120.0,86.7 121.2,84.6 122.5,88.3 123.7,88.7 125.0,92.0 126.2,93.7 127.4,92.0 128.7,76.4 129.9,70.2 131.2,65.3 132.4,66.9 133.7,70.2 134.9,68.1 136.2,69.8 137.4,71.8 138.7,64.4 139.9,58.2 141.1,53.7 142.4,47.1 143.6,48.8 144.9,48.8 146.1,53.3 147.4,65.3 148.6,77.2 149.9,88.3 151.1,96.1 152.4,99.0 153.6,90.0 154.9,79.7 156.1,64.8 157.3,52.9 158.6,42.6 159.8,33.1 161.1,30.2 162.3,31.1 163.6,33.1 164.8,41.0 166.1,40.1 167.3,44.2 168.6,44.2 169.8,35.6 171.0,38.1 172.3,35.2 173.5,29.0 174.8,33.1 176.0,30.2 177.3,24.9 178.5,28.2 179.8,28.2 181.0,33.5 182.3,33.9 183.5,29.0 184.8,24.9 186.0,34.4 187.2,32.7 188.5,29.8 189.7,29.4 191.0,31.1 192.2,33.5 193.5,38.5 194.7,38.5 196.0,36.4 197.2,46.7 198.5,41.4 199.7,48.8 201.0,49.6 202.2,52.5 203.4,53.7 204.7,66.5 205.9,69.4 207.2,69.4 208.4,66.5 209.7,66.9 210.9,67.3 212.2,65.3 213.4,60.7 214.7,55.8 215.9,66.1 217.1,64.4 218.4,63.2 219.6,64.4 220.9,69.8 222.1,71.8 223.4,75.1 224.6,75.1 225.9,73.9 227.1,80.9 228.4,85.4 229.6,89.6 230.9,100.3 232.1,103.1 233.3,108.9 234.6,116.7 235.8,120.0 237.1,115.9 238.3,108.5 239.6,101.5 240.8,99.9 242.1,97.4 243.3,95.7 244.6,91.2 245.8,94.5 247.0,104.4 248.3,107.3 249.5,110.6 250.8,115.9 252.0,120.4 253.3,127.9 254.5,127.0 255.8,126.2 257.0,128.3 258.3,128.3 259.5,127.0 260.8,131.2 262.0,134.0 263.2,141.0 264.5,141.0 265.7,138.2 267.0,140.2 268.2,139.8 269.5,137.7 270.7,136.9 272.0,135.7 273.2,137.7 274.5,139.8 275.7,137.7 277.0,135.7 278.2,135.3 279.4,134.5 280.7,134.5 281.9,134.5 283.2,135.7 284.4,137.3 285.7,141.0 286.9,142.3 288.2,146.0 289.4,149.3 290.7,150.1 291.9,152.2 293.1,154.6 294.4,155.5 295.6,154.6 296.9,154.6 298.1,147.2 299.4,147.6 300.6,146.4 301.9,146.8 303.1,146.4 304.4,147.2 305.6,140.6 306.9,147.6 308.1,145.2 309.3,146.0 310.6,143.1 311.8,141.9 313.1,142.7 314.3,145.2 315.6,141.5 316.8,143.5 318.1,141.9 319.3,143.1 320.6,144.3 321.8,142.3 323.0,141.9 324.3,145.6 325.5,148.5 326.8,152.6 328.0,153.4 329.3,155.5 330.5,157.5 331.8,162.9 333.0,160.8 334.3,155.9 335.5,153.4 336.8,153.8 338.0,150.1"/><text x="34.0" y="211" text-anchor="middle" style="font-size:10px">мар</text><text x="110.0" y="211" text-anchor="middle" style="font-size:10px">май</text><text x="186.0" y="211" text-anchor="middle" style="font-size:10px">июл</text><text x="263.2" y="211" text-anchor="middle" style="font-size:10px">сен</text><text x="318.1" y="211" text-anchor="middle" style="font-size:10px">окт</text></svg></div><figcaption class="ls-fig__cap">Search Console, веб-поиск, все страны и устройства. Линия сглажена за 7 дней. Метки: 27 марта — core update, 21 мая — core update, 18 августа — spam update, 24 сентября — spam update. Метка указывает старт, а не момент влияния на сайт.</figcaption></div></figure>
+<div class="split"><div><h3 class="ls-h3">Сравнение одинаковых двухнедельных периодов</h3><p class="ls-p">Каждый период включает одинаковые дни недели. Клики Google уменьшились на <b>29 % ещё до 18 августа</b>, а в следующий период — ещё на 31 %. Локальные визиты из Google снижались плавнее; Яндекс в этот же момент рос.</p><p class="ls-note">В Метрике — визиты людей из поиска, Санкт-Петербург и Ленинградская область, последний значимый переход, кросс-девайс. В GSC — клики по ресурсу из всех стран. Это разные показатели и разные географии.</p></div><figure class="ls-fig"><div class="ls-fig__frame"><p class="ls-fig__title">Изменение к первому периоду, %</p><div class="legend"><span style="--legend:#c1814e">GSC: Google, клики</span><span style="--legend:#5b8fd6">Метрика: Google, визиты</span><span class="dashed" style="--legend:#b5aea3">Метрика: Яндекс, визиты</span></div><div class="chart-desktop"><svg class="ls-chart" role="img" aria-label="Индексы кликов и визитов: первый период равен 100" viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg"><line x1="35" y1="202.0" x2="608" y2="202.0" stroke="var(--line-strong)"/><text x="28" y="206.0" text-anchor="end" style="font-size:10px">0</text><line x1="35" y1="150.3" x2="608" y2="150.3" stroke="var(--line-strong)"/><text x="28" y="154.3" text-anchor="end" style="font-size:10px">50</text><line x1="35" y1="98.7" x2="608" y2="98.7" stroke="var(--line-strong)"/><text x="28" y="102.7" text-anchor="end" style="font-size:10px">100</text><line x1="35" y1="47.0" x2="608" y2="47.0" stroke="var(--line-strong)"/><text x="28" y="51.0" text-anchor="end" style="font-size:10px">150</text><polyline fill="none" stroke="#c1814e" stroke-width="3" points="35.0,98.7 313.5,128.6 592.0,151.2"/><circle cx="35.0" cy="98.7" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 100%</title></circle><circle cx="313.5" cy="128.6" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 71%</title></circle><circle cx="592.0" cy="151.2" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 49%</title></circle><polyline fill="none" stroke="#5b8fd6" stroke-width="3" points="35.0,98.7 313.5,112.4 592.0,124.4"/><circle cx="35.0" cy="98.7" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 100%</title></circle><circle cx="313.5" cy="112.4" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 87%</title></circle><circle cx="592.0" cy="124.4" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 75%</title></circle><polyline fill="none" stroke="#b5aea3" stroke-width="3" stroke-dasharray="7 5" points="35.0,98.7 313.5,50.9 592.0,36.0"/><circle cx="35.0" cy="98.7" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 100%</title></circle><circle cx="313.5" cy="50.9" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 146%</title></circle><circle cx="592.0" cy="36.0" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 161%</title></circle><text x="35.0" y="228" text-anchor="middle" style="font-size:11px">21.07–03.08</text><text x="313.5" y="228" text-anchor="middle" style="font-size:11px">04.08–17.08</text><text x="592.0" y="228" text-anchor="middle" style="font-size:11px">18.08–31.08</text></svg></div><div class="chart-mobile"><svg class="ls-chart" role="img" aria-label="Индексы кликов и визитов: первый период равен 100" viewBox="0 0 350 240" xmlns="http://www.w3.org/2000/svg"><line x1="35" y1="202.0" x2="338" y2="202.0" stroke="var(--line-strong)"/><text x="28" y="206.0" text-anchor="end" style="font-size:10px">0</text><line x1="35" y1="150.3" x2="338" y2="150.3" stroke="var(--line-strong)"/><text x="28" y="154.3" text-anchor="end" style="font-size:10px">50</text><line x1="35" y1="98.7" x2="338" y2="98.7" stroke="var(--line-strong)"/><text x="28" y="102.7" text-anchor="end" style="font-size:10px">100</text><line x1="35" y1="47.0" x2="338" y2="47.0" stroke="var(--line-strong)"/><text x="28" y="51.0" text-anchor="end" style="font-size:10px">150</text><polyline fill="none" stroke="#c1814e" stroke-width="3" points="35.0,98.7 178.5,128.6 322.0,151.2"/><circle cx="35.0" cy="98.7" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 100%</title></circle><circle cx="178.5" cy="128.6" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 71%</title></circle><circle cx="322.0" cy="151.2" r="3.5" fill="#c1814e"><title>GSC: Google, клики: 49%</title></circle><polyline fill="none" stroke="#5b8fd6" stroke-width="3" points="35.0,98.7 178.5,112.4 322.0,124.4"/><circle cx="35.0" cy="98.7" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 100%</title></circle><circle cx="178.5" cy="112.4" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 87%</title></circle><circle cx="322.0" cy="124.4" r="3.5" fill="#5b8fd6"><title>Метрика: Google, визиты: 75%</title></circle><polyline fill="none" stroke="#b5aea3" stroke-width="3" stroke-dasharray="7 5" points="35.0,98.7 178.5,50.9 322.0,36.0"/><circle cx="35.0" cy="98.7" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 100%</title></circle><circle cx="178.5" cy="50.9" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 146%</title></circle><circle cx="322.0" cy="36.0" r="3.5" fill="#b5aea3"><title>Метрика: Яндекс, визиты: 161%</title></circle><text x="35.0" y="228" text-anchor="middle" style="font-size:11px">21.07</text><text x="178.5" y="228" text-anchor="middle" style="font-size:11px">04.08</text><text x="322.0" y="228" text-anchor="middle" style="font-size:11px">18.08</text></svg></div><figcaption class="ls-fig__cap">Первый период принят за 100. Абсолютные значения приведены в таблице.</figcaption></div></figure></div>
+<p class="mobile-tip ls-note">Таблицу можно прокрутить вправо →</p><div class="table-wrap"><table class="ls-table"><thead><tr><th>Источник и показатель</th><th class="num">21.07–03.08</th><th class="num">04.08–17.08</th><th class="num">18.08–31.08</th></tr></thead><tbody><tr><td>GSC: Google, клики</td><td class="num">563</td><td class="num">400</td><td class="num">277</td></tr><tr><td>Метрика: Google, визиты</td><td class="num">181</td><td class="num">157</td><td class="num">136</td></tr><tr><td>Метрика: Яндекс, визиты</td><td class="num">132</td><td class="num">193</td><td class="num">212</td></tr></tbody></table></div>
+<p class="ls-note">В России по GSC: 2 463 клика в июне–июле и 796 в сентябре–октябре; показы 252 082 и 224 578. Это дополнительно показывает, что спад не ограничился зарубежной аудиторией.</p>
+</section>
+
+<section id="updates"><h2 class="ls-h2">Обновления и ошибки учёта</h2>
+<p class="ls-p">Даты ниже подтверждены Google. Совпадение со спадом позволяет проверить гипотезу, но не устанавливает причину.</p>
+<div class="event-row"><time datetime="2026-03-24">24 марта — 8 апреля</time><div><b>Spam update и затем core update</b><p>Они шли почти подряд. В 14 дней до core update было 514 кликов, в 14 дней с его начала — 649. Общего падения кликов в этом сравнении нет. <a href="https://status.search.google.com/incidents/VbnSXAH4SmEcxPtx4YSD">Мартовский spam update</a> · <a href="https://status.search.google.com/incidents/7eTbAa2jWdToLkraZj5y">core update</a></p></div></div>
+<div class="event-row"><time datetime="2026-05-21">21 мая — 2 июня</time><div><b>May 2026 core update</b><p>14 дней до старта: 519 кликов; 14 дней с начала: 565. По общему трафику явного немедленного падения не видно. <a href="https://status.search.google.com/incidents/wdAXJk6LRRihEjpzEeWE">Запись Google</a></p></div></div>
+<div class="event-row"><time datetime="2026-06-24">24–26 июня</time><div><b>June 2026 spam update</b><p>Подтверждённое обновление систем борьбы со спамом. Основное снижение кликов проявилось в августе; данных для привязки к июньскому обновлению недостаточно. <a href="https://status.search.google.com/incidents/YUX1peHev5a4fkxLDiUQ">Запись Google</a></p></div></div>
+<div class="event-row"><time datetime="2026-08-18">18–21 августа</time><div><b>August 2026 spam update</b><p>Спад продолжился во время и после обновления, но уже начался к его старту. Google не сообщал, что именно изменил для этого сайта; называть обновление причиной или связывать его конкретно со ссылками нельзя. <a href="https://status.search.google.com/incidents/LEubPCm2octf2uMqCFKE">Запись Google</a></p></div></div>
+<div class="event-row"><time datetime="2026-09-24">24 сентября — 8 октября</time><div><b>September 2026 spam update</b><p>За 14 дней до старта — 222 клика GSC и 112 локальных визитов из Google; за первые 14 дней обновления — 202 и 123 соответственно. Сигналы разнонаправленные, поэтому отдельное влияние обновления не установлено. <a href="https://status.search.google.com/incidents/XhUDXP7A67iHCD2kmbVu">Запись Google</a></p></div></div>
+<div class="event-row"><time datetime="2026-04-27">Весна и август</time><div><b>Ошибки в отчётах Search Console</b><p>Google сообщил об исправленной ошибке учёта показов за период с 13 мая 2025 по 27 апреля 2026 года: она затрагивала показы, CTR и среднюю позицию, но не клики. Поэтому весенние показы нужно трактовать осторожно. Отдельная ошибка в отчёте по генеративному поиску затрагивала 13–17 августа; Google сообщил о восстановлении данных 21 августа. <a href="https://support.google.com/webmasters/answer/6211453?hl=en">Журнал аномалий Google</a></p></div></div>
+<div class="event-row"><time datetime="2026-10-14">14 октября</time><div><b>Перенос адресов сайта</b><p>Спад начался раньше переноса. После него при сравнении посадочных нужно сопоставлять старый и новый адреса и отдельно проверить редиректы и индексацию.</p></div></div>
+<p class="ls-note">На дату проверки, 6 ноября, в Search Console разделы «Меры, принятые вручную» и «Проблемы безопасности» показывали «Проблем нет». Это проверка текущего состояния, не доказательство отсутствия автоматических изменений ранжирования или исторических мер.</p>
+</section>
+
+<section id="demand"><h2 class="ls-h2">Спрос и сезонность</h2>
+<p class="ls-p">Проверили 19 выбранных фраз в Яндекс Вордстате через API Арсёнкина: Санкт-Петербург, все устройства, широкая частотность. Последний месяц, который вернул API, — сентябрь 2026 года. Октябрьские значения не подставлялись.</p>
+<p class="mobile-tip ls-note">Таблицу можно прокрутить вправо →</p><div class="table-wrap"><table class="ls-table"><thead><tr><th>Фраза в Вордстате</th><th class="num">Июль 2025</th><th class="num">Июль 2026</th><th class="num">Август 2026</th><th class="num">Сентябрь 2026</th></tr></thead><tbody><tr><td>стоматология</td><td class="num">341 974</td><td class="num">317 319</td><td class="num">322 963</td><td class="num">327 384</td></tr><tr><td>имплантация зубов</td><td class="num">11 890</td><td class="num">8 257</td><td class="num">8 506</td><td class="num">9 428</td></tr><tr><td>протезирование зубов</td><td class="num">8 808</td><td class="num">5 828</td><td class="num">5 665</td><td class="num">6 136</td></tr><tr><td>имплантация зубов в спб</td><td class="num">1 831</td><td class="num">957</td><td class="num">851</td><td class="num">913</td></tr><tr><td>протезирование зубов в спб</td><td class="num">2 052</td><td class="num">1 303</td><td class="num">1 237</td><td class="num">1 348</td></tr><tr><td>имплант цена в спб</td><td class="num">1 211</td><td class="num">831</td><td class="num">802</td><td class="num">939</td></tr></tbody></table></div>
+<p class="ls-note">Широкая частота включает запросы с дополнительными словами; строки пересекаются и не складываются. Это Яндекс, а не объём запросов Google. Для конкретных услуг и регионов динамика может отличаться. <a href="https://yandex.ru/support2/wordstat/ru/interface/new">Как работает динамика Вордстата</a> · <a href="https://help.arsenkin.ru/api/api-wordstat">API Арсёнкина</a></p>
+<div class="split"><div><h3 class="ls-h3">Что видно по спросу</h3><p class="ls-p">Частотность широкой фразы «стоматология» выросла с <b>317 319 в июле до 327 384 в сентябре 2026 года</b>. При этом запросы по имплантации и протезированию год к году стали слабее: у «имплантации зубов» июль снизился с 11 890 до 8 257. Снижение спроса могло внести вклад, но не объясняет всю динамику кликов.</p><p class="ls-p">Для независимой проверки посмотрели Google Trends по слову «стоматология» в Санкт-Петербурге. Недельный индекс менялся мягче, чем клики сайта. Это оценка относительного интереса, а не число запросов и не измерение спроса по всем услугам.</p></div><figure class="ls-fig"><div class="ls-fig__frame"><p class="ls-fig__title">Google Trends: «стоматология»</p><div class="chart-desktop"><svg class="ls-chart" role="img" aria-label="Google Trends: средний индекс по двум неделям" viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="210.0" x2="608" y2="210.0" stroke="var(--line-strong)"/><text x="31" y="214.0" text-anchor="end" style="font-size:10px">0</text><line x1="38" y1="167.7" x2="608" y2="167.7" stroke="var(--line-strong)"/><text x="31" y="171.7" text-anchor="end" style="font-size:10px">25</text><line x1="38" y1="125.5" x2="608" y2="125.5" stroke="var(--line-strong)"/><text x="31" y="129.5" text-anchor="end" style="font-size:10px">50</text><line x1="38" y1="83.2" x2="608" y2="83.2" stroke="var(--line-strong)"/><text x="31" y="87.2" text-anchor="end" style="font-size:10px">75</text><line x1="38" y1="40.9" x2="608" y2="40.9" stroke="var(--line-strong)"/><text x="31" y="44.9" text-anchor="end" style="font-size:10px">100</text><rect x="79.6" y="53.6" width="105.8" height="156.4" fill="#c1814e"/><text x="132.5" y="46.6" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">92,5</text><text x="132.5" y="238" text-anchor="middle" style="font-size:11px">19.07–01.08</text><rect x="268.6" y="57.8" width="105.8" height="152.2" fill="#c1814e"/><text x="321.5" y="50.8" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">90,0</text><text x="321.5" y="238" text-anchor="middle" style="font-size:11px">02.08–15.08</text><rect x="457.6" y="65.4" width="105.8" height="144.6" fill="#c1814e"/><text x="510.5" y="58.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">85,5</text><text x="510.5" y="238" text-anchor="middle" style="font-size:11px">16.08–29.08</text></svg></div><div class="chart-mobile"><svg class="ls-chart" role="img" aria-label="Google Trends: средний индекс по двум неделям" viewBox="0 0 350 250" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="210.0" x2="338" y2="210.0" stroke="var(--line-strong)"/><text x="31" y="214.0" text-anchor="end" style="font-size:10px">0</text><line x1="38" y1="167.7" x2="338" y2="167.7" stroke="var(--line-strong)"/><text x="31" y="171.7" text-anchor="end" style="font-size:10px">25</text><line x1="38" y1="125.5" x2="338" y2="125.5" stroke="var(--line-strong)"/><text x="31" y="129.5" text-anchor="end" style="font-size:10px">50</text><line x1="38" y1="83.2" x2="338" y2="83.2" stroke="var(--line-strong)"/><text x="31" y="87.2" text-anchor="end" style="font-size:10px">75</text><line x1="38" y1="40.9" x2="338" y2="40.9" stroke="var(--line-strong)"/><text x="31" y="44.9" text-anchor="end" style="font-size:10px">100</text><rect x="59.8" y="53.6" width="55.4" height="156.4" fill="#c1814e"/><text x="87.5" y="46.6" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">92,5</text><text x="87.5" y="238" text-anchor="middle" style="font-size:11px">19.07</text><rect x="158.8" y="57.8" width="55.4" height="152.2" fill="#c1814e"/><text x="186.5" y="50.8" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">90,0</text><text x="186.5" y="238" text-anchor="middle" style="font-size:11px">02.08</text><rect x="257.8" y="65.4" width="55.4" height="144.6" fill="#c1814e"/><text x="285.5" y="58.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">85,5</text><text x="285.5" y="238" text-anchor="middle" style="font-size:11px">16.08</text></svg></div><figcaption class="ls-fig__cap">Среднее недельных индексов: 19.07–01.08, 02.08–15.08 и 16.08–29.08. Шкала 0–100, нормированная выборка Google; периоды сдвинуты на два дня относительно таблицы кликов. <a href="https://support.google.com/trends/answer/4365533?hl=ru">Методика Google Trends</a></figcaption></div></figure></div>
+</section>
+
+<section id="ai"><h2 class="ls-h2">Нейроответы Google</h2>
+<div class="split"><div><p class="ls-p">У сайта есть показы в генеративных функциях Google. В отдельном отчёте GSC за июнь–октябрь число показов ссылок сайта снизилось с <b>20 774 до 9 768</b>. В этом отчёте объединены AI Overviews и AI Mode.</p><p class="ls-p">Показ означает, что ссылка сайта появилась в ответе. Отчёт не показывает, сколько раз нейроответ появился <em>без</em> сайта, и не даёт клики или запросы для этого разреза. Эта статистика не позволяет посчитать, сколько переходов забрали нейроответы; исключать их влияние тоже нельзя.</p><p class="ls-note">Пятидневная ошибка учёта в августе, по сообщению Google, восстановлена. <a href="https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports?hl=en">Описание отчёта</a> · <a href="https://support.google.com/webmasters/answer/16984139">Что входит в показатели</a></p></div><figure class="ls-fig"><div class="ls-fig__frame"><p class="ls-fig__title">Показы ссылок сайта в AI-функциях</p><div class="chart-desktop"><svg class="ls-chart" role="img" aria-label="Показы ссылок сайта в генеративных функциях Google" viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="210.0" x2="608" y2="210.0" stroke="var(--line-strong)"/><text x="31" y="214.0" text-anchor="end" style="font-size:10px">0</text><line x1="38" y1="172.8" x2="608" y2="172.8" stroke="var(--line-strong)"/><text x="31" y="176.8" text-anchor="end" style="font-size:10px">5000</text><line x1="38" y1="135.6" x2="608" y2="135.6" stroke="var(--line-strong)"/><text x="31" y="139.6" text-anchor="end" style="font-size:10px">10000</text><line x1="38" y1="98.4" x2="608" y2="98.4" stroke="var(--line-strong)"/><text x="31" y="102.4" text-anchor="end" style="font-size:10px">15000</text><line x1="38" y1="61.2" x2="608" y2="61.2" stroke="var(--line-strong)"/><text x="31" y="65.2" text-anchor="end" style="font-size:10px">20000</text><rect x="62.9" y="55.4" width="63.5" height="154.6" fill="#c1814e"/><text x="94.7" y="48.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">20 774</text><text x="94.7" y="238" text-anchor="middle" style="font-size:11px">июн</text><rect x="176.3" y="37.5" width="63.5" height="172.5" fill="#c1814e"/><text x="208.1" y="30.5" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">23 186</text><text x="208.1" y="238" text-anchor="middle" style="font-size:11px">июл</text><rect x="289.7" y="69.4" width="63.5" height="140.6" fill="#c1814e"/><text x="321.5" y="62.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">18 904</text><text x="321.5" y="238" text-anchor="middle" style="font-size:11px">авг</text><rect x="403.1" y="79.3" width="63.5" height="130.7" fill="#c1814e"/><text x="434.9" y="72.3" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">17 564</text><text x="434.9" y="238" text-anchor="middle" style="font-size:11px">сен</text><rect x="516.5" y="137.3" width="63.5" height="72.7" fill="#c1814e"/><text x="548.3" y="130.3" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">9 768</text><text x="548.3" y="238" text-anchor="middle" style="font-size:11px">окт</text></svg></div><div class="chart-mobile"><svg class="ls-chart" role="img" aria-label="Показы ссылок сайта в генеративных функциях Google" viewBox="0 0 350 250" xmlns="http://www.w3.org/2000/svg"><line x1="38" y1="210.0" x2="338" y2="210.0" stroke="var(--line-strong)"/><text x="31" y="214.0" text-anchor="end" style="font-size:10px">0</text><line x1="38" y1="172.8" x2="338" y2="172.8" stroke="var(--line-strong)"/><text x="31" y="176.8" text-anchor="end" style="font-size:10px">5000</text><line x1="38" y1="135.6" x2="338" y2="135.6" stroke="var(--line-strong)"/><text x="31" y="139.6" text-anchor="end" style="font-size:10px">10000</text><line x1="38" y1="98.4" x2="338" y2="98.4" stroke="var(--line-strong)"/><text x="31" y="102.4" text-anchor="end" style="font-size:10px">15000</text><line x1="38" y1="61.2" x2="338" y2="61.2" stroke="var(--line-strong)"/><text x="31" y="65.2" text-anchor="end" style="font-size:10px">20000</text><rect x="51.1" y="55.4" width="33.3" height="154.6" fill="#c1814e"/><text x="67.7" y="48.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">20 774</text><text x="67.7" y="238" text-anchor="middle" style="font-size:11px">июн</text><rect x="110.5" y="37.5" width="33.3" height="172.5" fill="#c1814e"/><text x="127.1" y="30.5" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">23 186</text><text x="127.1" y="238" text-anchor="middle" style="font-size:11px">июл</text><rect x="169.9" y="69.4" width="33.3" height="140.6" fill="#c1814e"/><text x="186.5" y="62.4" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">18 904</text><text x="186.5" y="238" text-anchor="middle" style="font-size:11px">авг</text><rect x="229.3" y="79.3" width="33.3" height="130.7" fill="#c1814e"/><text x="245.9" y="72.3" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">17 564</text><text x="245.9" y="238" text-anchor="middle" style="font-size:11px">сен</text><rect x="288.7" y="137.3" width="33.3" height="72.7" fill="#c1814e"/><text x="305.3" y="130.3" text-anchor="middle" style="font-size:12px;fill:var(--text-strong)">9 768</text><text x="305.3" y="238" text-anchor="middle" style="font-size:11px">окт</text></svg></div><figcaption class="ls-fig__cap">Google Search Console, данные по ресурсу, все страны; не равно числу переходов или доле выдач с нейроответом.</figcaption></div></figure></div>
+</section>
+
+<section id="signals"><h2 class="ls-h2">Запросы и кликовые сигналы</h2>
+<p class="ls-p">Сравнение июня–июля и сентября–октября: по части коммерческих фраз переходы практически исчезли. Примеры проверены отдельными фильтрами в GSC; это не полный список всех потерянных запросов.</p>
+<p class="mobile-tip ls-note">Таблицу можно прокрутить вправо →</p><div class="table-wrap"><table class="ls-table"><thead><tr><th>Запрос</th><th class="num">Июнь–июль<br>клики / показы</th><th class="num">Сентябрь–октябрь<br>клики / показы</th><th class="num">Средняя позиция<br>было → стало</th></tr></thead><tbody><tr><td>протезирование зубов в спб</td><td class="num">65 / 316</td><td class="num">0 / 211</td><td class="num">16,3 → 20,6</td></tr><tr><td>сколько стоит зубной имплант в спб</td><td class="num">64 / 139</td><td class="num">0 / 39</td><td class="num">15,1 → 21,0</td></tr><tr><td>имплант цена в спб</td><td class="num">58 / 63</td><td class="num">0 / 2</td><td class="num">19,5 → 26,5</td></tr><tr><td>установка импланта под ключ спб</td><td class="num">55 / 72</td><td class="num">0 / 12</td><td class="num">20,3 → 26,4</td></tr></tbody></table></div>
+<p class="ls-note">Средняя позиция взвешена по показам и зависит от географии, устройства и состава выдач. Там, где осталось два показа, позиция особенно неустойчива.</p>
+<h3 class="ls-h3">Что говорят документы и история работ</h3>
+<p class="ls-p">В публичных материалах антимонопольного дела сотрудник Google описывал Navboost как один из сигналов, использующих агрегированные клики по паре «запрос — страница» с учётом местоположения и устройства. В опубликованной в 2024 году документации Content Warehouse также встречаются поля, связанные с показами и кликами. Документация не раскрывает текущие веса, фильтрацию или применение к этому сайту. <a href="https://www.justice.gov/atr/media/1398866/dl">Материалы Минюста США</a> · <a href="https://google-api-content-warehouse.hexdocs.pm/0.2.0/GoogleApi.ContentWarehouse.V1.Model.ResearchScienceSearchNavboostQueryInfo.html">Архив API-документации</a></p>
+<p class="ls-p">Исторический список из 200 фраз для работ с поведенческими факторами в Яндексе пересекается с запросами Google: 17 точных совпадений среди первых 1 000 строк GSC за июнь–июль дали 206 кликов. Некоторые фразы имеют высокую долю кликов при усреднённой позиции за пределами первой страницы. Это основание проверить происхождение переходов, но не доказательство искусственного трафика в Google: средняя позиция объединяет разные показы, а список относится к Яндексу.</p>
+<p class="ls-note">Изменение кликовых сигналов, прекращение кампании и реакция алгоритма — разные гипотезы. Установить их влияние без истории действий и сопоставления сегментов нельзя.</p>
+</section>
+
+<section id="actions"><h2 class="ls-h2">Что проверить дальше</h2><ol class="steps">
+<li><div><b>Сопоставить упавшие запросы и посадочные.</b> Проверить отдельные фразы по стране и устройству за июль, август и сентябрь; после 14 октября объединять старые и новые URL. Таблица GSC показывает только доступные строки, поэтому отсутствие фразы в выгрузке ещё не означает ноль кликов.</div></li>
+<li><div><b>Уточнить историю работ с трафиком.</b> Запросить даты, список фраз, географию и поисковые системы, чтобы проверить, затрагивала ли кампания Google. Выделить местную аудиторию, устройства и поведение без искусственных переходов.</div></li>
+<li><div><b>Проверить ссылочную кампанию.</b> Получить даты WizardSEO, доноров, анкоры и целевые страницы; сверить их с изменениями по тем же страницам. Google относит покупку ссылок ради передачи веса и автоматическое создание ссылок к рискам link spam, но это не доказывает нарушение у сайта. <a href="https://developers.google.com/search/docs/essentials/spam-policies#link-spam">Правила Google о ссылочном спаме</a></div></li>
+<li><div><b>Проверить техническое состояние после переноса.</b> Сверить 301-цепочки, canonical и индексацию приоритетных старых и новых адресов. Снижение до октября эта проверка не объяснит, но поможет исключить дополнительную потерю после переноса.</div></li>
+<li><div><b>Оценить нейроответы на конкретных запросах.</b> Проверить выдачу из целевого региона на телефоне и компьютере, зафиксировать наличие AI Overviews и сравнить изменения по страницам. Для связи с потерями нужны данные не только о показах собственного сайта в AI-отчёте.</div></li>
+</ol></section>
+
+<section id="sources"><h2 class="ls-h2">Источники и границы анализа</h2><p class="section-note">Значения на странице зафиксированы 6 ноября 2026 года; трафик и спрос после 31 октября не анализировались. Срезы систем различаются по географии и метрикам. Сезонность Вордстата доступна по сентябрь включительно.</p>
+<ol class="sources">
+<li><a href="https://datastudio.google.com/u/0/reporting/c9b8d632-e62b-457c-a12f-894c16ffa6a4/page/p_plb2m1z08d">Исходный отчёт Looker Studio</a> и Google Search Console: клики, показы, средние позиции, страны и запросы. Для открытия нужен доступ к ресурсу.</li>
+<li><a href="https://metrika.yandex.ru/">Яндекс Метрика</a>: посетители и визиты из поиска в Санкт-Петербурге и области; фильтр роботов, последний значимый переход и кросс-девайс.</li>
+<li><a href="https://status.search.google.com/products/rGHU1u87FJnkP6W2GwMi/history?showAll=true">Официальная история обновлений Google</a> и <a href="https://support.google.com/webmasters/answer/6211453?hl=en">журнал аномалий Search Console</a>.</li>
+<li><a href="https://help.arsenkin.ru/api/api-wordstat">API Арсёнкина / Яндекс Вордстат</a>: 19 выбранных фраз, регион 2, широкая помесячная частотность, выгрузка 6 ноября.</li>
+<li><a href="https://trends.google.com/trends/explore?date=2025-01-01+2026-10-31&amp;geo=RU-SPE&amp;q=%D1%81%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F%2C%D0%B8%D0%BC%D0%BF%D0%BB%D0%B0%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D1%8F+%D0%B7%D1%83%D0%B1%D0%BE%D0%B2%2C%D0%BF%D1%80%D0%BE%D1%82%D0%B5%D0%B7%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%B7%D1%83%D0%B1%D0%BE%D0%B2&amp;hl=ru">Google Trends: сравнение запросов в Санкт-Петербурге</a> и <a href="https://support.google.com/trends/answer/4365533?hl=ru">методика нормирования и выборки</a>.</li>
+<li><a href="https://support.google.com/webmasters/answer/16984139">Отчёт Search Console по генеративному поиску</a>: AI Overviews и AI Mode, показы ссылок сайта.</li>
+<li><a href="https://www.justice.gov/atr/media/1398866/dl">Материалы антимонопольного дела о Navboost</a>, <a href="https://google-api-content-warehouse.hexdocs.pm/0.2.0/GoogleApi.ContentWarehouse.V1.Model.ResearchScienceSearchNavboostQueryInfo.html">архив документации Content Warehouse</a>, <a href="https://developers.google.com/search/docs/essentials/spam-policies">правила Google по спаму</a>.</li>
+</ol>
+<details class="method"><summary>Как рассчитаны сравнения</summary><p>Клики GSC и визиты Метрики суммированы по датам каждого 14-дневного окна. График кликов показывает среднее за 7 календарных дней. График сравнения индексирует каждый ряд к первому окну, принятому за 100. Средний индекс Trends рассчитан по двум соседним неделям; это не абсолютная частотность. Показы в AI-функциях суммированы по месяцам на уровне ресурса.</p><p>Средняя позиция GSC зависит от того, по каким запросам и в каких условиях сайт получал показы. Запросы, отсутствующие в стандартном списке первых 1 000 строк, дополнительно проверены фильтрами; нулевые значения относятся только к показанным в таблице строкам.</p></details>
+</section>
+<footer class="ls-sign"><p><b>LEOSEO</b> · Аналитика органического поиска</p><p>Данные до 31.10.2026</p></footer>
+</main>
+</body></html>
